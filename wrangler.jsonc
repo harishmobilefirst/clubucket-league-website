@@ -1,6 +1,6 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
-  "name": "tanstack-start-app",
+  "name": "clubucket-league-website",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   // Deploy the prebuilt Nitro (cloudflare-module) output, not the raw source.
