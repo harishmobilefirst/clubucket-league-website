@@ -3,5 +3,8 @@
   "name": "tanstack-start-app",
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
-  "main": "src/server.ts",
+  // Deploy the prebuilt Nitro (cloudflare-module) output, not the raw source.
+  // `npm run build` emits the self-contained Worker + client assets under dist/.
+  "main": "dist/server/index.mjs",
+  "assets": { "directory": "dist/client", "binding": "ASSETS" },
 }
