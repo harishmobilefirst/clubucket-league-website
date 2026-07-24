@@ -3,7 +3,9 @@ frontend:
   phases:
     preBuild:
       commands:
-        - npm ci
+        # Use `npm install` (not `npm ci`) so the build tolerates optional-dependency
+        # lockfile drift from rolldown/vite native bindings across npm versions.
+        - npm install --no-audit --no-fund
     build:
       commands:
         # DEPLOY_TARGET switches the Nitro preset to aws-amplify (see vite.config.ts).
