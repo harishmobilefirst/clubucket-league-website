@@ -3,12 +3,21 @@ import type {
   ApiEnvelope,
   PaginationMeta,
   PublicConfig,
+  PublicConfigEnabledModules,
   PublicConfigNavigationItem,
   PublicConfigRaw,
   PublicContentItem,
+  PublicContentItemRaw,
   PublicDivision,
+  PublicFixtureTeam,
+  PublicRawTeam,
   PublicSeason,
   PublicSponsor,
+  PublicSponsorRaw,
+  PublicStandingRow,
+  PublicStandingRowRaw,
+  PublicTopScorer,
+  PublicTopScorerRaw,
 } from "@/types/public-api";
 
 export class PublicApiError extends Error {
@@ -89,9 +98,71 @@ export async function postPublicApi<T>(
 export async function fetchPublicApiWithMeta<T>(
   path: string,
   options?: { params?: Record<string, string | number | undefined>; init?: RequestInit },
-): Promise<{ data: T; meta?: PaginationMeta }> {
+): Promise<{ data: T; meta?: PaginationMeta; teams?: Record<string, PublicRawTeam> }> {
   const envelope = await fetchPublicApiEnvelope<T>(path, options);
-  return { data: envelope.data, meta: envelope.meta };
+  return { data: envelope.data, meta: envelope.meta, teams: envelope.teams };
+}
+
+/**
+ * Resolve a team id against a de-duped `teams` map into the embedded team
+ * object shape the UI consumes. Returns undefined when the id/map is missing.
+ */
+export function resolveTeam(
+  id: string | undefined | null,
+  teams?: Record<string, PublicRawTeam>,
+): PublicFixtureTeam | undefined {
+  if (!id || !teams) return undefined;
+  const t = teams[id];
+  if (!t) return undefined;
+  return {
+    id: t.id,
+    name: t.name,
+    shortCode: t.shortCode,
+    logoUrl: t.logoUrl,
+    slug: t.slug,
+    location: t.location,
+  };
+}
+
+/** Safe empty team so components that read `homeTeam.name` never crash when an
+ *  id is missing from the `teams` map. */
+const EMPTY_TEAM: PublicFixtureTeam = { id: "", name: "" };
+
+/**
+ * Turn a raw fixture (teams referenced by `homeTeamId`/`awayTeamId`) into the
+ * embedded `homeTeam`/`awayTeam` shape the UI reads, resolving ids against the
+ * de-duped `teams` map. Falls back to an empty team when the id is absent.
+ */
+export function resolveFixtureTeams<
+  T extends { homeTeamId?: string; awayTeamId?: string },
+>(fixture: T, teams?: Record<string, PublicRawTeam>) {
+  return {
+    ...fixture,
+    homeTeam: resolveTeam(fixture.homeTeamId, teams) ?? EMPTY_TEAM,
+    awayTeam: resolveTeam(fixture.awayTeamId, teams) ?? EMPTY_TEAM,
+  };
+}
+
+/**
+ * Turn a raw standings row (`teamId`) into the embedded `team` shape the table
+ * reads, resolving against the response `teams` map.
+ */
+export function resolveStandingRow(
+  row: PublicStandingRowRaw,
+  teams?: Record<string, PublicRawTeam>,
+): PublicStandingRow {
+  const t = row.teamId ? teams?.[row.teamId] : undefined;
+  return {
+    ...row,
+    id: row.id ?? row.teamId,
+    team: {
+      id: t?.id ?? row.teamId,
+      name: t?.name ?? "",
+      shortCode: t?.shortCode,
+      logoUrl: t?.logoUrl,
+      slug: t?.slug,
+    },
+  };
 }
 
 const moduleRouteMap: Record<string, string | undefined> = {
@@ -109,8 +180,29 @@ export function normalizePublicRoute(item: PublicConfigNavigationItem): string |
   return moduleRouteMap[item.key];
 }
 
+/**
+ * The API now sends `enabledModules` as a snake_case string array
+ * (e.g. ["about_us", "top_scorers"]) while nav/footer gate on camelCase keys
+ * (aboutUs, topScorers). Build a record that answers BOTH key styles. Falls
+ * back to the legacy boolean-record form when given an object.
+ */
+export function toEnabledRecord(
+  value: PublicConfigEnabledModules | string[] | undefined,
+): PublicConfigEnabledModules {
+  if (Array.isArray(value)) {
+    const rec: PublicConfigEnabledModules = {};
+    for (const m of value) {
+      const key = String(m);
+      rec[key] = true;
+      rec[key.replace(/_([a-z])/g, (_, c: string) => c.toUpperCase())] = true;
+    }
+    return rec;
+  }
+  return value || {};
+}
+
 export function normalizePublicConfig(raw: PublicConfigRaw): PublicConfig {
-  const enabledModules = raw.enabledModules || {};
+  const enabledModules = toEnabledRecord(raw.enabledModules);
   const supportedLocales =
     raw.supportedLocales?.map((item) =>
       typeof item === "string" ? { label: item.toUpperCase(), locale: item } : item,
@@ -128,6 +220,7 @@ export function normalizePublicConfig(raw: PublicConfigRaw): PublicConfig {
     id: raw.id,
     organizationSlug: raw.organization.slug,
     displayName: raw.displayName || raw.organization.name || raw.organization.slug,
+    subtitle: raw.subtitle,
     logoUrl: raw.logoUrl,
     appIconUrl: raw.appIconUrl,
     fallbackImageUrl: raw.fallbackImageUrl,
@@ -135,6 +228,10 @@ export function normalizePublicConfig(raw: PublicConfigRaw): PublicConfig {
     contactPhone: raw.contactPhone,
     website: raw.website,
     socialLinks: raw.socialLinks,
+    registrationEnabled: raw.registrationEnabled,
+    heroTitle: raw.heroTitle,
+    heroImages: raw.heroImages,
+    supportEmail: raw.supportEmail,
     defaultLocale,
     supportedLocales: supportedLocales.length
       ? supportedLocales
@@ -153,8 +250,9 @@ export function normalizePublicConfig(raw: PublicConfigRaw): PublicConfig {
 
 export function isModuleEnabled(config: PublicConfig | undefined, key: string): boolean {
   if (!config) return true;
-  if (key === "home") return config.enabledModules.home !== false;
-  return config.enabledModules[key] === true;
+  // The public API no longer sends `enabledModules`, so a module is treated as
+  // enabled unless a (legacy) config explicitly disables it with `false`.
+  return config.enabledModules[key] !== false;
 }
 
 export function getDefaultSeasonId(
@@ -162,7 +260,7 @@ export function getDefaultSeasonId(
   seasons: PublicSeason[] | undefined,
 ): string | undefined {
   if (config?.activeSeasonId) return config.activeSeasonId;
-  const active = seasons?.find((s) => s.isActive || s.isCurrent);
+  const active = seasons?.find((s) => s.status === "active" || s.isActive || s.isCurrent);
   return active?.id || seasons?.[0]?.id;
 }
 
@@ -203,19 +301,44 @@ export function normalizeContentBody(body: unknown): string {
 }
 
 /**
- * Map a raw API content item onto the shape the UI expects: flatten `body`,
- * and alias `ctaLabel`/`publishedAt` to the `ctaText`/`date` fields the
- * components read.
+ * Pick the locale-appropriate variant of a bilingual field (`<base>En` /
+ * `<base>Es`). Falls back across languages and to the legacy single field so
+ * it works whether the API returns both languages or a pre-localized value.
  */
-export function normalizeContentItem<T extends Record<string, unknown>>(
-  raw: T,
+export function pickLocalized(
+  raw: Record<string, unknown>,
+  base: string,
+  locale: string,
+): unknown {
+  const en = raw[`${base}En`];
+  const es = raw[`${base}Es`];
+  const preferred = locale?.toLowerCase().startsWith("es") ? es : en;
+  return preferred ?? en ?? es ?? raw[base];
+}
+
+/**
+ * Map a raw API content item onto the shape the UI expects: pick the locale
+ * for bilingual title/summary/body, flatten `body`, and alias
+ * `ctaLabel`/`publishedAt`/`module` to the `ctaText`/`date`/`category` fields
+ * the components read.
+ */
+export function normalizeContentItem(
+  raw: PublicContentItemRaw,
+  locale = "en",
 ): PublicContentItem {
   const item = raw as Record<string, unknown>;
   return {
     ...(raw as unknown as PublicContentItem),
-    body: normalizeContentBody(item.body),
-    date: (item.date as string) || (item.publishedAt as string) || undefined,
-    ctaText: (item.ctaText as string) || (item.ctaLabel as string) || undefined,
+    title:
+      (pickLocalized(item, "title", locale) as string) || (item.title as string) || "",
+    summary:
+      (pickLocalized(item, "summary", locale) as string) ||
+      (item.summary as string) ||
+      undefined,
+    body: normalizeContentBody(pickLocalized(item, "body", locale) ?? item.body),
+    date: (item.publishedAt as string) || (item.date as string) || undefined,
+    ctaText: (item.ctaLabel as string) || (item.ctaText as string) || undefined,
+    category: (item.category as string) || (item.module as string) || undefined,
   };
 }
 
@@ -265,31 +388,25 @@ export function normalizeSponsor(raw: {
   };
 }
 
-export function normalizeTopScorer(raw: {
-  rank: number;
-  playerId: string;
-  player: { fullName: string; imageUrl?: string };
-  teamId?: string;
-  team: { name: string; shortCode: string };
-  goals: number;
-}): {
-  rank: number;
-  playerId: string;
-  playerName: string;
-  teamId?: string;
-  teamName?: string;
-  teamInitials?: string;
-  goals: number;
-  imageUrl?: string;
-} {
+/**
+ * Normalize a raw top-scorer row. The new API references the team by id only
+ * (`teamId`) and returns the full team in the sibling `teams` map, so resolve
+ * from there — preferring an embedded `team` when present (legacy resilience).
+ * Never throws when the team is missing.
+ */
+export function normalizeTopScorer(
+  raw: PublicTopScorerRaw,
+  teams?: Record<string, PublicRawTeam>,
+): PublicTopScorer {
+  const team = raw.team ?? (raw.teamId ? teams?.[raw.teamId] : undefined);
   return {
     rank: raw.rank,
     playerId: raw.playerId,
-    playerName: raw.player.fullName,
+    playerName: raw.player?.fullName ?? "",
     teamId: raw.teamId,
-    teamName: raw.team.name,
-    teamInitials: raw.team.shortCode,
+    teamName: team?.name,
+    teamInitials: team?.shortCode ?? generateInitials(team?.name),
     goals: raw.goals,
-    imageUrl: raw.player.imageUrl,
+    imageUrl: raw.player?.imageUrl,
   };
 }

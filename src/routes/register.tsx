@@ -59,11 +59,11 @@ function Register() {
     <Layout>
       <PageHeader title="New Team Membership" subtitle="Submit a request to join LigaD1." />
       <Section muted containerClassName="grid lg:grid-cols-[3fr_2fr] gap-[var(--cb-space-xl)]">
-          <div className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-48)] cb-shadow-panel">
+          <div className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-48)] border border-[var(--cb-border-subtle)]">
             {submitted ? (
               <div className="text-center py-[var(--cb-space-section)]">
                 <CheckCircle2 size={40} className="text-[var(--cb-status-success)] mx-auto" />
-                <h3 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] mt-[var(--cb-space-md)]">
+                <h3 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] mt-[var(--cb-space-md)]" style={{ textWrap: "balance" }}>
                   Request Submitted!
                 </h3>
                 <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-sm)] max-w-md mx-auto">
@@ -79,7 +79,7 @@ function Register() {
               </div>
             ) : (
               <form onSubmit={handleSubmit}>
-                <h2 className="cb-title">
+                <h2 className="cb-title" style={{ textWrap: "balance" }}>
                   Team Registration Request
                 </h2>
                 <p className="cb-body mt-[var(--cb-space-xs)]">
@@ -216,7 +216,7 @@ function Register() {
           </div>
 
           <aside className="bg-[var(--cb-brand-primary)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] text-[var(--cb-text-inverse)] h-fit">
-            <h3 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)]">
+            <h3 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)]" style={{ textWrap: "balance" }}>
               Why Join LigaD1?
             </h3>
             <ul className="mt-[var(--cb-space-lg)] space-y-[var(--cb-space-lg)]">

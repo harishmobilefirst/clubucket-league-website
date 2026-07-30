@@ -1,3 +1,5 @@
+import { useState } from "react";
+import { Pause, Play } from "lucide-react";
 import type { PublicFixture } from "@/types/public-api";
 import { generateInitials } from "@/lib/public-api";
 import { Container } from "./Container";
@@ -8,7 +10,7 @@ function TeamBadge({ team, accent = false }: { team: PublicFixture["homeTeam"]; 
       <img
         src={team.logoUrl}
         alt={team.name}
-        className="w-6 h-6 rounded-full object-contain bg-[var(--cb-surface-panel)] border border-[var(--cb-border-subtle)] shrink-0"
+        className="w-6 h-6 rounded-full object-contain bg-[var(--cb-surface-panel)] shrink-0"
       />
     );
   }
@@ -37,17 +39,32 @@ function Item(f: PublicFixture) {
 }
 
 export function ScoreTicker({ results }: { results?: PublicFixture[] }) {
+  const [paused, setPaused] = useState(false);
   if (!results || results.length === 0) return null;
   const items = [...results, ...results];
   return (
     <div className="w-full py-[var(--cb-space-md)] bg-[var(--cb-brand-primary)]">
       <Container>
-        <div className="overflow-hidden relative">
-          <div className="ticker-track flex items-center w-max">
-            {items.map((f, i) => (
-              <Item key={`${f.id || i}-${i}`} {...f} />
-            ))}
+        <div className="flex items-center gap-[var(--cb-space-md)]">
+          <span className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-[0.05em] whitespace-nowrap">
+            Recent Results
+          </span>
+          <div className="flex-1 overflow-hidden relative">
+            <div
+              className={"flex items-center w-max" + (paused ? "" : " ticker-track")}
+            >
+              {items.map((f, i) => (
+                <Item key={`${f.id || i}-${i}`} {...f} />
+              ))}
+            </div>
           </div>
+          <button
+            onClick={() => setPaused((p) => !p)}
+            className="shrink-0 w-8 h-8 rounded-full bg-[var(--cb-surface-panel)]/20 text-[var(--cb-text-inverse)] flex items-center justify-center hover:bg-[var(--cb-surface-panel)]/30 cb-focus transition-colors"
+            aria-label={paused ? "Resume ticker" : "Pause ticker"}
+          >
+            {paused ? <Play size={14} /> : <Pause size={14} />}
+          </button>
         </div>
       </Container>
     </div>

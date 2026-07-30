@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: 'DM Sans', sans-serif;
+  --font-sans: 'Manrope', sans-serif;
   --spacing: var(--cb-space-xs);
   --radius-sm: var(--cb-radius-sm);
   --radius-md: var(--cb-radius-md);
@@ -58,6 +58,7 @@
   --cb-text-primary: #111827;
   --cb-text-secondary: #475569;
   --cb-text-muted: #64748b;
+  --cb-text-muted-inverse: color-mix(in srgb, var(--cb-text-inverse), transparent 15%);
   --cb-text-inverse: #ffffff;
   --cb-surface-canvas: #f8fafc;
   --cb-surface-panel: #ffffff;
@@ -78,16 +79,15 @@
   --cb-space-sm: 8px;
   --cb-space-12: 12px;
   --cb-space-md: 16px;
-  --cb-space-32: 32px;
   --cb-space-lg: 24px;
   --cb-space-48: 48px;
   --cb-space-xl: 40px;
   --cb-space-section: 64px;
-  --cb-font-family: 'DM Sans', sans-serif;
+  --cb-font-family: 'Manrope', sans-serif;
   --cb-font-size-caption: 12px;
   --cb-font-size-body: 16px;
   --cb-font-size-title: 24px;
-  --cb-font-size-screen: 40px;
+  --cb-font-size-screen: clamp(1.75rem, 4.5vw, 3.5rem);
   --cb-font-weight-body: 400;
   --cb-font-weight-medium: 500;
   --cb-font-weight-heading: 700;
@@ -114,12 +114,26 @@
   --ring: var(--cb-brand-accent);
 }
 
+.dark, .dark * {
+  --cb-surface-canvas: #0a0f0d;
+  --cb-surface-panel: #111613;
+  --cb-surface-muted: #181e1a;
+  --cb-surface-inverse: #e8ece9;
+  --cb-text-primary: #e6e9e7;
+  --cb-text-secondary: #c5cac7;
+  --cb-text-muted: #9fa6a2;
+  --cb-text-muted-inverse: #4a524d;
+  --cb-text-inverse: #0a0f0d;
+  --cb-border-subtle: #242a26;
+  --cb-border-strong: #333935;
+}
+
 @layer base {
   * {
     border-color: var(--color-border);
   }
   html, body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Manrope', sans-serif;
     background-color: var(--cb-surface-canvas);
     color: var(--cb-text-primary);
   }
@@ -154,7 +168,6 @@
   .cb-card {
     background: var(--cb-surface-panel);
     color: var(--cb-text-primary);
-    border: 1px solid var(--cb-border-subtle);
     border-radius: var(--cb-radius-md);
   }
 
@@ -181,18 +194,21 @@
     color: var(--cb-text-primary);
     font-size: var(--cb-font-size-screen);
     font-weight: var(--cb-font-weight-heading);
+    text-wrap: balance;
   }
 
   .cb-title {
     color: var(--cb-text-primary);
     font-size: var(--cb-font-size-title);
     font-weight: var(--cb-font-weight-heading);
+    text-wrap: balance;
   }
 
   .cb-body {
     color: var(--cb-text-secondary);
     font-size: var(--cb-font-size-body);
     font-weight: var(--cb-font-weight-body);
+    text-wrap: pretty;
   }
 
   .cb-caption {
@@ -254,7 +270,8 @@
   }
 
   .cb-shadow-panel {
-    box-shadow: 0 2px 12px color-mix(in srgb, var(--cb-border-strong), transparent 70%);
+    box-shadow: 0 1px 3px color-mix(in srgb, var(--cb-border-strong), transparent 76%),
+                0 1px 2px color-mix(in srgb, var(--cb-border-strong), transparent 80%);
   }
 
   .cb-focus {
@@ -295,14 +312,22 @@
   }
 }
 
-/* Hide scrollbars globally while keeping scroll functionality */
+/* Thin scrollbars — never hidden */
 html {
-  scrollbar-width: none;
-  -ms-overflow-style: none;
+  scrollbar-width: thin;
+  -ms-overflow-style: auto;
 }
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  width: 0;
-  height: 0;
-  display: none;
+  width: 6px;
+  height: 6px;
+}
+html::-webkit-scrollbar-thumb,
+body::-webkit-scrollbar-thumb {
+  background: var(--cb-border-strong);
+  border-radius: 3px;
+}
+html::-webkit-scrollbar-track,
+body::-webkit-scrollbar-track {
+  background: transparent;
 }

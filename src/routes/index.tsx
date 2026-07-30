@@ -5,6 +5,7 @@ import seasonHighlights from "@/assets/season-highlights.jpg";
 import { Layout } from "@/components/Layout";
 import { ScoreTicker } from "@/components/ScoreTicker";
 import { NewsCard } from "@/components/NewsCard";
+import { HighlightCard } from "@/components/HighlightCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import hero1 from "@/assets/hero-1.png";
 import hero2 from "@/assets/hero-2.png";
@@ -109,7 +110,7 @@ function HeroSlider({
         <div className="text-center max-w-3xl">
           {slides && slides[current]?.headline ? (
             <>
-              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]">
+              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]" style={{ textWrap: "balance" }}>
                 {slides[current].headline}
               </h1>
               {slides[current].subheadline && (
@@ -128,7 +129,7 @@ function HeroSlider({
             </>
           ) : (
             <>
-              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]">
+              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]" style={{ textWrap: "balance" }}>
                 The Heart of Mexican Soccer
               </h1>
               <p className="text-[color-mix(in_srgb,var(--cb-text-inverse),transparent_20%)] text-[length:var(--cb-font-size-title)] mt-[var(--cb-space-lg)]">LigaD1</p>
@@ -205,28 +206,24 @@ function Home() {
 
   return (
     <Layout>
-      <div className="relative">
+      <div>
         <HeroSlider slides={home?.heroSlides} />
-        <div className="absolute inset-x-0 top-0 z-20 pointer-events-none">
-          <div className="pointer-events-auto">
-            {tickerLoading ? (
-              <div
-                className="w-full py-[var(--cb-space-sm)]"
-                style={{ background: "var(--cb-brand-primary)" }}
-              >
-                <Container>
-                  <div className="flex gap-[var(--cb-space-sm)]">
-                    <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                    <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                    <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                  </div>
-                </Container>
+        {tickerLoading ? (
+          <div
+            className="w-full py-[var(--cb-space-sm)]"
+            style={{ background: "var(--cb-brand-primary)" }}
+          >
+            <Container>
+              <div className="flex gap-[var(--cb-space-sm)]">
+                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
+                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
+                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
               </div>
-            ) : (
-              <ScoreTicker results={completedMatches} />
-            )}
+            </Container>
           </div>
-        </div>
+        ) : (
+          <ScoreTicker results={completedMatches} />
+        )}
       </div>
 
       {homeError && (
@@ -243,13 +240,10 @@ function Home() {
 
       {/* About */}
       <Section muted containerClassName="grid md:grid-cols-2 gap-[var(--cb-space-xl)] items-center">
-        <div>
-          <div className="cb-eyebrow">
-            {aboutData?.title || home?.aboutContent?.title ? "About" : "About LigaD1"}
-          </div>
-          <h2 className="cb-heading">
-            {aboutData?.title || home?.aboutContent?.title || "More Than a League. A Community."}
-          </h2>
+          <div>
+            <h2 className="cb-heading">
+              {aboutData?.title || home?.aboutContent?.title || "More Than a League. A Community."}
+            </h2>
           {aboutData?.summary || home?.aboutContent?.body ? (
             <p className="cb-body mt-[var(--cb-space-lg)]">
               {aboutData?.summary || home?.aboutContent?.body}
@@ -265,7 +259,7 @@ function Home() {
         <div className="rounded-[var(--cb-radius-lg)] overflow-hidden min-h-[280px]">
           <img
             src={aboutData?.imageUrl || home?.aboutContent?.imageUrl || seasonHighlights}
-            alt="About"
+            alt={aboutData?.title || "LigaD1 season in action"}
             width={1280}
             height={896}
             loading="lazy"
@@ -276,7 +270,7 @@ function Home() {
 
       {/* Our Divisions */}
       <Section inverse>
-        <h2 className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal">
+        <h2 className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal" style={{ textWrap: "balance" }}>
           <span className="text-[var(--cb-text-inverse)]">OUR </span>
           <span className="text-[var(--cb-brand-accent)]">DIVISIONS</span>
         </h2>
@@ -366,31 +360,61 @@ function Home() {
               View All Highlights &rarr;
             </Link>
           </div>
-          <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
+          <div className="mt-[var(--cb-space-xl)] grid md:grid-cols-2 gap-[var(--cb-space-xl)]">
             {highlightsData.slice(0, 3).map((item, idx) => (
               <Link
                 key={`${item.id || item.title}-${idx}`}
                 to="/highlights/$slug"
                 params={{ slug: item.slug || item.id }}
+                className={idx === 0 ? "md:col-span-2" : ""}
               >
-                <NewsCard
-                  category={item.category || ""}
+                <HighlightCard
                   title={item.title}
                   date={item.date || ""}
                   excerpt={normalizeContentExcerpt(item)}
                   image={normalizeContentImage(item)}
+                  mediaUrl={item.mediaUrl}
+                  category={item.category || ""}
                 />
               </Link>
             ))}
           </div>
         </Section>
       ) : homeLoading ? (
-        <SectionSkeleton />
+        <SectionHighlightSkeleton />
       ) : null}
 
       {/* Sponsors */}
       {sponsors && sponsors.length > 0 && <SponsorsSection sponsors={sponsors} />}
     </Layout>
+  );
+}
+
+function SectionHighlightSkeleton() {
+  return (
+    <Section muted>
+      <Skeleton className="h-8 w-48" />
+      <div className="grid md:grid-cols-2 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
+        <div className="md:col-span-2 bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden">
+          <Skeleton className="h-[220px] w-full rounded-none" />
+          <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
+        {[1, 2].map((i) => (
+          <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden">
+            <Skeleton className="h-[220px] w-full rounded-none" />
+            <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Section>
   );
 }
 
@@ -424,8 +448,9 @@ function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
           View All &rarr;
         </Link>
       </div>
-      <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-        <div className="flex items-stretch gap-[var(--cb-space-lg)]" style={{ width: "max-content" }}>
+      <div className="relative">
+        <div className="overflow-x-auto">
+          <div className="flex items-stretch gap-[var(--cb-space-lg)]" style={{ width: "max-content" }}>
           {scorers.map((p, idx) => (
             <div
               key={`${p.playerId || p.playerName}-${idx}`}
@@ -444,7 +469,7 @@ function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
               </div>
               <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
                 <div className="flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-text-primary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-title)]">
-                  <span aria-hidden>{String.fromCharCode(9917)}</span>
+                  <span aria-hidden className="text-[length:var(--cb-font-size-body)]">⚽</span>
                   <span>{p.goals}</span>
                 </div>
                 <h3 className="mt-[var(--cb-space-xs)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
@@ -459,14 +484,15 @@ function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
           ))}
         </div>
       </div>
+      </div>
     </Section>
   );
 }
 
 function SponsorsSection({ sponsors }: { sponsors: PublicSponsor[] }) {
   return (
-    <Section className="border-t-4 border-b-4 border-[var(--cb-brand-accent)]" containerClassName="text-center">
-      <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] tracking-normal text-[var(--cb-text-primary)] uppercase">Sponsors</h2>
+    <Section className="border-t-4 border-[var(--cb-brand-accent)]" containerClassName="text-center pb-[var(--cb-space-section)]">
+      <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] tracking-normal text-[var(--cb-text-primary)] uppercase" style={{ textWrap: "balance" }}>Sponsors</h2>
       <div className="mt-[var(--cb-space-xl)] flex items-center justify-center gap-[var(--cb-space-xl)] flex-wrap">
         {sponsors.map((s, idx) =>
           s.logoUrl ? (

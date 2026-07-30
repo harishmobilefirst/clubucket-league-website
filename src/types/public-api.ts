@@ -3,6 +3,9 @@ export type ApiEnvelope<T> = {
   data: T;
   meta?: PaginationMeta;
   message?: string;
+  /** De-duped team map keyed by id, present as a sibling of `data` on
+   *  /schedule and /top-scorers. Other endpoints nest it inside `data`. */
+  teams?: Record<string, PublicRawTeam>;
 };
 
 export type PaginationMeta = {
@@ -10,6 +13,19 @@ export type PaginationMeta = {
   limit?: number;
   total?: number;
   totalPages?: number;
+};
+
+/** Value shape in every de-duped `teams` map (superset covering all endpoints). */
+export type PublicRawTeam = {
+  id: string;
+  name: string;
+  slug?: string;
+  shortCode?: string;
+  logoUrl?: string;
+  status?: string;
+  location?: string;
+  division?: { id: string; name: string; sortOrder?: number };
+  homeVenue?: PublicVenueInfo;
 };
 
 export type PublicConfigOrganization = {
@@ -52,6 +68,10 @@ export type PublicConfigDivision = {
 };
 
 export type PublicTheme = {
+  /** New flat shape returned by the API doc: { primary, secondary, accent }. */
+  primary?: string;
+  secondary?: string;
+  accent?: string;
   media?: {
     imageRadius?: string;
     logoTreatment?: string;
@@ -108,6 +128,7 @@ export type PublicConfigRaw = {
   surface?: string;
   status?: string;
   displayName?: string;
+  subtitle?: string;
   logoUrl?: string;
   appIconUrl?: string;
   fallbackImageUrl?: string;
@@ -115,9 +136,15 @@ export type PublicConfigRaw = {
   contactPhone?: string;
   website?: string;
   socialLinks?: Record<string, string>;
+  /** public_web surface extras */
+  registrationEnabled?: boolean;
+  heroTitle?: string;
+  heroImages?: string[];
+  supportEmail?: string;
   defaultLocale: string;
   supportedLocales?: (PublicConfigLocale | string)[];
-  enabledModules?: PublicConfigEnabledModules;
+  /** May be a snake_case string array (new) or a boolean record (legacy). */
+  enabledModules?: PublicConfigEnabledModules | string[];
   activeSeason?: PublicConfigSeason | null;
   defaultDivision?: PublicConfigDivision | null;
   navigation?: PublicConfigNavigationItem[];
@@ -132,6 +159,7 @@ export type PublicConfig = {
   id: string;
   organizationSlug: string;
   displayName: string;
+  subtitle?: string;
   logoUrl?: string;
   appIconUrl?: string;
   fallbackImageUrl?: string;
@@ -139,6 +167,10 @@ export type PublicConfig = {
   contactPhone?: string;
   website?: string;
   socialLinks?: Record<string, string>;
+  registrationEnabled?: boolean;
+  heroTitle?: string;
+  heroImages?: string[];
+  supportEmail?: string;
   defaultLocale: string;
   supportedLocales: PublicConfigLocale[];
   enabledModules: PublicConfigEnabledModules;
@@ -156,6 +188,8 @@ export type PublicDivision = {
   id: string;
   name: string;
   order?: number;
+  sortOrder?: number;
+  status?: string;
   teams?: PublicTeamSummary[];
 };
 
@@ -163,6 +197,9 @@ export type PublicTeamSummary = {
   id: string;
   name: string;
   initials?: string;
+  slug?: string;
+  shortCode?: string;
+  location?: string;
   logoUrl?: string;
   divisionId?: string;
   divisionName?: string;
@@ -225,6 +262,7 @@ export type PublicCoach = {
 export type PublicSeason = {
   id: string;
   name: string;
+  status?: "active" | "upcoming" | "completed";
   isActive?: boolean;
   isCurrent?: boolean;
   startDate?: string;
@@ -249,11 +287,15 @@ export type PublicFixtureTeam = {
 };
 
 export type PublicFixtureResult = {
+  status?: string;
+  outcome?: "home_win" | "away_win" | "draw";
   homeScore: number;
   awayScore: number;
+  confirmedAt?: string;
 };
 
-export type PublicFixture = {
+/** Common fixture fields shared by the raw (id-referencing) and embedded shapes. */
+type PublicFixtureBase = {
   id: string;
   round?: number;
   roundName?: string;
@@ -261,11 +303,23 @@ export type PublicFixture = {
   kickoffTime?: string;
   season: { id: string; name: string; status: string };
   division: { id: string; name: string; sortOrder: number };
-  homeTeam: PublicFixtureTeam;
-  awayTeam: PublicFixtureTeam;
   venue: PublicVenueInfo;
   status: "scheduled" | "completed" | "postponed" | "cancelled";
   result: PublicFixtureResult | null;
+};
+
+/** Raw fixture as returned by the API: teams referenced by id. */
+export type PublicFixtureRaw = PublicFixtureBase & {
+  homeTeamId: string;
+  awayTeamId: string;
+};
+
+/** Fixture after the hook `select` resolves the teams map into embedded objects. */
+export type PublicFixture = PublicFixtureBase & {
+  homeTeamId?: string;
+  awayTeamId?: string;
+  homeTeam: PublicFixtureTeam;
+  awayTeam: PublicFixtureTeam;
 };
 
 export type PublicFixtureGoalEvent = {
@@ -287,6 +341,14 @@ export type PublicFixtureCardEvent = {
   cards: number;
 };
 
+/** Raw fixture detail: id-referenced teams + nested `teams` map + events. */
+export type PublicFixtureDetailRaw = PublicFixtureRaw & {
+  teams?: Record<string, PublicRawTeam>;
+  goalEvents: PublicFixtureGoalEvent[];
+  cardEvents: PublicFixtureCardEvent[];
+};
+
+/** Fixture detail after `select` resolves the teams map. */
 export type PublicFixtureDetail = PublicFixture & {
   goalEvents: PublicFixtureGoalEvent[];
   cardEvents: PublicFixtureCardEvent[];
@@ -314,6 +376,19 @@ export type PublicStandingRow = {
   points: number;
 };
 
+/** Raw standings row: references its team by id into the response `teams` map. */
+export type PublicStandingRowRaw = Omit<PublicStandingRow, "team"> & {
+  teamId: string;
+};
+
+/** New /standings response: an object (rows + de-duped teams), null when empty. */
+export type PublicStandingsResponse = {
+  season: { id: string; name: string; status?: string } | null;
+  division: { id: string; name: string; sortOrder?: number } | null;
+  teams?: Record<string, PublicRawTeam>;
+  rows: PublicStandingRowRaw[];
+} | null;
+
 export type PublicTopScorer = {
   playerId: string;
   playerName: string;
@@ -337,14 +412,15 @@ export type PublicTopScorerRaw = {
     status: string;
   };
   teamId?: string;
-  team: {
+  /** Legacy embedded team (older API); new API references via teamId + teams map. */
+  team?: {
     id: string;
     name: string;
-    slug: string;
-    shortCode: string;
+    slug?: string;
+    shortCode?: string;
     logoUrl?: string;
     location?: string;
-    status: string;
+    status?: string;
   };
   goals: number;
 };
@@ -367,12 +443,61 @@ export type PublicContentItem = {
   author?: string;
 };
 
+/**
+ * Raw content item from the new API — carries both languages plus extra
+ * metadata. `normalizeContentItem(raw, locale)` collapses this into
+ * `PublicContentItem`. Legacy single-language fields kept for resilience.
+ */
+export type PublicContentItemRaw = {
+  id: string;
+  module?: string;
+  slug?: string;
+  titleEn?: string;
+  titleEs?: string;
+  summaryEn?: string;
+  summaryEs?: string;
+  bodyEn?: unknown;
+  bodyEs?: unknown;
+  featuredImageUrl?: string;
+  thumbnailUrl?: string;
+  mediaUrl?: string;
+  publishedAt?: string;
+  metadata?: Record<string, unknown>;
+  relatedFixture?: unknown;
+  relatedTeam?: unknown;
+  ctaLabel?: string;
+  ctaUrl?: string;
+  // legacy fallbacks
+  title?: string;
+  summary?: string;
+  body?: unknown;
+  category?: string;
+  date?: string;
+  ctaText?: string;
+  tags?: string[];
+  author?: string;
+  bodySections?: { title?: string; body: string; order?: number }[];
+  [key: string]: unknown;
+};
+
 export type PublicSponsor = {
   id: string;
   name: string;
   logoUrl?: string;
   websiteUrl?: string;
   order?: number;
+};
+
+/** Raw sponsor from the new API. */
+export type PublicSponsorRaw = {
+  id: string;
+  title?: string;
+  sortOrder?: number;
+  featuredImageUrl?: string;
+  publishedAt?: string;
+  // legacy fields (older API) kept for resilience
+  ctaUrl?: string;
+  metadata?: { websiteUrl?: string };
 };
 
 export type PublicHome = {
@@ -394,6 +519,20 @@ export type PublicHome = {
   latestNews?: PublicContentItem[];
   highlights?: PublicContentItem[];
   sponsors?: PublicSponsor[];
+};
+
+/** Raw /home aggregate as returned by the new API. */
+export type PublicHomeRaw = {
+  config?: PublicConfigRaw;
+  schedule?: PublicFixtureRaw[];
+  scheduleTeams?: Record<string, PublicRawTeam>;
+  standings?: PublicStandingsResponse;
+  topScorers?: PublicTopScorerRaw[];
+  topScorersTeams?: Record<string, PublicRawTeam>;
+  news?: PublicContentItemRaw[];
+  highlights?: PublicContentItemRaw[];
+  sponsors?: PublicSponsorRaw[];
+  aboutUs?: PublicContentItemRaw | null;
 };
 
 export type PublicAboutUs = {

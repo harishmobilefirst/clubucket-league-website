@@ -23,6 +23,7 @@ export function Section({
         inverse && "cb-section-inverse",
         !muted && !inverse && "cb-section",
         !noPadding && "py-[var(--cb-space-section)]",
+        "scroll-mt-[68px]",
         className,
       )}
     >

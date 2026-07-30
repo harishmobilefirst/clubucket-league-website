@@ -1,5 +1,5 @@
 import { Link, useLocation } from "@tanstack/react-router";
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useCallback } from "react";
 import { Menu, X } from "lucide-react";
 import logo from "@/assets/ligad1-logo.png";
 import { usePublicConfig } from "@/hooks/use-public-api";
@@ -14,9 +14,10 @@ const fallbackNavLinks: NavLink[] = [
   { to: "/", label: "Home" },
   { to: "/divisions", label: "Divisions", moduleKey: "divisions" },
   { to: "/schedule", label: "Schedule", moduleKey: "schedule" },
-  { to: "/standing", label: "Standing", moduleKey: "standings" },
+  { to: "/standings", label: "Standings", moduleKey: "standings" },
   { to: "/news", label: "News", moduleKey: "news" },
   { to: "/highlights", label: "Highlights", moduleKey: "highlights" },
+  { to: "/top-scorers", label: "Top Scorers", moduleKey: "topScorers" },
   { to: "/about", label: "About Us", moduleKey: "aboutUs" },
 ];
 
@@ -32,23 +33,45 @@ export function Navbar() {
   const [open, setOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
+  const mobileRef = useRef<HTMLDivElement>(null);
   const isMobile = useIsMobile();
 
+  const closeAll = useCallback(() => {
+    setOpen(false);
+    setMobileOpen(false);
+  }, []);
+
   useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") closeAll();
+    };
     const onClick = (e: MouseEvent) => {
       if (ref.current && !ref.current.contains(e.target as Node)) setOpen(false);
     };
+    document.addEventListener("keydown", onKeyDown);
     document.addEventListener("mousedown", onClick);
-    return () => document.removeEventListener("mousedown", onClick);
-  }, []);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.removeEventListener("mousedown", onClick);
+    };
+  }, [closeAll]);
 
   useEffect(() => {
     if (mobileOpen) {
       document.body.style.overflow = "hidden";
+      const prev = document.activeElement as HTMLElement | null;
+      const timeout = setTimeout(() => {
+        const first = mobileRef.current?.querySelector<HTMLElement>("a, button");
+        first?.focus();
+      }, 50);
+      return () => {
+        clearTimeout(timeout);
+        document.body.style.overflow = "";
+        prev?.focus();
+      };
     } else {
       document.body.style.overflow = "";
     }
-    return () => { document.body.style.overflow = ""; };
   }, [mobileOpen]);
 
   const navLinks = fallbackNavLinks.filter(
@@ -75,6 +98,7 @@ export function Navbar() {
               <Link
                 key={l.to}
                 to={l.to}
+                aria-current={active ? "page" : undefined}
                 className="relative font-[var(--cb-font-weight-heading)] uppercase tracking-normal transition-colors text-[length:var(--cb-font-size-body)] hover:text-[var(--cb-brand-accent)] cb-focus"
                 style={{ color: active ? "var(--cb-brand-accent)" : "var(--cb-text-inverse)" }}
               >
@@ -94,13 +118,13 @@ export function Navbar() {
           <div className="text-[length:var(--cb-font-size-caption)] flex items-center gap-[var(--cb-space-xs)]">
             {locales.map((item, idx) => (
               <span key={item.locale} className="flex items-center gap-[var(--cb-space-xs)]">
-                {idx > 0 && <span className="text-[var(--cb-text-muted)]">|</span>}
+                {idx > 0 && <span className="text-[var(--cb-text-muted-inverse)]">|</span>}
                 <button
                   onClick={() => setLocale(item.locale)}
                   className={
                     locale === item.locale
                       ? "text-[var(--cb-text-inverse)] underline decoration-[var(--cb-brand-accent)] decoration-2 underline-offset-4 cb-focus"
-                      : "text-[var(--cb-text-muted)] cb-focus"
+                      : "text-[var(--cb-text-muted-inverse)] cb-focus"
                   }
                 >
                   {item.locale.toUpperCase()}
@@ -109,7 +133,12 @@ export function Navbar() {
             ))}
           </div>
           <div className="relative" ref={ref}>
-            <button onClick={() => setOpen((o) => !o)} className="cb-button-primary cb-focus">
+            <button
+              onClick={() => setOpen((o) => !o)}
+              aria-expanded={open}
+              aria-haspopup="true"
+              className="cb-button-primary cb-focus"
+            >
               Register
             </button>
             {open && (
@@ -136,7 +165,13 @@ export function Navbar() {
       </Container>
 
       {mobileOpen && (
-        <div className="md:hidden fixed inset-0 top-[68px] z-[999] bg-[var(--cb-brand-primary)]">
+        <div
+          ref={mobileRef}
+          role="dialog"
+          aria-modal="true"
+          aria-label="Navigation menu"
+          className="md:hidden fixed inset-0 top-[68px] z-[999] bg-[var(--cb-brand-primary)]"
+        >
           <nav className="flex flex-col p-[var(--cb-space-xl)] gap-[var(--cb-space-sm)]">
             {navLinks.map((l) => {
               const active = l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
@@ -144,6 +179,7 @@ export function Navbar() {
                 <Link
                   key={l.to}
                   to={l.to}
+                  aria-current={active ? "page" : undefined}
                   onClick={() => setMobileOpen(false)}
                   className="block py-[var(--cb-space-md)] px-[var(--cb-space-md)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal text-[length:var(--cb-font-size-body)] rounded-[var(--cb-radius-md)] transition-colors cb-focus"
                   style={{

@@ -78,16 +78,16 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "website" },
-      { name: "description", content: "website - ligad1" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "website" },
-      { property: "og:description", content: "website - ligad1" },
+      { title: "LigaD1 — The Heart of Mexican Soccer" },
+      { name: "description", content: "LigaD1 — Mexico's premier semi-professional soccer league." },
+      { name: "author", content: "LigaD1" },
+      { property: "og:title", content: "LigaD1 — The Heart of Mexican Soccer" },
+      { property: "og:description", content: "LigaD1 — Mexico's premier semi-professional soccer league." },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "website" },
-      { name: "twitter:description", content: "website - ligad1" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@LigaD1" },
+      { name: "twitter:title", content: "LigaD1 — The Heart of Mexican Soccer" },
+      { name: "twitter:description", content: "LigaD1 — Mexico's premier semi-professional soccer league." },
       {
         property: "og:image",
         content:
@@ -167,15 +167,18 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
     );
   }
 
-  const colors = config.theme?.colors;
-  const radii = config.theme?.radii;
-  const spacing = config.theme?.spacing;
-  const typography = config.theme?.typography;
+  const theme = config.theme;
+  const colors = theme?.colors;
+  const radii = theme?.radii;
+  const spacing = theme?.spacing;
+  const typography = theme?.typography;
 
   const themeVars = {
-    "--cb-brand-primary": colors?.brand?.primary,
-    "--cb-brand-accent": colors?.brand?.accent,
-    "--cb-brand-secondary": colors?.brand?.secondary,
+    // The API returns a flat brand shape ({ primary, secondary, accent }); the
+    // nested colors.brand.* path is kept as a fallback for forward-compat.
+    "--cb-brand-primary": theme?.primary ?? colors?.brand?.primary,
+    "--cb-brand-accent": theme?.accent ?? colors?.brand?.accent,
+    "--cb-brand-secondary": theme?.secondary ?? colors?.brand?.secondary,
     "--cb-text-primary": colors?.text?.primary,
     "--cb-text-secondary": colors?.text?.secondary,
     "--cb-text-muted": colors?.text?.muted,
@@ -200,7 +203,7 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
     "--cb-space-lg": px(spacing?.lg),
     "--cb-space-xl": px(spacing?.xl),
     "--cb-space-section": px(spacing?.section),
-    "--cb-font-family": "'DM Sans', sans-serif",
+    "--cb-font-family": "'Manrope', sans-serif",
     "--cb-font-size-caption": px(typography?.scale?.caption),
     "--cb-font-size-body": px(typography?.scale?.body),
     "--cb-font-size-title": px(typography?.scale?.title),

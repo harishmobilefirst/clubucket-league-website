@@ -68,7 +68,7 @@ function TeamProfile() {
                   </div>
                 )}
               </div>
-              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase mt-[var(--cb-space-sm)]">{team.name}</h1>
+              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase mt-[var(--cb-space-sm)]" style={{ textWrap: "balance" }}>{team.name}</h1>
               {socialLinks && Object.keys(socialLinks).length > 0 && (
                 <div className="flex items-center justify-center gap-[var(--cb-space-sm)] mt-[var(--cb-space-xs)]">
                   {socialLinks.instagram && (
@@ -131,7 +131,7 @@ function TeamProfile() {
       <Section muted>
         <BackLink to="/divisions">Back to Divisions</BackLink>
 
-          <h2 className="cb-title mb-[var(--cb-space-lg)]">Squad</h2>
+          <h2 className="cb-title mb-[var(--cb-space-lg)]" style={{ textWrap: "balance" }}>Squad</h2>
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
               {Array.from({ length: 8 }).map((_, i) => (
@@ -150,7 +150,7 @@ function TeamProfile() {
               {players.map((p, idx) => (
                 <div
                   key={`${p.id || p.name}-${idx}`}
-                  className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
+                  className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col"
                 >
                   <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-surface-muted)] to-[var(--cb-border-subtle)] flex items-center justify-center text-[var(--cb-text-secondary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
                     {p.imageUrl ? (
@@ -161,7 +161,7 @@ function TeamProfile() {
                   </div>
                   <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
                     <div className="flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-text-primary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-title)]">
-                      <span aria-hidden>{String.fromCharCode(9917)}</span>
+                      <span aria-hidden className="text-[length:var(--cb-font-size-body)]">⚽</span>
                       <span>{p.number ?? "-"}</span>
                     </div>
                     <h3 className="mt-[var(--cb-space-xs)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
@@ -179,7 +179,7 @@ function TeamProfile() {
             <EmptyState message="No players listed yet." />
           )}
 
-          <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mb-[var(--cb-space-lg)] mt-[var(--cb-space-section)]">Coaches</h2>
+          <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mb-[var(--cb-space-lg)] mt-[var(--cb-space-section)]" style={{ textWrap: "balance" }}>Coaches</h2>
           {isLoading ? (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
               {Array.from({ length: 3 }).map((_, i) => (
@@ -197,7 +197,7 @@ function TeamProfile() {
               {coaches.map((c, idx) => (
                 <div
                   key={`${c.id || c.name}-${idx}`}
-                  className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
+                  className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col"
                 >
                   <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-brand-secondary)] to-[var(--cb-brand-primary)] flex items-center justify-center text-[var(--cb-text-inverse)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
                     {c.imageUrl ? (

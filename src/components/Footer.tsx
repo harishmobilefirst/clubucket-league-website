@@ -9,7 +9,7 @@ const fallbackQuickLinks = [
   { to: "/", label: "Home" },
   { to: "/divisions", label: "Divisions" },
   { to: "/schedule", label: "Schedule" },
-  { to: "/standing", label: "Standing", moduleKey: "standings" },
+  { to: "/standings", label: "Standings", moduleKey: "standings" },
   { to: "/news", label: "News", moduleKey: "news" },
 ] satisfies { to: string; label: string; moduleKey?: string }[];
 
@@ -39,14 +39,14 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--cb-space-xl)]">
           <div>
             <img src={logoUrl} alt={leagueName} className="h-16 w-auto" />
-            <p className="cb-caption mt-[var(--cb-space-md)]">{leagueName}</p>
+            <p className="cb-caption text-[var(--cb-text-muted-inverse)] mt-[var(--cb-space-md)]">{leagueName}</p>
             <div className="flex gap-[var(--cb-space-lg)] mt-[var(--cb-space-lg)]">
               {socialLinks?.instagram ? (
                 <a href={socialLinks.instagram} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[var(--cb-brand-accent)] cb-focus">
                   <Instagram size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted)]"><Instagram size={20} /></span>
+                <span className="text-[var(--cb-text-muted-inverse)]"><Instagram size={20} /></span>
               )}
               {socialLinks?.twitter || socialLinks?.x ? (
                 <a
@@ -58,26 +58,26 @@ export function Footer() {
                   <Twitter size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted)]"><Twitter size={20} /></span>
+                <span className="text-[var(--cb-text-muted-inverse)]"><Twitter size={20} /></span>
               )}
               {socialLinks?.youtube ? (
                 <a href={socialLinks.youtube} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[var(--cb-brand-accent)] cb-focus">
                   <Youtube size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted)]"><Youtube size={20} /></span>
+                <span className="text-[var(--cb-text-muted-inverse)]"><Youtube size={20} /></span>
               )}
               {socialLinks?.facebook ? (
                 <a href={socialLinks.facebook} target="_blank" rel="noopener noreferrer" className="transition-colors hover:text-[var(--cb-brand-accent)] cb-focus">
                   <Facebook size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted)]"><Facebook size={20} /></span>
+                <span className="text-[var(--cb-text-muted-inverse)]"><Facebook size={20} /></span>
               )}
             </div>
           </div>
           <div>
-            <h4 className="cb-caption uppercase tracking-normal mb-[var(--cb-space-lg)]">
+            <h4 className="cb-caption text-[var(--cb-text-muted-inverse)] uppercase tracking-normal mb-[var(--cb-space-lg)]">
               Quick Links
             </h4>
             <ul className="space-y-[var(--cb-space-sm)]">
@@ -91,11 +91,11 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="cb-caption uppercase tracking-normal mb-[var(--cb-space-lg)]">Contact</h4>
+            <h4 className="cb-caption text-[var(--cb-text-muted-inverse)] uppercase tracking-normal mb-[var(--cb-space-lg)]">Contact</h4>
             <ul className="space-y-[var(--cb-space-sm)]">
               <li className="text-[length:var(--cb-font-size-body)]">{contactEmail}</li>
               <li className="text-[length:var(--cb-font-size-body)]">{website}</li>
-              <li className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-muted)]">
+              <li className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-muted-inverse)]">
                 <span className="text-[var(--cb-text-inverse)]">{locales[0]}</span>
                 {locales.length > 1 ? ` | ${locales.slice(1).join(" | ")}` : null}
               </li>
@@ -103,8 +103,8 @@ export function Footer() {
           </div>
         </div>
         <div className="border-t border-[var(--cb-border-strong)] mt-[var(--cb-space-xl)] pt-[var(--cb-space-xl)] flex flex-col md:flex-row justify-between text-[length:var(--cb-font-size-caption)]">
-          <span className="text-[var(--cb-text-muted)]">&copy; 2026 {leagueName}. All rights reserved.</span>
-          <span className="text-[var(--cb-text-muted)]">Powered by Clubucket</span>
+          <span className="text-[var(--cb-text-muted-inverse)]">&copy; 2026 {leagueName}. All rights reserved.</span>
+          <span className="text-[var(--cb-text-muted-inverse)]">Powered by Clubucket</span>
         </div>
       </Container>
     </footer>

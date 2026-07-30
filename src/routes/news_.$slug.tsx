@@ -64,7 +64,7 @@ function NewsDetail() {
           </div>
         )}
 
-        <h1 className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-sm)] leading-tight">{item.title}</h1>
+        <h1 className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-sm)] leading-tight" style={{ textWrap: "balance" }}>{item.title}</h1>
 
         <div className="flex items-center gap-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-sm)]">
           {item.date && <span>{item.date}</span>}
@@ -89,7 +89,7 @@ function NewsDetail() {
             item.bodySections.map((section, i) => (
               <div key={i}>
                 {section.title && (
-                  <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-xl)] mb-[var(--cb-space-sm)]">{section.title}</h2>
+                  <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-xl)] mb-[var(--cb-space-sm)]" style={{ textWrap: "balance" }}>{section.title}</h2>
                 )}
                 <p>{section.body}</p>
               </div>

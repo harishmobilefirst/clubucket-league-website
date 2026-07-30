@@ -69,7 +69,7 @@ function DivisionCard({ division }: { division: PublicDivision }) {
   return (
     <div className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden cb-shadow-panel">
       <div className="bg-[var(--cb-surface-muted)] px-[var(--cb-space-xl)] py-[var(--cb-space-lg)] border-b border-[var(--cb-border-subtle)]">
-        <h2 className="cb-title text-[var(--cb-brand-primary)]">{division.name}</h2>
+        <h2 className="cb-title text-[var(--cb-brand-primary)]" style={{ textWrap: "balance" }}>{division.name}</h2>
       </div>
       <div className="relative px-[var(--cb-space-xl)] py-[var(--cb-space-section)]">
         {teams.length > 0 ? (
@@ -101,7 +101,7 @@ function DivisionCard({ division }: { division: PublicDivision }) {
                     key={`${t.id}-${idx}`}
                     to="/teams/$teamId"
                     params={{ teamId: t.id }}
-                    className="w-[210px] shrink-0 group/team bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] border border-[var(--cb-border-subtle)] hover:border-[var(--cb-brand-accent)] hover:-translate-y-1 transition-all duration-300 flex flex-col cb-shadow-panel"
+                    className="w-[210px] shrink-0 group/team bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] border border-[var(--cb-border-subtle)] hover:border-[var(--cb-brand-accent)] hover:-translate-y-1 transition-all duration-300 flex flex-col"
                   >
                     <div className="relative px-[var(--cb-space-lg)] pt-[var(--cb-space-lg)] pb-[var(--cb-space-sm)] flex items-center justify-center h-[170px]">
                       {t.logoUrl ? (

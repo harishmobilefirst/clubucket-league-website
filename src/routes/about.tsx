@@ -70,9 +70,6 @@ function About() {
         ) : (
           <>
             <div>
-              <div className="text-[var(--cb-brand-accent)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal">
-                Who We Are
-              </div>
               <h2 className="cb-heading mt-[var(--cb-space-sm)]">{heroTitle}</h2>
               <p className="cb-body mt-[var(--cb-space-lg)]">{heroSummary}</p>
             </div>
@@ -86,14 +83,14 @@ function About() {
       <Section muted containerClassName="grid md:grid-cols-3 gap-[var(--cb-space-xl)]">
         {isLoading
           ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] cb-shadow-panel">
+              <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)]">
                 <Skeleton className="h-5 w-28 mb-[var(--cb-space-sm)]" />
                 <Skeleton className="h-16 w-full" />
               </div>
             ))
           : sections.map((s) => (
-              <div key={s.title} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] cb-shadow-panel">
-                <h3 className="cb-title text-[var(--cb-brand-primary)]">{s.title}</h3>
+              <div key={s.title} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] border border-[var(--cb-border-subtle)]">
+                <h3 className="cb-title text-[var(--cb-brand-primary)]" style={{ textWrap: "balance" }}>{s.title}</h3>
                 <p className="cb-body mt-[var(--cb-space-sm)]">{s.body}</p>
               </div>
             ))}

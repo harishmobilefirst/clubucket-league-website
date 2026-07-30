@@ -9,7 +9,7 @@ import { usePublicStandings, usePublicDivisions, usePublicConfig } from "@/hooks
 import { generateInitials } from "@/lib/public-api";
 import type { PublicStandingRow } from "@/types/public-api";
 
-export const Route = createFileRoute("/standing")({
+export const Route = createFileRoute("/standings")({
   head: () => ({
     meta: [
       { title: "Standings — LigaD1" },
@@ -63,14 +63,15 @@ function Standing() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="cb-table-header h-14">
-                <th className="w-[8%] text-left pl-[var(--cb-space-xl)]">POST</th>
-                <th className="w-[34%] text-left">TEAM</th>
+                <th className="w-[8%] text-left pl-[var(--cb-space-xl)]">#</th>
+                <th className="w-[30%] text-left">TEAM</th>
                 <th className="w-[10%] text-left">P</th>
+                <th className="w-[10%] text-left">W</th>
                 <th className="w-[10%] text-left">L</th>
-                <th className="w-[10%] text-left">F</th>
-                <th className="w-[10%] text-left">TO</th>
-                <th className="w-[8%] text-left">GD</th>
-                <th className="w-[10%] text-left pr-[var(--cb-space-xl)]">POINTS</th>
+                <th className="w-[10%] text-left">GF</th>
+                <th className="w-[10%] text-left">GA</th>
+                <th className="w-[6%] text-left">GD</th>
+                <th className="w-[10%] text-left pr-[var(--cb-space-xl)]">PTS</th>
               </tr>
             </thead>
             <tbody>
@@ -111,7 +112,7 @@ function Standing() {
                 ))
               ) : error ? (
                 <tr className="border-t border-[var(--cb-border-subtle)] h-[var(--cb-space-48)]">
-                  <td colSpan={8} className="text-center cb-body">
+                  <td colSpan={9} className="text-center cb-body">
                     This section could not load.
                     <button
                       onClick={() => window.location.reload()}
@@ -123,7 +124,7 @@ function Standing() {
                 </tr>
               ) : !standings || standings.length === 0 ? (
                 <tr className="border-t border-[var(--cb-border-subtle)]">
-                  <td colSpan={8}>
+                  <td colSpan={9}>
                     <EmptyState message="Standings are not available yet." />
                   </td>
                 </tr>
@@ -135,8 +136,8 @@ function Standing() {
         </div>
 
         <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-md)]">
-          P: Played &middot; L: Lost &middot; F: Goals For &middot; TO: Goals Against &middot; GD:
-          Goal Difference
+          P: Played &middot; W: Wins &middot; L: Losses &middot; GF: Goals For &middot; GA: Goals Against &middot; GD:
+          Goal Difference &middot; PTS: Points
         </p>
       </Section>
     </Layout>

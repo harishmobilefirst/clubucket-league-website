@@ -279,7 +279,7 @@ function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
           {m.status === "completed" &&
           m.result?.homeScore != null &&
           m.result?.awayScore != null ? (
-            <div className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">
+            <div className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]" style={{ textWrap: "balance" }}>
               {m.result.homeScore} &ndash; {m.result.awayScore}
             </div>
           ) : (

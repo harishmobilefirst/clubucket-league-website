@@ -16,7 +16,7 @@ import { Route as HighlightsRouteImport } from './routes/highlights'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as RegisterRouteImport } from './routes/register'
 import { Route as ScheduleRouteImport } from './routes/schedule'
-import { Route as StandingRouteImport } from './routes/standing'
+import { Route as StandingsRouteImport } from './routes/standings'
 import { Route as TopScorersRouteImport } from './routes/top-scorers'
 import { Route as HighlightsSlugRouteImport } from './routes/highlights_.$slug'
 import { Route as NewsSlugRouteImport } from './routes/news_.$slug'
@@ -57,9 +57,9 @@ const ScheduleRoute = ScheduleRouteImport.update({
   path: '/schedule',
   getParentRoute: () => rootRouteImport,
 } as any)
-const StandingRoute = StandingRouteImport.update({
-  id: '/standing',
-  path: '/standing',
+const StandingsRoute = StandingsRouteImport.update({
+  id: '/standings',
+  path: '/standings',
   getParentRoute: () => rootRouteImport,
 } as any)
 const TopScorersRoute = TopScorersRouteImport.update({
@@ -91,7 +91,7 @@ export interface FileRoutesByFullPath {
   '/news': typeof NewsRoute
   '/register': typeof RegisterRoute
   '/schedule': typeof ScheduleRoute
-  '/standing': typeof StandingRoute
+  '/standings': typeof StandingsRoute
   '/top-scorers': typeof TopScorersRoute
   '/highlights/$slug': typeof HighlightsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -105,7 +105,7 @@ export interface FileRoutesByTo {
   '/news': typeof NewsRoute
   '/register': typeof RegisterRoute
   '/schedule': typeof ScheduleRoute
-  '/standing': typeof StandingRoute
+  '/standings': typeof StandingsRoute
   '/top-scorers': typeof TopScorersRoute
   '/highlights/$slug': typeof HighlightsSlugRoute
   '/news/$slug': typeof NewsSlugRoute
@@ -120,7 +120,7 @@ export interface FileRoutesById {
   '/news': typeof NewsRoute
   '/register': typeof RegisterRoute
   '/schedule': typeof ScheduleRoute
-  '/standing': typeof StandingRoute
+  '/standings': typeof StandingsRoute
   '/top-scorers': typeof TopScorersRoute
   '/highlights_/$slug': typeof HighlightsSlugRoute
   '/news_/$slug': typeof NewsSlugRoute
@@ -136,7 +136,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/register'
     | '/schedule'
-    | '/standing'
+    | '/standings'
     | '/top-scorers'
     | '/highlights/$slug'
     | '/news/$slug'
@@ -150,7 +150,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/register'
     | '/schedule'
-    | '/standing'
+    | '/standings'
     | '/top-scorers'
     | '/highlights/$slug'
     | '/news/$slug'
@@ -164,7 +164,7 @@ export interface FileRouteTypes {
     | '/news'
     | '/register'
     | '/schedule'
-    | '/standing'
+    | '/standings'
     | '/top-scorers'
     | '/highlights_/$slug'
     | '/news_/$slug'
@@ -179,7 +179,7 @@ export interface RootRouteChildren {
   NewsRoute: typeof NewsRoute
   RegisterRoute: typeof RegisterRoute
   ScheduleRoute: typeof ScheduleRoute
-  StandingRoute: typeof StandingRoute
+  StandingsRoute: typeof StandingsRoute
   TopScorersRoute: typeof TopScorersRoute
   HighlightsSlugRoute: typeof HighlightsSlugRoute
   NewsSlugRoute: typeof NewsSlugRoute
@@ -237,11 +237,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ScheduleRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/standing': {
-      id: '/standing'
-      path: '/standing'
-      fullPath: '/standing'
-      preLoaderRoute: typeof StandingRouteImport
+    '/standings': {
+      id: '/standings'
+      path: '/standings'
+      fullPath: '/standings'
+      preLoaderRoute: typeof StandingsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/top-scorers': {
@@ -283,7 +283,7 @@ const rootRouteChildren: RootRouteChildren = {
   NewsRoute: NewsRoute,
   RegisterRoute: RegisterRoute,
   ScheduleRoute: ScheduleRoute,
-  StandingRoute: StandingRoute,
+  StandingsRoute: StandingsRoute,
   TopScorersRoute: TopScorersRoute,
   HighlightsSlugRoute: HighlightsSlugRoute,
   NewsSlugRoute: NewsSlugRoute,

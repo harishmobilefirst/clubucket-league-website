@@ -1,7 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Layout, PageHeader } from "@/components/Layout";
-import { NewsCard } from "@/components/NewsCard";
+import { HighlightCard } from "@/components/HighlightCard";
 import { Section } from "@/components/Section";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,19 +67,21 @@ function Highlights() {
           <EmptyState message="No highlights available." />
         ) : (
           <>
-            <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)]">
+            <div className="grid md:grid-cols-2 gap-[var(--cb-space-xl)]">
               {items.map((h, idx) => (
                 <Link
                   key={`${h.id}-${idx}`}
                   to="/highlights/$slug"
                   params={{ slug: h.slug || h.id }}
+                  className={idx === 0 ? "md:col-span-2" : ""}
                 >
-                  <NewsCard
-                    category={h.category || ""}
+                  <HighlightCard
                     title={h.title}
                     date={h.date || ""}
                     excerpt={normalizeContentExcerpt(h)}
                     image={normalizeContentImage(h)}
+                    mediaUrl={h.mediaUrl}
+                    category={h.category || ""}
                   />
                 </Link>
               ))}

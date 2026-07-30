@@ -35,7 +35,6 @@ export function MobileAppPrompt() {
       aria-label="Download our app"
       style={{
         background: "color-mix(in srgb, var(--cb-surface-inverse), transparent 20%)",
-        backdropFilter: "blur(8px)",
       }}
       onKeyDown={(e) => { if (e.key === "Escape") dismiss(); }}
     >
