@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Play } from "lucide-react";
 
 export function HighlightCard({
@@ -15,9 +16,15 @@ export function HighlightCard({
   mediaUrl?: string;
   category?: string;
 }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [image]);
+
   return (
     <article className="cb-card cb-shadow-panel overflow-hidden group">
-      {image ? (
+      {image && !imageFailed ? (
         <div className="relative h-[220px] overflow-hidden">
           <img
             src={image}
@@ -25,6 +32,7 @@ export function HighlightCard({
             loading="lazy"
             width={800}
             height={512}
+            onError={() => setImageFailed(true)}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {mediaUrl && (
@@ -42,9 +50,11 @@ export function HighlightCard({
       )}
       <div className="p-[var(--cb-space-lg)]">
         {category && <div className="cb-eyebrow">{category}</div>}
-        <h3 className="cb-title mt-[var(--cb-space-sm)] line-clamp-2">{title}</h3>
-        <div className="cb-caption mt-[var(--cb-space-xs)]">{date}</div>
-        <p className="cb-body mt-[var(--cb-space-sm)] line-clamp-2">{excerpt}</p>
+        <h3 className={"cb-title line-clamp-2" + (category ? " mt-[var(--cb-space-sm)]" : "")}>
+          {title}
+        </h3>
+        {date && <div className="cb-caption mt-[var(--cb-space-xs)]">{date}</div>}
+        {excerpt && <p className="cb-body mt-[var(--cb-space-sm)] line-clamp-2">{excerpt}</p>}
       </div>
     </article>
   );
