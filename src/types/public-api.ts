@@ -42,6 +42,11 @@ export type PublicConfigLocale = {
 
 export type PublicConfigEnabledModules = Record<string, boolean>;
 
+export type PublicHeroImage = {
+  url: string;
+  assetId?: string | null;
+};
+
 export type PublicConfigNavigationItem = {
   key: string;
   label: string;
@@ -139,7 +144,7 @@ export type PublicConfigRaw = {
   /** public_web surface extras */
   registrationEnabled?: boolean;
   heroTitle?: string;
-  heroImages?: string[];
+  heroImages?: (PublicHeroImage | string)[];
   supportEmail?: string;
   defaultLocale: string;
   supportedLocales?: (PublicConfigLocale | string)[];

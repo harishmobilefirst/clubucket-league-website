@@ -79,12 +79,8 @@ export function usePublicHome(locale: string) {
         params: { locale },
       }),
     select: (data): PublicHome => ({
-      recentResults: (data.schedule ?? []).map((f) =>
-        resolveFixtureTeams(f, data.scheduleTeams),
-      ),
-      topScorers: (data.topScorers ?? []).map((s) =>
-        normalizeTopScorer(s, data.topScorersTeams),
-      ),
+      recentResults: (data.schedule ?? []).map((f) => resolveFixtureTeams(f, data.scheduleTeams)),
+      topScorers: (data.topScorers ?? []).map((s) => normalizeTopScorer(s, data.topScorersTeams)),
       latestNews: (data.news ?? []).map((n) => normalizeContentItem(n, locale)),
       highlights: (data.highlights ?? []).map((n) => normalizeContentItem(n, locale)),
       sponsors: (data.sponsors ?? []).map(normalizeSponsor),
@@ -209,8 +205,7 @@ export function usePublicTopScorers(seasonId?: string, divisionId?: string) {
       fetchPublicApiWithMeta<PublicTopScorerRaw[]>("/top-scorers", {
         params: { seasonId, divisionId, limit: 20 },
       }),
-    select: (envelope) =>
-      (envelope.data ?? []).map((s) => normalizeTopScorer(s, envelope.teams)),
+    select: (envelope) => (envelope.data ?? []).map((s) => normalizeTopScorer(s, envelope.teams)),
     staleTime: 2 * 60 * 1000,
   });
 }
@@ -234,13 +229,13 @@ export function usePublicNews(locale: string, page?: number) {
   return useQuery({
     queryKey: queryKeys.news(locale, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicContentItem[]>("/news", {
+      fetchPublicApiWithMeta<PublicContentItemRaw[]>("/news", {
         params: { locale, page: page ?? 1, limit: 20 },
       }),
     staleTime: 2 * 60 * 1000,
     enabled: !!locale,
     select: (envelope) => ({
-      items: envelope.data ?? [],
+      items: (envelope.data ?? []).map((n) => normalizeContentItem(n, locale)),
       meta: envelope.meta,
     }),
   });
@@ -250,13 +245,13 @@ export function usePublicHighlights(locale: string, page?: number) {
   return useQuery({
     queryKey: queryKeys.highlights(locale, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicContentItem[]>("/highlights", {
+      fetchPublicApiWithMeta<PublicContentItemRaw[]>("/highlights", {
         params: { locale, page: page ?? 1, limit: 20 },
       }),
     staleTime: 2 * 60 * 1000,
     enabled: !!locale,
     select: (envelope) => ({
-      items: envelope.data ?? [],
+      items: (envelope.data ?? []).map((n) => normalizeContentItem(n, locale)),
       meta: envelope.meta,
     }),
   });

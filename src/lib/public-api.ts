@@ -10,6 +10,7 @@ import type {
   PublicContentItemRaw,
   PublicDivision,
   PublicFixtureTeam,
+  PublicHeroImage,
   PublicRawTeam,
   PublicSeason,
   PublicSponsor,
@@ -133,9 +134,10 @@ const EMPTY_TEAM: PublicFixtureTeam = { id: "", name: "" };
  * embedded `homeTeam`/`awayTeam` shape the UI reads, resolving ids against the
  * de-duped `teams` map. Falls back to an empty team when the id is absent.
  */
-export function resolveFixtureTeams<
-  T extends { homeTeamId?: string; awayTeamId?: string },
->(fixture: T, teams?: Record<string, PublicRawTeam>) {
+export function resolveFixtureTeams<T extends { homeTeamId?: string; awayTeamId?: string }>(
+  fixture: T,
+  teams?: Record<string, PublicRawTeam>,
+) {
   return {
     ...fixture,
     homeTeam: resolveTeam(fixture.homeTeamId, teams) ?? EMPTY_TEAM,
@@ -201,6 +203,30 @@ export function toEnabledRecord(
   return value || {};
 }
 
+/**
+ * Locales shown when the API config doesn't declare a supported set. A
+ * bilingual EN/ES site is the product default for the public league surface;
+ * an explicit `supportedLocales` list from the API always wins over this.
+ */
+export const DEFAULT_SUPPORTED_LOCALES = [
+  { label: "EN", locale: "en" },
+  { label: "ES", locale: "es" },
+];
+
+/**
+ * Normalize the hero image list into plain URL strings. The API returns an
+ * array of `{ url, assetId }` objects; legacy plain strings are accepted too.
+ */
+export function normalizeHeroImages(
+  value: (PublicHeroImage | string)[] | undefined,
+): string[] | undefined {
+  if (!Array.isArray(value)) return undefined;
+  const urls = value
+    .map((item) => (typeof item === "string" ? item : item.url))
+    .filter((url): url is string => typeof url === "string" && url.length > 0);
+  return urls.length ? urls : undefined;
+}
+
 export function normalizePublicConfig(raw: PublicConfigRaw): PublicConfig {
   const enabledModules = toEnabledRecord(raw.enabledModules);
   const supportedLocales =
@@ -211,9 +237,7 @@ export function normalizePublicConfig(raw: PublicConfigRaw): PublicConfig {
   const navigation = (raw.navigation || [])
     .map((item) => ({ ...item, appRoute: normalizePublicRoute(item) }))
     .filter(
-      (item) =>
-        item.appRoute &&
-        (item.key === "home" || enabledModules[item.key] !== false),
+      (item) => item.appRoute && (item.key === "home" || enabledModules[item.key] !== false),
     ) as PublicConfig["navigation"];
 
   return {
@@ -230,12 +254,10 @@ export function normalizePublicConfig(raw: PublicConfigRaw): PublicConfig {
     socialLinks: raw.socialLinks,
     registrationEnabled: raw.registrationEnabled,
     heroTitle: raw.heroTitle,
-    heroImages: raw.heroImages,
+    heroImages: normalizeHeroImages(raw.heroImages),
     supportEmail: raw.supportEmail,
     defaultLocale,
-    supportedLocales: supportedLocales.length
-      ? supportedLocales
-      : [{ label: defaultLocale.toUpperCase(), locale: defaultLocale }],
+    supportedLocales: supportedLocales.length ? supportedLocales : DEFAULT_SUPPORTED_LOCALES,
     enabledModules,
     activeSeasonId: raw.activeSeason?.id,
     activeSeason: raw.activeSeason || undefined,
@@ -290,9 +312,7 @@ export function normalizeContentBody(body: unknown): string {
     const blocks = (body as { blocks?: unknown }).blocks;
     if (Array.isArray(blocks)) {
       return blocks
-        .map((b) =>
-          typeof b === "string" ? b : (b as { text?: string })?.text ?? "",
-        )
+        .map((b) => (typeof b === "string" ? b : ((b as { text?: string })?.text ?? "")))
         .filter(Boolean)
         .join("\n\n");
     }
@@ -301,15 +321,30 @@ export function normalizeContentBody(body: unknown): string {
 }
 
 /**
+ * Format an ISO `publishedAt`/`date` value into a short locale-aware label
+ * ("Jun 1, 2026"). Passes through already-formatted strings untouched and
+ * never throws on malformed input.
+ */
+export function formatContentDate(value: string | undefined | null, locale = "en"): string {
+  if (!value) return "";
+  if (!/^\d{4}-\d{2}-\d{2}/.test(value)) return value;
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return value;
+  const lang = locale.toLowerCase().startsWith("es") ? "es-MX" : "en-US";
+  return date.toLocaleDateString(lang, {
+    month: "short",
+    day: "numeric",
+    year: "numeric",
+    timeZone: "UTC",
+  });
+}
+
+/**
  * Pick the locale-appropriate variant of a bilingual field (`<base>En` /
  * `<base>Es`). Falls back across languages and to the legacy single field so
  * it works whether the API returns both languages or a pre-localized value.
  */
-export function pickLocalized(
-  raw: Record<string, unknown>,
-  base: string,
-  locale: string,
-): unknown {
+export function pickLocalized(raw: Record<string, unknown>, base: string, locale: string): unknown {
   const en = raw[`${base}En`];
   const es = raw[`${base}Es`];
   const preferred = locale?.toLowerCase().startsWith("es") ? es : en;
@@ -319,26 +354,22 @@ export function pickLocalized(
 /**
  * Map a raw API content item onto the shape the UI expects: pick the locale
  * for bilingual title/summary/body, flatten `body`, and alias
- * `ctaLabel`/`publishedAt`/`module` to the `ctaText`/`date`/`category` fields
- * the components read.
+ * `ctaLabel`/`publishedAt` to the `ctaText`/`date` fields the components read.
+ * A real `category` (when the API sends one) is passed through; the internal
+ * `module` key is not surfaced as a card eyebrow.
  */
-export function normalizeContentItem(
-  raw: PublicContentItemRaw,
-  locale = "en",
-): PublicContentItem {
+export function normalizeContentItem(raw: PublicContentItemRaw, locale = "en"): PublicContentItem {
   const item = raw as Record<string, unknown>;
   return {
     ...(raw as unknown as PublicContentItem),
-    title:
-      (pickLocalized(item, "title", locale) as string) || (item.title as string) || "",
+    title: (pickLocalized(item, "title", locale) as string) || (item.title as string) || "",
     summary:
-      (pickLocalized(item, "summary", locale) as string) ||
-      (item.summary as string) ||
-      undefined,
+      (pickLocalized(item, "summary", locale) as string) || (item.summary as string) || undefined,
     body: normalizeContentBody(pickLocalized(item, "body", locale) ?? item.body),
-    date: (item.publishedAt as string) || (item.date as string) || undefined,
+    date:
+      formatContentDate((item.publishedAt as string) || (item.date as string), locale) || undefined,
     ctaText: (item.ctaLabel as string) || (item.ctaText as string) || undefined,
-    category: (item.category as string) || (item.module as string) || undefined,
+    category: (item.category as string) || undefined,
   };
 }
 
