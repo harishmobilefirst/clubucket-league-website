@@ -4,6 +4,7 @@ import { Section } from "@/components/Section";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicAbout } from "@/hooks/use-public-api";
 import { useLocale } from "@/lib/locale";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 import seasonHighlights from "@/assets/season-highlights.jpg";
 
 export const Route = createFileRoute("/about")({
@@ -26,37 +27,40 @@ export const Route = createFileRoute("/about")({
 
 const staticSections = [
   {
-    title: "Our Mission",
-    body: "Develop the next generation of Mexican soccer talent through competitive, well-organized league play.",
+    titleKey: "about.mission.title",
+    bodyKey: "about.mission.body",
   },
   {
-    title: "Our Vision",
-    body: "Become the most respected semi-professional league in Latin America, known for fair play and community impact.",
+    titleKey: "about.vision.title",
+    bodyKey: "about.vision.body",
   },
   {
-    title: "Our Values",
-    body: "Passion, discipline, community, and respect — on the field and beyond.",
+    titleKey: "about.values.title",
+    bodyKey: "about.values.body",
   },
-];
+] as const;
 
 function About() {
   const { locale } = useLocale();
+  const { t } = useI18n();
+  usePageTitle("meta.about");
   const { data: about, isLoading } = usePublicAbout(locale);
 
-  const hasData = about && (about.title || about.summary || about.bodySections?.length);
-
-  const heroTitle = about?.title || "More Than a League. A Community.";
-  const heroSummary =
-    about?.summary ||
-    "LigaD1 is Mexico's premier semi-professional soccer league, bringing together the most competitive clubs from across the country. Founded to bridge the gap between amateur football and the professional game, LigaD1 gives talented players a real platform to grow.";
+  const heroTitle = about?.title || t("about.fallbackTitle");
+  const heroSummary = about?.summary || t("about.fallbackSummary");
   const heroImage = about?.imageUrl || seasonHighlights;
-  const sections = about?.bodySections?.length ? about.bodySections : staticSections;
+  const sections = about?.bodySections?.length
+    ? about.bodySections
+    : staticSections.map((s) => ({ title: t(s.titleKey), body: t(s.bodyKey) }));
 
   return (
     <Layout>
-      <PageHeader title="About Us" subtitle="The story behind LigaD1" />
+      <PageHeader title={t("about.title")} subtitle={t("about.subtitle")} />
 
-      <Section className="bg-[var(--cb-surface-panel)]" containerClassName="grid md:grid-cols-2 gap-[var(--cb-space-48)] items-center">
+      <Section
+        className="bg-[var(--cb-surface-panel)]"
+        containerClassName="grid md:grid-cols-2 gap-[var(--cb-space-48)] items-center"
+      >
         {isLoading ? (
           <>
             <div className="space-y-[var(--cb-space-lg)]">
@@ -70,9 +74,6 @@ function About() {
         ) : (
           <>
             <div>
-              <div className="text-[var(--cb-brand-accent)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal">
-                Who We Are
-              </div>
               <h2 className="cb-heading mt-[var(--cb-space-sm)]">{heroTitle}</h2>
               <p className="cb-body mt-[var(--cb-space-lg)]">{heroSummary}</p>
             </div>
@@ -86,14 +87,25 @@ function About() {
       <Section muted containerClassName="grid md:grid-cols-3 gap-[var(--cb-space-xl)]">
         {isLoading
           ? Array.from({ length: 3 }).map((_, i) => (
-              <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] cb-shadow-panel">
+              <div
+                key={i}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)]"
+              >
                 <Skeleton className="h-5 w-28 mb-[var(--cb-space-sm)]" />
                 <Skeleton className="h-16 w-full" />
               </div>
             ))
           : sections.map((s) => (
-              <div key={s.title} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] cb-shadow-panel">
-                <h3 className="cb-title text-[var(--cb-brand-primary)]">{s.title}</h3>
+              <div
+                key={s.title}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] border border-[var(--cb-border-subtle)]"
+              >
+                <h3
+                  className="cb-title text-[var(--cb-brand-primary)]"
+                  style={{ textWrap: "balance" }}
+                >
+                  {s.title}
+                </h3>
                 <p className="cb-body mt-[var(--cb-space-sm)]">{s.body}</p>
               </div>
             ))}

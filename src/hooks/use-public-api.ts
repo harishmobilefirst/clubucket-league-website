@@ -7,6 +7,8 @@ import {
   normalizeSponsor,
   normalizePublicConfig,
   normalizeContentItem,
+  resolveFixtureTeams,
+  resolveStandingRow,
 } from "@/lib/public-api";
 import { getOrganizationSlug } from "@/lib/env";
 import type {
@@ -15,14 +17,19 @@ import type {
   PublicTeamDetail,
   PublicTeamDetailRaw,
   PublicSeason,
-  PublicFixture,
+  PublicFixtureRaw,
   PublicFixtureDetail,
+  PublicFixtureDetailRaw,
   PublicStandingRow,
+  PublicStandingRowRaw,
   PublicTopScorer,
   PublicTopScorerRaw,
+  PublicRawTeam,
   PublicContentItem,
+  PublicContentItemRaw,
   PublicSponsor,
   PublicHome,
+  PublicHomeRaw,
   PublicAboutUs,
   PaginationMeta,
 } from "@/types/public-api";
@@ -68,23 +75,16 @@ export function usePublicHome(locale: string) {
   return useQuery({
     queryKey: queryKeys.home(locale),
     queryFn: () =>
-      fetchPublicApi<PublicHome>("/home", {
+      fetchPublicApi<PublicHomeRaw>("/home", {
         params: { locale },
       }),
-    select: (data) => {
-      const result = { ...data };
-      if (data.topScorers && Array.isArray(data.topScorers)) {
-        result.topScorers = (data.topScorers as unknown as PublicTopScorerRaw[]).map(
-          normalizeTopScorer,
-        );
-      }
-      if (data.sponsors && Array.isArray(data.sponsors)) {
-        result.sponsors = (
-          data.sponsors as unknown as Parameters<typeof normalizeSponsor>[0][]
-        ).map(normalizeSponsor);
-      }
-      return result;
-    },
+    select: (data): PublicHome => ({
+      recentResults: (data.schedule ?? []).map((f) => resolveFixtureTeams(f, data.scheduleTeams)),
+      topScorers: (data.topScorers ?? []).map((s) => normalizeTopScorer(s, data.topScorersTeams)),
+      latestNews: (data.news ?? []).map((n) => normalizeContentItem(n, locale)),
+      highlights: (data.highlights ?? []).map((n) => normalizeContentItem(n, locale)),
+      sponsors: (data.sponsors ?? []).map(normalizeSponsor),
+    }),
     staleTime: 2 * 60 * 1000,
     enabled: !!locale,
   });
@@ -141,13 +141,13 @@ export function usePublicSchedule(
   return useQuery({
     queryKey: queryKeys.schedule(seasonId, divisionId, status, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicFixture[]>("/schedule", {
+      fetchPublicApiWithMeta<PublicFixtureRaw[]>("/schedule", {
         params: { seasonId, divisionId, status, page: page ?? 1, limit: 50 },
       }),
     staleTime: 2 * 60 * 1000,
     enabled: !!seasonId,
     select: (envelope) => ({
-      items: envelope.data ?? [],
+      items: (envelope.data ?? []).map((f) => resolveFixtureTeams(f, envelope.teams)),
       meta: envelope.meta,
     }),
   });
@@ -156,7 +156,12 @@ export function usePublicSchedule(
 export function usePublicFixture(fixtureId?: string) {
   return useQuery({
     queryKey: queryKeys.fixture(fixtureId ?? ""),
-    queryFn: () => fetchPublicApi<PublicFixtureDetail>(`/schedule/${fixtureId}`),
+    queryFn: () => fetchPublicApi<PublicFixtureDetailRaw>(`/schedule/${fixtureId}`),
+    select: (raw): PublicFixtureDetail => ({
+      ...resolveFixtureTeams(raw, raw.teams),
+      goalEvents: raw.goalEvents ?? [],
+      cardEvents: raw.cardEvents ?? [],
+    }),
     staleTime: 2 * 60 * 1000,
     enabled: !!fixtureId,
     retry: 1,
@@ -173,12 +178,20 @@ export function usePublicStandings(seasonId?: string, divisionId?: string) {
     staleTime: 2 * 60 * 1000,
     enabled: !!divisionId,
     select: (data): PublicStandingRow[] => {
-      if (Array.isArray(data)) return data as PublicStandingRow[];
+      if (Array.isArray(data)) {
+        return (data as PublicStandingRowRaw[]).map((r) => resolveStandingRow(r));
+      }
       if (data && typeof data === "object") {
-        const obj = data as Record<string, unknown>;
-        if (Array.isArray(obj.rows)) return obj.rows as PublicStandingRow[];
-        if (Array.isArray(obj.data)) return obj.data as PublicStandingRow[];
-        if (Array.isArray(obj.standings)) return obj.standings as PublicStandingRow[];
+        const obj = data as {
+          rows?: PublicStandingRowRaw[];
+          data?: PublicStandingRowRaw[];
+          standings?: PublicStandingRowRaw[];
+          teams?: Record<string, PublicRawTeam>;
+        };
+        const rows = obj.rows ?? obj.data ?? obj.standings;
+        if (Array.isArray(rows)) {
+          return rows.map((r) => resolveStandingRow(r, obj.teams));
+        }
       }
       return [];
     },
@@ -189,10 +202,10 @@ export function usePublicTopScorers(seasonId?: string, divisionId?: string) {
   return useQuery({
     queryKey: queryKeys.topScorers(seasonId, divisionId),
     queryFn: () =>
-      fetchPublicApi<PublicTopScorerRaw[]>("/top-scorers", {
+      fetchPublicApiWithMeta<PublicTopScorerRaw[]>("/top-scorers", {
         params: { seasonId, divisionId, limit: 20 },
       }),
-    select: (raw) => raw.map(normalizeTopScorer),
+    select: (envelope) => (envelope.data ?? []).map((s) => normalizeTopScorer(s, envelope.teams)),
     staleTime: 2 * 60 * 1000,
   });
 }
@@ -205,7 +218,7 @@ export function usePublicTopScorersPaginated(page: number, seasonId?: string, di
         params: { seasonId, divisionId, page, limit: 50 },
       }),
     select: (raw) => ({
-      items: raw.data.map(normalizeTopScorer),
+      items: (raw.data ?? []).map((s) => normalizeTopScorer(s, raw.teams)),
       meta: raw.meta,
     }),
     staleTime: 2 * 60 * 1000,
@@ -216,13 +229,13 @@ export function usePublicNews(locale: string, page?: number) {
   return useQuery({
     queryKey: queryKeys.news(locale, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicContentItem[]>("/news", {
+      fetchPublicApiWithMeta<PublicContentItemRaw[]>("/news", {
         params: { locale, page: page ?? 1, limit: 20 },
       }),
     staleTime: 2 * 60 * 1000,
     enabled: !!locale,
     select: (envelope) => ({
-      items: envelope.data ?? [],
+      items: (envelope.data ?? []).map((n) => normalizeContentItem(n, locale)),
       meta: envelope.meta,
     }),
   });
@@ -232,13 +245,13 @@ export function usePublicHighlights(locale: string, page?: number) {
   return useQuery({
     queryKey: queryKeys.highlights(locale, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicContentItem[]>("/highlights", {
+      fetchPublicApiWithMeta<PublicContentItemRaw[]>("/highlights", {
         params: { locale, page: page ?? 1, limit: 20 },
       }),
     staleTime: 2 * 60 * 1000,
     enabled: !!locale,
     select: (envelope) => ({
-      items: envelope.data ?? [],
+      items: (envelope.data ?? []).map((n) => normalizeContentItem(n, locale)),
       meta: envelope.meta,
     }),
   });
@@ -248,10 +261,10 @@ export function usePublicNewsItem(itemSlug: string, locale: string) {
   return useQuery({
     queryKey: queryKeys.newsItem(itemSlug, locale),
     queryFn: () =>
-      fetchPublicApi<Record<string, unknown>>(`/news/${itemSlug}`, {
+      fetchPublicApi<PublicContentItemRaw>(`/news/${itemSlug}`, {
         params: { locale },
       }),
-    select: normalizeContentItem,
+    select: (raw) => normalizeContentItem(raw, locale),
     staleTime: 2 * 60 * 1000,
     enabled: !!locale && !!itemSlug,
     retry: 1,
@@ -262,10 +275,10 @@ export function usePublicHighlightsItem(itemSlug: string, locale: string) {
   return useQuery({
     queryKey: queryKeys.highlightItem(itemSlug, locale),
     queryFn: () =>
-      fetchPublicApi<Record<string, unknown>>(`/highlights/${itemSlug}`, {
+      fetchPublicApi<PublicContentItemRaw>(`/highlights/${itemSlug}`, {
         params: { locale },
       }),
-    select: normalizeContentItem,
+    select: (raw) => normalizeContentItem(raw, locale),
     staleTime: 2 * 60 * 1000,
     enabled: !!locale && !!itemSlug,
     retry: 1,

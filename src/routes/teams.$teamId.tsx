@@ -8,6 +8,7 @@ import { BackLink } from "@/components/BackLink";
 import { EmptyState } from "@/components/EmptyState";
 import { usePublicTeam } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n } from "@/lib/i18n";
 
 export const Route = createFileRoute("/teams/$teamId")({
   head: () => ({ meta: [{ title: "Team Profile — LigaD1" }] }),
@@ -16,6 +17,7 @@ export const Route = createFileRoute("/teams/$teamId")({
 
 function TeamProfile() {
   const { teamId } = Route.useParams();
+  const { t } = useI18n();
   const { data: team, isLoading, error } = usePublicTeam(teamId);
 
   if (error && !isLoading) {
@@ -23,8 +25,8 @@ function TeamProfile() {
       <Layout>
         <div className="w-full bg-[var(--cb-brand-primary)] h-[220px] flex items-center justify-center" />
         <Section muted containerClassName="text-center">
-          <EmptyState message="Team not found." />
-          <BackLink to="/divisions">Back to Divisions</BackLink>
+          <EmptyState message={t("teams.notFound")} />
+          <BackLink to="/divisions">{t("teams.backToDivisions")}</BackLink>
         </Section>
       </Layout>
     );
@@ -44,15 +46,19 @@ function TeamProfile() {
             <>
               <div className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
                 <Link to="/divisions" className="hover:text-[var(--cb-text-inverse)]">
-                  Divisions
+                  {t("teams.divisions")}
                 </Link>
                 {team.divisionName && (
                   <>
-                    <span className="text-[var(--cb-text-inverse)]/60 mx-[var(--cb-space-xs)]">&rsaquo;</span>
+                    <span className="text-[var(--cb-text-inverse)]/60 mx-[var(--cb-space-xs)]">
+                      &rsaquo;
+                    </span>
                     <span>{team.divisionName}</span>
                   </>
                 )}
-                <span className="text-[var(--cb-text-inverse)]/60 mx-[var(--cb-space-xs)]">&rsaquo;</span>
+                <span className="text-[var(--cb-text-inverse)]/60 mx-[var(--cb-space-xs)]">
+                  &rsaquo;
+                </span>
                 <span className="text-[var(--cb-text-inverse)]">{team.name}</span>
               </div>
               <div className="mx-auto mt-[var(--cb-space-sm)] w-[72px] h-[72px] rounded-[var(--cb-radius-lg)] flex items-center justify-center border-2 border-[var(--cb-text-inverse)] overflow-hidden">
@@ -68,7 +74,12 @@ function TeamProfile() {
                   </div>
                 )}
               </div>
-              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase mt-[var(--cb-space-sm)]">{team.name}</h1>
+              <h1
+                className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase mt-[var(--cb-space-sm)]"
+                style={{ textWrap: "balance" }}
+              >
+                {team.name}
+              </h1>
               {socialLinks && Object.keys(socialLinks).length > 0 && (
                 <div className="flex items-center justify-center gap-[var(--cb-space-sm)] mt-[var(--cb-space-xs)]">
                   {socialLinks.instagram && (
@@ -129,98 +140,117 @@ function TeamProfile() {
       </div>
 
       <Section muted>
-        <BackLink to="/divisions">Back to Divisions</BackLink>
+        <BackLink to="/divisions">{t("teams.backToDivisions")}</BackLink>
 
-          <h2 className="cb-title mb-[var(--cb-space-lg)]">Squad</h2>
-          {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
-              {Array.from({ length: 8 }).map((_, i) => (
-                <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden">
-                  <Skeleton className="aspect-[3/4] w-full rounded-none" />
-                  <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)] space-y-[var(--cb-space-sm)]">
-                    <Skeleton className="h-5 w-12" />
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-3 w-20" />
-                  </div>
+        <h2 className="cb-title mb-[var(--cb-space-lg)]" style={{ textWrap: "balance" }}>
+          {t("teams.squad")}
+        </h2>
+        {isLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
+            {Array.from({ length: 8 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden"
+              >
+                <Skeleton className="aspect-[3/4] w-full rounded-none" />
+                <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)] space-y-[var(--cb-space-sm)]">
+                  <Skeleton className="h-5 w-12" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-3 w-20" />
                 </div>
-              ))}
-            </div>
-          ) : players.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
-              {players.map((p, idx) => (
-                <div
-                  key={`${p.id || p.name}-${idx}`}
-                  className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
-                >
-                  <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-surface-muted)] to-[var(--cb-border-subtle)] flex items-center justify-center text-[var(--cb-text-secondary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
-                    {p.imageUrl ? (
-                      <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
-                    ) : (
-                      generateInitials(p.name)
-                    )}
-                  </div>
-                  <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
-                    <div className="flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-text-primary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-title)]">
-                      <span aria-hidden>{String.fromCharCode(9917)}</span>
-                      <span>{p.number ?? "-"}</span>
-                    </div>
-                    <h3 className="mt-[var(--cb-space-xs)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
-                      {p.name}
-                    </h3>
-                    <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-2xs)]">{team?.name || ""}</p>
-                    <p className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)] tracking-normal">
-                      {(p.position || "").toUpperCase()}
-                    </p>
-                  </div>
+              </div>
+            ))}
+          </div>
+        ) : players.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
+            {players.map((p, idx) => (
+              <div
+                key={`${p.id || p.name}-${idx}`}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col"
+              >
+                <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-surface-muted)] to-[var(--cb-border-subtle)] flex items-center justify-center text-[var(--cb-text-secondary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
+                  {p.imageUrl ? (
+                    <img src={p.imageUrl} alt={p.name} className="w-full h-full object-cover" />
+                  ) : (
+                    generateInitials(p.name)
+                  )}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState message="No players listed yet." />
-          )}
+                <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
+                  <div className="flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-text-primary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-title)]">
+                    <span aria-hidden className="text-[length:var(--cb-font-size-body)]">
+                      ⚽
+                    </span>
+                    <span>{p.number ?? "-"}</span>
+                  </div>
+                  <h3 className="mt-[var(--cb-space-xs)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
+                    {p.name}
+                  </h3>
+                  <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-2xs)]">
+                    {team?.name || ""}
+                  </p>
+                  <p className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)] tracking-normal">
+                    {(p.position || "").toUpperCase()}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState message={t("teams.noPlayers")} />
+        )}
 
-          <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mb-[var(--cb-space-lg)] mt-[var(--cb-space-section)]">Coaches</h2>
-          {isLoading ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
-              {Array.from({ length: 3 }).map((_, i) => (
-                <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden">
-                  <Skeleton className="aspect-[3/4] w-full rounded-none" />
-                  <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)] space-y-[var(--cb-space-sm)]">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-3 w-20" />
-                  </div>
+        <h2
+          className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mb-[var(--cb-space-lg)] mt-[var(--cb-space-section)]"
+          style={{ textWrap: "balance" }}
+        >
+          {t("teams.coaches")}
+        </h2>
+        {isLoading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
+            {Array.from({ length: 3 }).map((_, i) => (
+              <div
+                key={i}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden"
+              >
+                <Skeleton className="aspect-[3/4] w-full rounded-none" />
+                <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)] space-y-[var(--cb-space-sm)]">
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-3 w-20" />
                 </div>
-              ))}
-            </div>
-          ) : coaches.length > 0 ? (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
-              {coaches.map((c, idx) => (
-                <div
-                  key={`${c.id || c.name}-${idx}`}
-                  className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
-                >
-                  <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-brand-secondary)] to-[var(--cb-brand-primary)] flex items-center justify-center text-[var(--cb-text-inverse)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
-                    {c.imageUrl ? (
-                      <img src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
-                    ) : (
-                      generateInitials(c.name)
-                    )}
-                  </div>
-                  <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
-                    <h3 className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
-                      {c.name}
-                    </h3>
-                    <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-2xs)]">{team?.name || ""}</p>
-                    <p className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)] tracking-normal uppercase">
-                      {c.role || ""}
-                    </p>
-                  </div>
+              </div>
+            ))}
+          </div>
+        ) : coaches.length > 0 ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-[var(--cb-space-xl)]">
+            {coaches.map((c, idx) => (
+              <div
+                key={`${c.id || c.name}-${idx}`}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col"
+              >
+                <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-brand-secondary)] to-[var(--cb-brand-primary)] flex items-center justify-center text-[var(--cb-text-inverse)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
+                  {c.imageUrl ? (
+                    <img src={c.imageUrl} alt={c.name} className="w-full h-full object-cover" />
+                  ) : (
+                    generateInitials(c.name)
+                  )}
                 </div>
-              ))}
-            </div>
-          ) : (
-            <EmptyState message="No coaches listed yet." />
-          )}
+                <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
+                  <h3 className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
+                    {c.name}
+                  </h3>
+                  <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-2xs)]">
+                    {team?.name || ""}
+                  </p>
+                  <p className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)] tracking-normal uppercase">
+                    {c.role || ""}
+                  </p>
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : (
+          <EmptyState message={t("teams.noCoaches")} />
+        )}
       </Section>
     </Layout>
   );

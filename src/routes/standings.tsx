@@ -7,9 +7,10 @@ import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicStandings, usePublicDivisions, usePublicConfig } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 import type { PublicStandingRow } from "@/types/public-api";
 
-export const Route = createFileRoute("/standing")({
+export const Route = createFileRoute("/standings")({
   head: () => ({
     meta: [
       { title: "Standings — LigaD1" },
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/standing")({
 });
 
 function Standing() {
+  const { t } = useI18n();
+  usePageTitle("meta.standings");
   const { data: config } = usePublicConfig();
   const { data: divisions } = usePublicDivisions();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string | undefined>(undefined);
@@ -63,14 +66,15 @@ function Standing() {
           <table className="w-full border-collapse">
             <thead>
               <tr className="cb-table-header h-14">
-                <th className="w-[8%] text-left pl-[var(--cb-space-xl)]">POST</th>
-                <th className="w-[34%] text-left">TEAM</th>
-                <th className="w-[10%] text-left">P</th>
-                <th className="w-[10%] text-left">L</th>
-                <th className="w-[10%] text-left">F</th>
-                <th className="w-[10%] text-left">TO</th>
-                <th className="w-[8%] text-left">GD</th>
-                <th className="w-[10%] text-left pr-[var(--cb-space-xl)]">POINTS</th>
+                <th className="w-[8%] text-left pl-[var(--cb-space-xl)]">#</th>
+                <th className="w-[30%] text-left">{t("standings.team")}</th>
+                <th className="w-[10%] text-left">{t("standings.p")}</th>
+                <th className="w-[10%] text-left">{t("standings.w")}</th>
+                <th className="w-[10%] text-left">{t("standings.l")}</th>
+                <th className="w-[10%] text-left">{t("standings.gf")}</th>
+                <th className="w-[10%] text-left">{t("standings.ga")}</th>
+                <th className="w-[6%] text-left">{t("standings.gd")}</th>
+                <th className="w-[10%] text-left pr-[var(--cb-space-xl)]">{t("standings.pts")}</th>
               </tr>
             </thead>
             <tbody>
@@ -111,20 +115,20 @@ function Standing() {
                 ))
               ) : error ? (
                 <tr className="border-t border-[var(--cb-border-subtle)] h-[var(--cb-space-48)]">
-                  <td colSpan={8} className="text-center cb-body">
+                  <td colSpan={9} className="text-center cb-body">
                     This section could not load.
                     <button
                       onClick={() => window.location.reload()}
                       className="ml-[var(--cb-space-xs)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus transition-colors"
                     >
-                      Retry
+                      {t("common.retry")}
                     </button>
                   </td>
                 </tr>
               ) : !standings || standings.length === 0 ? (
                 <tr className="border-t border-[var(--cb-border-subtle)]">
-                  <td colSpan={8}>
-                    <EmptyState message="Standings are not available yet." />
+                  <td colSpan={9}>
+                    <EmptyState message={t("standings.empty")} />
                   </td>
                 </tr>
               ) : (
@@ -135,8 +139,7 @@ function Standing() {
         </div>
 
         <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-md)]">
-          P: Played &middot; L: Lost &middot; F: Goals For &middot; TO: Goals Against &middot; GD:
-          Goal Difference
+          {t("standings.legend")}
         </p>
       </Section>
     </Layout>

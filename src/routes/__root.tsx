@@ -13,24 +13,28 @@ import type { CSSProperties, ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { LocaleProvider } from "@/lib/locale";
 import { useLocale } from "@/lib/locale";
+import { useI18n } from "@/lib/i18n";
 import { usePublicConfig } from "@/hooks/use-public-api";
 import { LoadingState } from "@/components/LoadingState";
 
 function NotFoundComponent() {
+  const { t } = useI18n();
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-[var(--cb-space-md)]">
       <div className="max-w-md text-center">
         <h1 className="text-7xl font-[var(--cb-font-weight-heading)] text-foreground">404</h1>
-        <h2 className="mt-[var(--cb-space-md)] text-xl font-[var(--cb-font-weight-heading)] text-foreground">Page not found</h2>
+        <h2 className="mt-[var(--cb-space-md)] text-xl font-[var(--cb-font-weight-heading)] text-foreground">
+          {t("notFound.title")}
+        </h2>
         <p className="mt-[var(--cb-space-xs)] text-sm text-muted-foreground">
-          The page you're looking for doesn't exist or has been moved.
+          {t("notFound.body")}
         </p>
         <div className="mt-[var(--cb-space-lg)]">
           <Link
             to="/"
             className="inline-flex items-center justify-center rounded-[var(--cb-radius-md)] bg-[var(--cb-brand-accent)] px-[var(--cb-space-md)] py-[var(--cb-space-sm)] text-sm font-[var(--cb-font-weight-medium)] text-[var(--cb-text-inverse)] transition-colors hover:bg-[var(--cb-brand-accent)]/90"
           >
-            Go home
+            {t("notFound.goHome")}
           </Link>
         </div>
       </div>
@@ -41,15 +45,16 @@ function NotFoundComponent() {
 function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   console.error(error);
   const router = useRouter();
+  const { t } = useI18n();
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-[var(--cb-space-md)]">
       <div className="max-w-md text-center">
         <h1 className="text-xl font-[var(--cb-font-weight-heading)] tracking-normal text-foreground">
-          This page didn't load
+          {t("error.title")}
         </h1>
         <p className="mt-[var(--cb-space-xs)] text-sm text-muted-foreground">
-          {error.message || "Something went wrong on our end."}
+          {error.message || t("error.body")}
         </p>
         <div className="mt-[var(--cb-space-lg)] flex flex-wrap justify-center gap-[var(--cb-space-xs)]">
           <button
@@ -59,13 +64,13 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
             }}
             className="inline-flex items-center justify-center rounded-[var(--cb-radius-md)] bg-[var(--cb-brand-accent)] px-[var(--cb-space-md)] py-[var(--cb-space-sm)] text-sm font-[var(--cb-font-weight-medium)] text-[var(--cb-text-inverse)] transition-colors hover:bg-[var(--cb-brand-accent)]/90"
           >
-            Try again
+            {t("error.tryAgain")}
           </button>
           <a
             href="/"
             className="inline-flex items-center justify-center rounded-[var(--cb-radius-md)] border border-[var(--cb-border-subtle)] bg-[var(--cb-surface-canvas)] px-[var(--cb-space-md)] py-[var(--cb-space-sm)] text-sm font-[var(--cb-font-weight-medium)] text-[var(--cb-text-primary)] transition-colors hover:bg-[var(--cb-surface-muted)]"
           >
-            Go home
+            {t("error.goHome")}
           </a>
         </div>
       </div>
@@ -78,16 +83,25 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "website" },
-      { name: "description", content: "website - ligad1" },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "website" },
-      { property: "og:description", content: "website - ligad1" },
+      { title: "LigaD1 — The Heart of Mexican Soccer" },
+      {
+        name: "description",
+        content: "LigaD1 — Mexico's premier semi-professional soccer league.",
+      },
+      { name: "author", content: "LigaD1" },
+      { property: "og:title", content: "LigaD1 — The Heart of Mexican Soccer" },
+      {
+        property: "og:description",
+        content: "LigaD1 — Mexico's premier semi-professional soccer league.",
+      },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "website" },
-      { name: "twitter:description", content: "website - ligad1" },
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@LigaD1" },
+      { name: "twitter:title", content: "LigaD1 — The Heart of Mexican Soccer" },
+      {
+        name: "twitter:description",
+        content: "LigaD1 — Mexico's premier semi-professional soccer league.",
+      },
       {
         property: "og:image",
         content:
@@ -160,22 +174,29 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
     return (
       <div className="min-h-screen flex items-center justify-center px-[var(--cb-space-md)] text-center">
         <div>
-          <h1 className="cb-heading text-[length:var(--cb-font-size-title)]">Website unavailable</h1>
-          <p className="mt-[var(--cb-space-xs)] cb-body">The public website configuration could not be loaded.</p>
+          <h1 className="cb-heading text-[length:var(--cb-font-size-title)]">
+            Website unavailable
+          </h1>
+          <p className="mt-[var(--cb-space-xs)] cb-body">
+            The public website configuration could not be loaded.
+          </p>
         </div>
       </div>
     );
   }
 
-  const colors = config.theme?.colors;
-  const radii = config.theme?.radii;
-  const spacing = config.theme?.spacing;
-  const typography = config.theme?.typography;
+  const theme = config.theme;
+  const colors = theme?.colors;
+  const radii = theme?.radii;
+  const spacing = theme?.spacing;
+  const typography = theme?.typography;
 
   const themeVars = {
-    "--cb-brand-primary": colors?.brand?.primary,
-    "--cb-brand-accent": colors?.brand?.accent,
-    "--cb-brand-secondary": colors?.brand?.secondary,
+    // The API returns a flat brand shape ({ primary, secondary, accent }); the
+    // nested colors.brand.* path is kept as a fallback for forward-compat.
+    "--cb-brand-primary": theme?.primary ?? colors?.brand?.primary,
+    "--cb-brand-accent": theme?.accent ?? colors?.brand?.accent,
+    "--cb-brand-secondary": theme?.secondary ?? colors?.brand?.secondary,
     "--cb-text-primary": colors?.text?.primary,
     "--cb-text-secondary": colors?.text?.secondary,
     "--cb-text-muted": colors?.text?.muted,
@@ -200,7 +221,7 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
     "--cb-space-lg": px(spacing?.lg),
     "--cb-space-xl": px(spacing?.xl),
     "--cb-space-section": px(spacing?.section),
-    "--cb-font-family": "'DM Sans', sans-serif",
+    "--cb-font-family": "'Manrope', sans-serif",
     "--cb-font-size-caption": px(typography?.scale?.caption),
     "--cb-font-size-body": px(typography?.scale?.body),
     "--cb-font-size-title": px(typography?.scale?.title),
@@ -219,6 +240,12 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
 function ConfigLocaleSync() {
   const { data: config } = usePublicConfig();
   const { locale, setLocale } = useLocale();
+
+  useEffect(() => {
+    if (typeof document !== "undefined") {
+      document.documentElement.lang = locale === "es" ? "es" : "en";
+    }
+  }, [locale]);
 
   useEffect(() => {
     if (!config) return;

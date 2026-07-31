@@ -1,3 +1,5 @@
+import { useEffect, useState } from "react";
+
 export function NewsCard({
   category,
   title,
@@ -11,15 +13,22 @@ export function NewsCard({
   excerpt: string;
   image?: string;
 }) {
+  const [imageFailed, setImageFailed] = useState(false);
+
+  useEffect(() => {
+    setImageFailed(false);
+  }, [image]);
+
   return (
     <article className="cb-card cb-shadow-panel overflow-hidden">
-      {image ? (
+      {image && !imageFailed ? (
         <img
           src={image}
           alt={title}
           loading="lazy"
           width={800}
           height={512}
+          onError={() => setImageFailed(true)}
           className="w-full h-[190px] object-cover"
         />
       ) : (
@@ -28,10 +37,12 @@ export function NewsCard({
         </div>
       )}
       <div className="p-[var(--cb-space-lg)]">
-        <div className="cb-eyebrow">{category}</div>
-        <h3 className="cb-title mt-[var(--cb-space-sm)] line-clamp-2">{title}</h3>
-        <div className="cb-caption mt-[var(--cb-space-xs)]">{date}</div>
-        <p className="cb-body mt-[var(--cb-space-sm)] line-clamp-2">{excerpt}</p>
+        {category && <div className="cb-eyebrow">{category}</div>}
+        <h3 className={"cb-title line-clamp-2" + (category ? " mt-[var(--cb-space-sm)]" : "")}>
+          {title}
+        </h3>
+        {date && <div className="cb-caption mt-[var(--cb-space-xs)]">{date}</div>}
+        {excerpt && <p className="cb-body mt-[var(--cb-space-sm)] line-clamp-2">{excerpt}</p>}
       </div>
     </article>
   );

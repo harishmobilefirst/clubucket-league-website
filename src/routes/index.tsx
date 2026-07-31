@@ -5,11 +5,13 @@ import seasonHighlights from "@/assets/season-highlights.jpg";
 import { Layout } from "@/components/Layout";
 import { ScoreTicker } from "@/components/ScoreTicker";
 import { NewsCard } from "@/components/NewsCard";
+import { HighlightCard } from "@/components/HighlightCard";
 import { Skeleton } from "@/components/ui/skeleton";
 import hero1 from "@/assets/hero-1.png";
 import hero2 from "@/assets/hero-2.png";
 import hero3 from "@/assets/hero-3.png";
 import { useLocale } from "@/lib/locale";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 import {
   usePublicConfig,
   usePublicHome,
@@ -73,6 +75,7 @@ function HeroSlider({
 }) {
   const [current, setCurrent] = useState(0);
   const count = slides && slides.length > 0 ? slides.length : fallbackSlides.length;
+  const { t } = useI18n();
 
   useEffect(() => {
     const t = setInterval(() => setCurrent((p) => (p + 1) % count), 5000);
@@ -109,11 +112,16 @@ function HeroSlider({
         <div className="text-center max-w-3xl">
           {slides && slides[current]?.headline ? (
             <>
-              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]">
+              <h1
+                className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]"
+                style={{ textWrap: "balance" }}
+              >
                 {slides[current].headline}
               </h1>
               {slides[current].subheadline && (
-                <p className="text-[color-mix(in_srgb,var(--cb-text-inverse),transparent_20%)] text-[length:var(--cb-font-size-title)] mt-[var(--cb-space-lg)]">{slides[current].subheadline}</p>
+                <p className="text-[color-mix(in_srgb,var(--cb-text-inverse),transparent_20%)] text-[length:var(--cb-font-size-title)] mt-[var(--cb-space-lg)]">
+                  {slides[current].subheadline}
+                </p>
               )}
               {slides[current].ctaText && (
                 <div className="mt-[var(--cb-space-xl)]">
@@ -128,16 +136,18 @@ function HeroSlider({
             </>
           ) : (
             <>
-              <h1 className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]">
-                The Heart of Mexican Soccer
+              <h1
+                className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]"
+                style={{ textWrap: "balance" }}
+              >
+                {t("home.heroTitle")}
               </h1>
-              <p className="text-[color-mix(in_srgb,var(--cb-text-inverse),transparent_20%)] text-[length:var(--cb-font-size-title)] mt-[var(--cb-space-lg)]">LigaD1</p>
+              <p className="text-[color-mix(in_srgb,var(--cb-text-inverse),transparent_20%)] text-[length:var(--cb-font-size-title)] mt-[var(--cb-space-lg)]">
+                LigaD1
+              </p>
               <div className="mt-[var(--cb-space-xl)]">
-                <Link
-                  to="/schedule"
-                  className="inline-block cb-button-primary"
-                >
-                  View Schedule
+                <Link to="/schedule" className="inline-block cb-button-primary">
+                  {t("home.heroCta")}
                 </Link>
               </div>
             </>
@@ -181,6 +191,8 @@ function HeroSlider({
 
 function Home() {
   const { locale } = useLocale();
+  const { t } = useI18n();
+  usePageTitle("meta.home");
   const { data: config } = usePublicConfig();
   const { data: home, isLoading: homeLoading, error: homeError } = usePublicHome(locale);
   const { data: divisionsData } = usePublicDivisions();
@@ -202,41 +214,46 @@ function Home() {
   const sponsors = home?.sponsors && home.sponsors.length > 0 ? home.sponsors : sponsorsData;
   const completedMatches = getCompletedMatches(scheduleData?.items, home?.recentResults);
   const tickerLoading = scheduleLoading && completedMatches.length === 0;
+  const heroSlides = config?.heroImages?.length
+    ? config.heroImages.map((img) => ({
+        imageUrl: img,
+        headline: config?.heroTitle,
+        subheadline: config?.subtitle,
+        ctaText: t("home.heroCta"),
+        ctaLink: "/schedule",
+      }))
+    : home?.heroSlides;
 
   return (
     <Layout>
-      <div className="relative">
-        <HeroSlider slides={home?.heroSlides} />
-        <div className="absolute inset-x-0 top-0 z-20 pointer-events-none">
-          <div className="pointer-events-auto">
-            {tickerLoading ? (
-              <div
-                className="w-full py-[var(--cb-space-sm)]"
-                style={{ background: "var(--cb-brand-primary)" }}
-              >
-                <Container>
-                  <div className="flex gap-[var(--cb-space-sm)]">
-                    <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                    <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                    <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                  </div>
-                </Container>
+      <div>
+        {tickerLoading ? (
+          <div
+            className="w-full py-[var(--cb-space-sm)]"
+            style={{ background: "var(--cb-brand-primary)" }}
+          >
+            <Container>
+              <div className="flex gap-[var(--cb-space-sm)]">
+                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
+                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
+                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
               </div>
-            ) : (
-              <ScoreTicker results={completedMatches} />
-            )}
+            </Container>
           </div>
-        </div>
+        ) : (
+          <ScoreTicker results={completedMatches} />
+        )}
+        <HeroSlider slides={heroSlides} />
       </div>
 
       {homeError && (
         <Section muted containerClassName="text-center">
-          <p className="cb-body">This section could not load.</p>
+          <p className="cb-body">{t("common.sectionCouldNotLoad")}</p>
           <button
             onClick={() => window.location.reload()}
             className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
           >
-            Retry
+            {t("common.retry")}
           </button>
         </Section>
       )}
@@ -244,11 +261,8 @@ function Home() {
       {/* About */}
       <Section muted containerClassName="grid md:grid-cols-2 gap-[var(--cb-space-xl)] items-center">
         <div>
-          <div className="cb-eyebrow">
-            {aboutData?.title || home?.aboutContent?.title ? "About" : "About LigaD1"}
-          </div>
           <h2 className="cb-heading">
-            {aboutData?.title || home?.aboutContent?.title || "More Than a League. A Community."}
+            {aboutData?.title || home?.aboutContent?.title || t("home.aboutTitle")}
           </h2>
           {aboutData?.summary || home?.aboutContent?.body ? (
             <p className="cb-body mt-[var(--cb-space-lg)]">
@@ -259,13 +273,13 @@ function Home() {
             to="/about"
             className="mt-[var(--cb-space-xl)] inline-block text-[var(--cb-brand-accent)] text-[length:var(--cb-font-size-body)] uppercase font-[var(--cb-font-weight-heading)] hover:underline"
           >
-            Learn more &rarr;
+            {t("common.learnMore")} &rarr;
           </Link>
         </div>
         <div className="rounded-[var(--cb-radius-lg)] overflow-hidden min-h-[280px]">
           <img
             src={aboutData?.imageUrl || home?.aboutContent?.imageUrl || seasonHighlights}
-            alt="About"
+            alt={aboutData?.title || t("home.aboutImgAlt")}
             width={1280}
             height={896}
             loading="lazy"
@@ -276,9 +290,12 @@ function Home() {
 
       {/* Our Divisions */}
       <Section inverse>
-        <h2 className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal">
-          <span className="text-[var(--cb-text-inverse)]">OUR </span>
-          <span className="text-[var(--cb-brand-accent)]">DIVISIONS</span>
+        <h2
+          className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal"
+          style={{ textWrap: "balance" }}
+        >
+          <span className="text-[var(--cb-text-inverse)]">{t("home.our")} </span>
+          <span className="text-[var(--cb-brand-accent)]">{t("home.divisions")}</span>
         </h2>
         {apiDivisions && apiDivisions.length > 0 ? (
           <div className="mt-[var(--cb-space-section)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--cb-space-xl)]">
@@ -301,7 +318,7 @@ function Home() {
                 </h3>
                 <div className="mt-[var(--cb-space-lg)] flex items-center justify-between">
                   <span className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] tracking-normal text-[var(--cb-brand-accent)]">
-                    View Standings
+                    {t("home.viewStandings")}
                   </span>
                   <div className="w-9 h-9 rounded-[var(--cb-radius-md)] bg-[var(--cb-brand-accent)] text-[var(--cb-text-inverse)] flex items-center justify-center group-hover:opacity-90 transition-colors">
                     <ChevronRight size={18} />
@@ -313,7 +330,10 @@ function Home() {
         ) : homeLoading ? (
           <div className="mt-[var(--cb-space-section)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--cb-space-xl)]">
             {[1, 2, 3].map((i) => (
-              <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)]">
+              <div
+                key={i}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)]"
+              >
                 <Skeleton className="w-12 h-12 rounded-[var(--cb-radius-md)]" />
                 <Skeleton className="h-7 w-3/4 mt-[var(--cb-space-lg)]" />
                 <Skeleton className="h-4 w-1/3 mt-[var(--cb-space-lg)]" />
@@ -330,9 +350,12 @@ function Home() {
       {latestNews && latestNews.length > 0 ? (
         <Section muted>
           <div className="flex items-center justify-between">
-            <h2 className="cb-heading">Latest News</h2>
-            <Link to="/news" className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]">
-              View All News &rarr;
+            <h2 className="cb-heading">{t("home.latestNews")}</h2>
+            <Link
+              to="/news"
+              className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]"
+            >
+              {t("home.viewAllNews")} &rarr;
             </Link>
           </div>
           <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
@@ -361,36 +384,72 @@ function Home() {
       {highlightsData && highlightsData.length > 0 ? (
         <Section muted>
           <div className="flex items-center justify-between">
-            <h2 className="cb-heading">Highlights</h2>
-            <Link to="/highlights" className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]">
-              View All Highlights &rarr;
+            <h2 className="cb-heading">{t("home.highlights")}</h2>
+            <Link
+              to="/highlights"
+              className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]"
+            >
+              {t("home.viewAllHighlights")} &rarr;
             </Link>
           </div>
-          <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
+          <div className="mt-[var(--cb-space-xl)] grid md:grid-cols-2 gap-[var(--cb-space-xl)]">
             {highlightsData.slice(0, 3).map((item, idx) => (
               <Link
                 key={`${item.id || item.title}-${idx}`}
                 to="/highlights/$slug"
                 params={{ slug: item.slug || item.id }}
+                className={idx === 0 ? "md:col-span-2" : ""}
               >
-                <NewsCard
-                  category={item.category || ""}
+                <HighlightCard
                   title={item.title}
                   date={item.date || ""}
                   excerpt={normalizeContentExcerpt(item)}
                   image={normalizeContentImage(item)}
+                  mediaUrl={item.mediaUrl}
+                  category={item.category || ""}
                 />
               </Link>
             ))}
           </div>
         </Section>
       ) : homeLoading ? (
-        <SectionSkeleton />
+        <SectionHighlightSkeleton />
       ) : null}
 
       {/* Sponsors */}
       {sponsors && sponsors.length > 0 && <SponsorsSection sponsors={sponsors} />}
     </Layout>
+  );
+}
+
+function SectionHighlightSkeleton() {
+  return (
+    <Section muted>
+      <Skeleton className="h-8 w-48" />
+      <div className="grid md:grid-cols-2 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
+        <div className="md:col-span-2 bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden">
+          <Skeleton className="h-[220px] w-full rounded-none" />
+          <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
+            <Skeleton className="h-5 w-3/4" />
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-4 w-2/3" />
+          </div>
+        </div>
+        {[1, 2].map((i) => (
+          <div
+            key={i}
+            className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden"
+          >
+            <Skeleton className="h-[220px] w-full rounded-none" />
+            <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
+              <Skeleton className="h-5 w-3/4" />
+              <Skeleton className="h-3 w-20" />
+              <Skeleton className="h-4 w-2/3" />
+            </div>
+          </div>
+        ))}
+      </div>
+    </Section>
   );
 }
 
@@ -400,7 +459,10 @@ function SectionSkeleton() {
       <Skeleton className="h-8 w-48" />
       <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
         {[1, 2, 3].map((i) => (
-          <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden">
+          <div
+            key={i}
+            className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden"
+          >
             <Skeleton className="h-[190px] w-full rounded-none" />
             <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
               <Skeleton className="h-3 w-24" />
@@ -416,47 +478,60 @@ function SectionSkeleton() {
 }
 
 function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
+  const { t } = useI18n();
   return (
     <Section muted>
       <div className="flex items-center justify-between mb-[var(--cb-space-xl)]">
-        <h2 className="cb-heading">Top Scorers</h2>
-        <Link to="/top-scorers" className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]">
-          View All &rarr;
+        <h2 className="cb-heading">{t("home.topScorers")}</h2>
+        <Link
+          to="/top-scorers"
+          className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]"
+        >
+          {t("common.viewAll")} &rarr;
         </Link>
       </div>
-      <div className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-        <div className="flex items-stretch gap-[var(--cb-space-lg)]" style={{ width: "max-content" }}>
-          {scorers.map((p, idx) => (
-            <div
-              key={`${p.playerId || p.playerName}-${idx}`}
-              className="w-[210px] shrink-0 bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
-            >
-              <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-surface-muted)] to-[var(--cb-border-subtle)] flex items-center justify-center text-[var(--cb-text-secondary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
-                {p.imageUrl ? (
-                  <img
-                    src={p.imageUrl}
-                    alt={p.playerName}
-                    className="w-full h-full object-cover"
-                  />
-                ) : (
-                  generateInitials(p.playerName)
-                )}
-              </div>
-              <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
-                <div className="flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-text-primary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-title)]">
-                  <span aria-hidden>{String.fromCharCode(9917)}</span>
-                  <span>{p.goals}</span>
+      <div className="relative">
+        <div className="overflow-x-auto">
+          <div
+            className="flex items-stretch gap-[var(--cb-space-lg)]"
+            style={{ width: "max-content" }}
+          >
+            {scorers.map((p, idx) => (
+              <div
+                key={`${p.playerId || p.playerName}-${idx}`}
+                className="w-[210px] shrink-0 bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
+              >
+                <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-surface-muted)] to-[var(--cb-border-subtle)] flex items-center justify-center text-[var(--cb-text-secondary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
+                  {p.imageUrl ? (
+                    <img
+                      src={p.imageUrl}
+                      alt={p.playerName}
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    generateInitials(p.playerName)
+                  )}
                 </div>
-                <h3 className="mt-[var(--cb-space-xs)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
-                  {p.playerName}
-                </h3>
-                <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-2xs)]">{p.teamName || ""}</p>
-                <p className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)] tracking-normal">
-                  {p.position || ""}
-                </p>
+                <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
+                  <div className="flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-text-primary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-title)]">
+                    <span aria-hidden className="text-[length:var(--cb-font-size-body)]">
+                      ⚽
+                    </span>
+                    <span>{p.goals}</span>
+                  </div>
+                  <h3 className="mt-[var(--cb-space-xs)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
+                    {p.playerName}
+                  </h3>
+                  <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-2xs)]">
+                    {p.teamName || ""}
+                  </p>
+                  <p className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)] tracking-normal">
+                    {p.position || ""}
+                  </p>
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
     </Section>
@@ -464,9 +539,18 @@ function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
 }
 
 function SponsorsSection({ sponsors }: { sponsors: PublicSponsor[] }) {
+  const { t } = useI18n();
   return (
-    <Section className="border-t-4 border-b-4 border-[var(--cb-brand-accent)]" containerClassName="text-center">
-      <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] tracking-normal text-[var(--cb-text-primary)] uppercase">Sponsors</h2>
+    <Section
+      className="border-t-4 border-[var(--cb-brand-accent)]"
+      containerClassName="text-center pb-[var(--cb-space-section)]"
+    >
+      <h2
+        className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] tracking-normal text-[var(--cb-text-primary)] uppercase"
+        style={{ textWrap: "balance" }}
+      >
+        {t("home.sponsors")}
+      </h2>
       <div className="mt-[var(--cb-space-xl)] flex items-center justify-center gap-[var(--cb-space-xl)] flex-wrap">
         {sponsors.map((s, idx) =>
           s.logoUrl ? (

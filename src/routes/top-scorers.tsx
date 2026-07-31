@@ -20,6 +20,7 @@ import {
   usePublicConfig,
 } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 import type { PublicTopScorer } from "@/types/public-api";
 
 export const Route = createFileRoute("/top-scorers")({
@@ -33,6 +34,8 @@ export const Route = createFileRoute("/top-scorers")({
 });
 
 function TopScorers() {
+  const { t } = useI18n();
+  usePageTitle("meta.topScorers");
   const { data: config } = usePublicConfig();
   const { data: seasons } = usePublicSeasons();
   const { data: divisions } = usePublicDivisions();
@@ -53,7 +56,7 @@ function TopScorers() {
 
   return (
     <Layout>
-      <PageHeader title="Top Scorers" subtitle="Leading goal-scorers across the league." />
+      <PageHeader title={t("topScorers.title")} subtitle={t("topScorers.subtitle")} />
 
       <Section>
         <div className="flex items-center gap-[var(--cb-space-md)] mb-[var(--cb-space-xl)]">
@@ -66,10 +69,10 @@ function TopScorers() {
               }}
             >
               <SelectTrigger className="w-[180px] h-10">
-                <SelectValue placeholder="All Seasons" />
+                <SelectValue placeholder={t("topScorers.allSeasons")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Seasons</SelectItem>
+                <SelectItem value="ALL">{t("topScorers.allSeasons")}</SelectItem>
                 {seasons.map((s) => (
                   <SelectItem key={s.id} value={s.id}>
                     {s.name}
@@ -87,10 +90,10 @@ function TopScorers() {
               }}
             >
               <SelectTrigger className="w-[180px] h-10">
-                <SelectValue placeholder="All Divisions" />
+                <SelectValue placeholder={t("topScorers.allDivisions")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="ALL">All Divisions</SelectItem>
+                <SelectItem value="ALL">{t("topScorers.allDivisions")}</SelectItem>
                 {divisions.map((d) => (
                   <SelectItem key={d.id} value={d.id}>
                     {d.name}
@@ -106,9 +109,11 @@ function TopScorers() {
             <thead>
               <tr className="cb-table-header h-14">
                 <th className="w-[10%] text-left pl-[var(--cb-space-xl)]">#</th>
-                <th className="w-[40%] text-left">Player</th>
-                <th className="w-[30%] text-left">Team</th>
-                <th className="w-[20%] text-left pr-[var(--cb-space-xl)]">Goals</th>
+                <th className="w-[40%] text-left">{t("topScorers.player")}</th>
+                <th className="w-[30%] text-left">{t("topScorers.team")}</th>
+                <th className="w-[20%] text-left pr-[var(--cb-space-xl)]">
+                  {t("topScorers.goals")}
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -143,14 +148,14 @@ function TopScorers() {
                       onClick={() => window.location.reload()}
                       className="ml-[var(--cb-space-xs)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus transition-colors"
                     >
-                      Retry
+                      {t("common.retry")}
                     </button>
                   </td>
                 </tr>
               ) : !scorers || scorers.length === 0 ? (
                 <tr className="border-t border-[var(--cb-border-subtle)]">
                   <td colSpan={4}>
-                    <EmptyState message="No top scorers found for the selected filters." />
+                    <EmptyState message={t("topScorers.empty")} />
                   </td>
                 </tr>
               ) : (
