@@ -9,6 +9,7 @@ import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicDivisions } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 import type { PublicDivision } from "@/types/public-api";
 
 export const Route = createFileRoute("/divisions")({
@@ -22,33 +23,37 @@ export const Route = createFileRoute("/divisions")({
 });
 
 function Divisions() {
+  const { t } = useI18n();
+  usePageTitle("meta.divisions");
   const { data, isLoading, error } = usePublicDivisions();
 
   return (
     <Layout>
       <Section muted containerClassName="space-y-[var(--cb-space-section)]">
-          {isLoading ? (
-            <>
-              <DivisionCardSkeleton />
-              <DivisionCardSkeleton />
-            </>
-          ) : error ? (
-            <div className="text-center py-[var(--cb-space-section)]">
-              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">This section could not load.</p>
-              <button
-                onClick={() => window.location.reload()}
-                className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
-              >
-                Retry
-              </button>
-            </div>
-          ) : !data || data.length === 0 ? (
-            <EmptyState message="No divisions are published yet." />
-          ) : (
-            data.map((div, idx) => (
-              <DivisionCard key={`${div.id || div.name}-${idx}`} division={div} />
-            ))
-          )}
+        {isLoading ? (
+          <>
+            <DivisionCardSkeleton />
+            <DivisionCardSkeleton />
+          </>
+        ) : error ? (
+          <div className="text-center py-[var(--cb-space-section)]">
+            <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">
+              {t("common.sectionError")}
+            </p>
+            <button
+              onClick={() => window.location.reload()}
+              className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
+            >
+              {t("common.retry")}
+            </button>
+          </div>
+        ) : !data || data.length === 0 ? (
+          <EmptyState message={t("divisions.empty")} />
+        ) : (
+          data.map((div, idx) => (
+            <DivisionCard key={`${div.id || div.name}-${idx}`} division={div} />
+          ))
+        )}
       </Section>
     </Layout>
   );
@@ -57,6 +62,7 @@ function Divisions() {
 function DivisionCard({ division }: { division: PublicDivision }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const CARD_STEP = 234;
+  const { t } = useI18n();
 
   const scrollBy = (dir: "left" | "right") => {
     const el = scrollerRef.current;
@@ -69,7 +75,9 @@ function DivisionCard({ division }: { division: PublicDivision }) {
   return (
     <div className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden cb-shadow-panel">
       <div className="bg-[var(--cb-surface-muted)] px-[var(--cb-space-xl)] py-[var(--cb-space-lg)] border-b border-[var(--cb-border-subtle)]">
-        <h2 className="cb-title text-[var(--cb-brand-primary)]" style={{ textWrap: "balance" }}>{division.name}</h2>
+        <h2 className="cb-title text-[var(--cb-brand-primary)]" style={{ textWrap: "balance" }}>
+          {division.name}
+        </h2>
       </div>
       <div className="relative px-[var(--cb-space-xl)] py-[var(--cb-space-section)]">
         {teams.length > 0 ? (
@@ -77,7 +85,7 @@ function DivisionCard({ division }: { division: PublicDivision }) {
             <button
               type="button"
               onClick={() => scrollBy("left")}
-              aria-label="Scroll left"
+              aria-label={t("divisions.scrollLeft")}
               className="absolute left-[var(--cb-space-12)] top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[var(--cb-brand-primary)] text-[var(--cb-text-inverse)] flex items-center justify-center cb-shadow-panel hover:bg-[var(--cb-brand-accent)] transition-colors cb-focus"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -85,7 +93,7 @@ function DivisionCard({ division }: { division: PublicDivision }) {
             <button
               type="button"
               onClick={() => scrollBy("right")}
-              aria-label="Scroll right"
+              aria-label={t("divisions.scrollRight")}
               className="absolute right-[var(--cb-space-12)] top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[var(--cb-brand-primary)] text-[var(--cb-text-inverse)] flex items-center justify-center cb-shadow-panel hover:bg-[var(--cb-brand-accent)] transition-colors cb-focus"
             >
               <ChevronRight className="w-5 h-5" />
@@ -95,7 +103,10 @@ function DivisionCard({ division }: { division: PublicDivision }) {
               className="overflow-x-auto scroll-smooth"
               style={{ scrollbarWidth: "none" }}
             >
-              <div className="flex items-stretch gap-[var(--cb-space-lg)]" style={{ width: "max-content" }}>
+              <div
+                className="flex items-stretch gap-[var(--cb-space-lg)]"
+                style={{ width: "max-content" }}
+              >
                 {teams.map((t, idx) => (
                   <Link
                     key={`${t.id}-${idx}`}
@@ -120,7 +131,9 @@ function DivisionCard({ division }: { division: PublicDivision }) {
                       <div className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight group-hover/team:text-[var(--cb-brand-accent)] transition-colors">
                         {t.name}
                       </div>
-                      <div className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-xs)]">{division.name}</div>
+                      <div className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-xs)]">
+                        {division.name}
+                      </div>
                     </div>
                   </Link>
                 ))}
@@ -128,7 +141,7 @@ function DivisionCard({ division }: { division: PublicDivision }) {
             </div>
           </>
         ) : (
-          <EmptyState message="No teams in this division yet." />
+          <EmptyState message={t("divisions.noTeams")} />
         )}
       </div>
     </div>

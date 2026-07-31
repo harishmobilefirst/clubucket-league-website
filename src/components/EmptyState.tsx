@@ -1,12 +1,8 @@
 import { cn } from "@/lib/utils";
+import { useI18n } from "@/lib/i18n";
 
-export function EmptyState({
-  message = "No items found.",
-  className,
-}: {
-  message?: string;
-  className?: string;
-}) {
+export function EmptyState({ message, className }: { message?: string; className?: string }) {
+  const { t } = useI18n();
   return (
     <div
       className={cn(
@@ -14,7 +10,7 @@ export function EmptyState({
         className,
       )}
     >
-      <p className="cb-body">{message}</p>
+      <p className="cb-body">{message ?? t("common.noItems")}</p>
     </div>
   );
 }

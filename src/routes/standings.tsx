@@ -7,6 +7,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicStandings, usePublicDivisions, usePublicConfig } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 import type { PublicStandingRow } from "@/types/public-api";
 
 export const Route = createFileRoute("/standings")({
@@ -20,6 +21,8 @@ export const Route = createFileRoute("/standings")({
 });
 
 function Standing() {
+  const { t } = useI18n();
+  usePageTitle("meta.standings");
   const { data: config } = usePublicConfig();
   const { data: divisions } = usePublicDivisions();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string | undefined>(undefined);
@@ -64,14 +67,14 @@ function Standing() {
             <thead>
               <tr className="cb-table-header h-14">
                 <th className="w-[8%] text-left pl-[var(--cb-space-xl)]">#</th>
-                <th className="w-[30%] text-left">TEAM</th>
-                <th className="w-[10%] text-left">P</th>
-                <th className="w-[10%] text-left">W</th>
-                <th className="w-[10%] text-left">L</th>
-                <th className="w-[10%] text-left">GF</th>
-                <th className="w-[10%] text-left">GA</th>
-                <th className="w-[6%] text-left">GD</th>
-                <th className="w-[10%] text-left pr-[var(--cb-space-xl)]">PTS</th>
+                <th className="w-[30%] text-left">{t("standings.team")}</th>
+                <th className="w-[10%] text-left">{t("standings.p")}</th>
+                <th className="w-[10%] text-left">{t("standings.w")}</th>
+                <th className="w-[10%] text-left">{t("standings.l")}</th>
+                <th className="w-[10%] text-left">{t("standings.gf")}</th>
+                <th className="w-[10%] text-left">{t("standings.ga")}</th>
+                <th className="w-[6%] text-left">{t("standings.gd")}</th>
+                <th className="w-[10%] text-left pr-[var(--cb-space-xl)]">{t("standings.pts")}</th>
               </tr>
             </thead>
             <tbody>
@@ -118,14 +121,14 @@ function Standing() {
                       onClick={() => window.location.reload()}
                       className="ml-[var(--cb-space-xs)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus transition-colors"
                     >
-                      Retry
+                      {t("common.retry")}
                     </button>
                   </td>
                 </tr>
               ) : !standings || standings.length === 0 ? (
                 <tr className="border-t border-[var(--cb-border-subtle)]">
                   <td colSpan={9}>
-                    <EmptyState message="Standings are not available yet." />
+                    <EmptyState message={t("standings.empty")} />
                   </td>
                 </tr>
               ) : (
@@ -136,8 +139,7 @@ function Standing() {
         </div>
 
         <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-md)]">
-          P: Played &middot; W: Wins &middot; L: Losses &middot; GF: Goals For &middot; GA: Goals Against &middot; GD:
-          Goal Difference &middot; PTS: Points
+          {t("standings.legend")}
         </p>
       </Section>
     </Layout>

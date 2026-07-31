@@ -19,6 +19,7 @@ import {
   usePublicConfig,
 } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n, usePageTitle, dateLocale } from "@/lib/i18n";
 import type { PublicFixture } from "@/types/public-api";
 
 export const Route = createFileRoute("/schedule")({
@@ -39,6 +40,8 @@ function Schedule() {
   const [seasonId, setSeasonId] = useState<string | undefined>(undefined);
   const [page, setPage] = useState(1);
   const [selectedFixture, setSelectedFixture] = useState<PublicFixture | null>(null);
+  const { locale, t } = useI18n();
+  usePageTitle("meta.schedule");
 
   const { data: config } = usePublicConfig();
   const { data: seasons, isLoading: seasonsLoading } = usePublicSeasons();
@@ -75,8 +78,8 @@ function Schedule() {
   }, [seasonId, defaultSeasonId]);
 
   const tabs: { id: View; label: string }[] = [
-    { id: "fixtures", label: "FIXTURES" },
-    { id: "results", label: "RESULTS" },
+    { id: "fixtures", label: t("schedule.fixtures") },
+    { id: "results", label: t("schedule.results") },
   ];
 
   const groupedFixtures = useMemo(() => {
@@ -125,10 +128,10 @@ function Schedule() {
             disabled={!divisions || divisions.length === 0}
           >
             <SelectTrigger className="w-[220px] h-11 text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal border-[var(--cb-border-subtle)] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)] text-[var(--cb-text-primary)]">
-              <SelectValue placeholder="All Divisions" />
+              <SelectValue placeholder={t("schedule.allDivisions")} />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="ALL">All Divisions</SelectItem>
+              <SelectItem value="ALL">{t("schedule.allDivisions")}</SelectItem>
               {divisions?.map((d) => (
                 <SelectItem key={d.id} value={d.id}>
                   {d.name}
@@ -143,7 +146,7 @@ function Schedule() {
             disabled={seasonsLoading || !seasons || seasons.length === 0}
           >
             <SelectTrigger className="w-[220px] h-11 text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal border-[var(--cb-border-subtle)] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)] text-[var(--cb-text-primary)]">
-              <SelectValue placeholder="Select Season" />
+              <SelectValue placeholder={t("schedule.selectSeason")} />
             </SelectTrigger>
             <SelectContent>
               {seasons?.map((s) => (
@@ -166,17 +169,21 @@ function Schedule() {
             </div>
           ) : error ? (
             <div className="text-center py-[var(--cb-space-section)]">
-              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">This section could not load.</p>
+              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">
+                {t("common.sectionError")}
+              </p>
               <button
                 onClick={() => window.location.reload()}
                 className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline"
               >
-                Retry
+                {t("common.retry")}
               </button>
             </div>
           ) : fixtures.length === 0 ? (
             <div className="text-center py-[var(--cb-space-section)]">
-              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">No fixtures found for this filter.</p>
+              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">
+                {t("schedule.noFixtures")}
+              </p>
             </div>
           ) : (
             <div className="mb-[calc(var(--cb-space-xl)*2)]">
@@ -184,15 +191,11 @@ function Schedule() {
                 <div key={groupKey} className="mb-[var(--cb-space-lg)]">
                   <div className="bg-[var(--cb-surface-muted)] rounded-[var(--cb-radius-md)] px-[var(--cb-space-lg)] py-[var(--cb-space-sm)] mb-[var(--cb-space-sm)]">
                     <span className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] tracking-normal">
-                      {groupKey.length === 10 ? formatGroupDate(groupKey) : groupKey}
+                      {groupKey.length === 10 ? formatGroupDate(groupKey, locale) : groupKey}
                     </span>
                   </div>
                   {groupFixtures.map((m, idx) => (
-                    <MatchCard
-                      key={`${m.id}-${idx}`}
-                      m={m}
-                      onClick={() => setSelectedFixture(m)}
-                    />
+                    <MatchCard key={`${m.id}-${idx}`} m={m} onClick={() => setSelectedFixture(m)} />
                   ))}
                 </div>
               ))}
@@ -213,9 +216,9 @@ function Schedule() {
   );
 }
 
-function formatGroupDate(isoDate: string): string {
+function formatGroupDate(isoDate: string, locale: string): string {
   const d = new Date(isoDate + "T00:00:00.000Z");
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString(dateLocale(locale), {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -223,9 +226,13 @@ function formatGroupDate(isoDate: string): string {
   });
 }
 
-function formatDate(isoDate: string): string {
+function formatDate(isoDate: string, locale: string): string {
   const d = new Date(isoDate);
-  return d.toLocaleDateString("en-US", { month: "short", day: "numeric", timeZone: "UTC" });
+  return d.toLocaleDateString(dateLocale(locale), {
+    month: "short",
+    day: "numeric",
+    timeZone: "UTC",
+  });
 }
 
 function TeamLogoImg({ team }: { team: { logoUrl?: string; shortCode?: string; name: string } }) {
@@ -246,10 +253,17 @@ function TeamLogoImg({ team }: { team: { logoUrl?: string; shortCode?: string; n
 }
 
 function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
+  const { locale, t } = useI18n();
   const statusPill =
-    m.status === "completed" ? "bg-[color-mix(in_srgb,var(--cb-status-success),transparent_86%)] text-[var(--cb-status-success)]" : "bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)]";
+    m.status === "completed"
+      ? "bg-[color-mix(in_srgb,var(--cb-status-success),transparent_86%)] text-[var(--cb-status-success)]"
+      : "bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)]";
   const statusLabel =
-    m.status === "completed" ? "Completed" : m.status === "scheduled" ? "Upcoming" : m.status;
+    m.status === "completed"
+      ? t("schedule.completed")
+      : m.status === "scheduled"
+        ? t("schedule.upcoming")
+        : m.status;
 
   return (
     <div
@@ -266,8 +280,14 @@ function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
     >
       <div className="flex items-center gap-[var(--cb-space-md)]">
         <div className="w-[15%] text-center">
-          <div className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">{formatDate(m.matchDate)}</div>
-          {m.kickoffTime && <div className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">{m.kickoffTime}</div>}
+          <div className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">
+            {formatDate(m.matchDate, locale)}
+          </div>
+          {m.kickoffTime && (
+            <div className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
+              {m.kickoffTime}
+            </div>
+          )}
         </div>
         <div className="w-[25%] flex items-center justify-end gap-[var(--cb-space-sm)]">
           <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] text-right">
@@ -279,16 +299,23 @@ function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
           {m.status === "completed" &&
           m.result?.homeScore != null &&
           m.result?.awayScore != null ? (
-            <div className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]" style={{ textWrap: "balance" }}>
+            <div
+              className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]"
+              style={{ textWrap: "balance" }}
+            >
               {m.result.homeScore} &ndash; {m.result.awayScore}
             </div>
           ) : (
-            <div className="text-[length:var(--cb-font-size-title)] text-[var(--cb-text-muted)]">vs</div>
+            <div className="text-[length:var(--cb-font-size-title)] text-[var(--cb-text-muted)]">
+              {t("schedule.vs")}
+            </div>
           )}
         </div>
         <div className="w-[25%] flex items-center gap-[var(--cb-space-sm)]">
           <TeamLogoImg team={m.awayTeam} />
-          <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">{m.awayTeam.name}</span>
+          <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">
+            {m.awayTeam.name}
+          </span>
         </div>
         <div className="w-[15%] text-right">
           <span

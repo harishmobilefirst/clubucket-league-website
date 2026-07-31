@@ -2,9 +2,16 @@ import { useState } from "react";
 import { Pause, Play } from "lucide-react";
 import type { PublicFixture } from "@/types/public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n } from "@/lib/i18n";
 import { Container } from "./Container";
 
-function TeamBadge({ team, accent = false }: { team: PublicFixture["homeTeam"]; accent?: boolean }) {
+function TeamBadge({
+  team,
+  accent = false,
+}: {
+  team: PublicFixture["homeTeam"];
+  accent?: boolean;
+}) {
   if (team.logoUrl) {
     return (
       <img
@@ -30,7 +37,8 @@ function Item(f: PublicFixture) {
     <div className="flex items-center gap-[var(--cb-space-md)] px-[var(--cb-space-lg)] py-[var(--cb-space-sm)] mx-[var(--cb-space-xs)] cb-panel cb-shadow-panel shrink-0">
       <TeamBadge team={f.homeTeam} />
       <div className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] tabular-nums whitespace-nowrap">
-        {f.result?.homeScore ?? "-"}         <span className="text-[var(--cb-text-muted)] mx-[var(--cb-space-2xs)]">&ndash;</span>{" "}
+        {f.result?.homeScore ?? "-"}{" "}
+        <span className="text-[var(--cb-text-muted)] mx-[var(--cb-space-2xs)]">&ndash;</span>{" "}
         {f.result?.awayScore ?? "-"}
       </div>
       <TeamBadge team={f.awayTeam} accent />
@@ -40,6 +48,7 @@ function Item(f: PublicFixture) {
 
 export function ScoreTicker({ results }: { results?: PublicFixture[] }) {
   const [paused, setPaused] = useState(false);
+  const { t } = useI18n();
   if (!results || results.length === 0) return null;
   const items = [...results, ...results];
   return (
@@ -47,12 +56,10 @@ export function ScoreTicker({ results }: { results?: PublicFixture[] }) {
       <Container>
         <div className="flex items-center gap-[var(--cb-space-md)]">
           <span className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-[0.05em] whitespace-nowrap">
-            Recent Results
+            {t("home.recentResults")}
           </span>
           <div className="flex-1 overflow-hidden relative">
-            <div
-              className={"flex items-center w-max" + (paused ? "" : " ticker-track")}
-            >
+            <div className={"flex items-center w-max" + (paused ? "" : " ticker-track")}>
               {items.map((f, i) => (
                 <Item key={`${f.id || i}-${i}`} {...f} />
               ))}
@@ -61,7 +68,7 @@ export function ScoreTicker({ results }: { results?: PublicFixture[] }) {
           <button
             onClick={() => setPaused((p) => !p)}
             className="shrink-0 w-8 h-8 rounded-full bg-[var(--cb-surface-panel)]/20 text-[var(--cb-text-inverse)] flex items-center justify-center hover:bg-[var(--cb-surface-panel)]/30 cb-focus transition-colors"
-            aria-label={paused ? "Resume ticker" : "Pause ticker"}
+            aria-label={paused ? t("ticker.resume") : t("ticker.pause")}
           >
             {paused ? <Play size={14} /> : <Pause size={14} />}
           </button>

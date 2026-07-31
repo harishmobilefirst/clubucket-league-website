@@ -3,7 +3,7 @@ import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicNewsItem } from "@/hooks/use-public-api";
 import { normalizeContentImage } from "@/lib/public-api";
-import { useLocale } from "@/lib/locale";
+import { useI18n } from "@/lib/i18n";
 import { BackLink } from "@/components/BackLink";
 import { EmptyState } from "@/components/EmptyState";
 import { Container } from "@/components/Container";
@@ -17,7 +17,7 @@ export const Route = createFileRoute("/news_/$slug")({
 
 function NewsDetail() {
   const { slug } = Route.useParams();
-  const { locale } = useLocale();
+  const { locale, t } = useI18n();
   const { data: item, isLoading } = usePublicNewsItem(slug, locale);
 
   if (isLoading) {
@@ -44,8 +44,8 @@ function NewsDetail() {
     return (
       <Layout>
         <Container className="max-w-[750px] py-[var(--cb-space-section)] text-center">
-          <EmptyState message="Article not found." />
-          <BackLink to="/news">Back to News</BackLink>
+          <EmptyState message={t("news.notFound")} />
+          <BackLink to="/news">{t("news.backToNews")}</BackLink>
         </Container>
       </Layout>
     );
@@ -56,7 +56,7 @@ function NewsDetail() {
   return (
     <Layout>
       <article className="max-w-[750px] mx-auto px-[var(--cb-space-xl)] py-[var(--cb-space-section)]">
-        <BackLink to="/news">Back to News</BackLink>
+        <BackLink to="/news">{t("news.backToNews")}</BackLink>
 
         {item.category && (
           <div className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)] mt-[var(--cb-space-lg)] tracking-normal">
@@ -64,7 +64,12 @@ function NewsDetail() {
           </div>
         )}
 
-        <h1 className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-sm)] leading-tight" style={{ textWrap: "balance" }}>{item.title}</h1>
+        <h1
+          className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-sm)] leading-tight"
+          style={{ textWrap: "balance" }}
+        >
+          {item.title}
+        </h1>
 
         <div className="flex items-center gap-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-sm)]">
           {item.date && <span>{item.date}</span>}
@@ -89,7 +94,12 @@ function NewsDetail() {
             item.bodySections.map((section, i) => (
               <div key={i}>
                 {section.title && (
-                  <h2 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-xl)] mb-[var(--cb-space-sm)]" style={{ textWrap: "balance" }}>{section.title}</h2>
+                  <h2
+                    className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-xl)] mb-[var(--cb-space-sm)]"
+                    style={{ textWrap: "balance" }}
+                  >
+                    {section.title}
+                  </h2>
                 )}
                 <p>{section.body}</p>
               </div>
@@ -108,7 +118,7 @@ function NewsDetail() {
                 rel="noopener noreferrer"
                 className="text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline"
               >
-                {item.ctaText || "Watch Video"}
+                {item.ctaText || t("news.watchVideo")}
               </a>
             </div>
           )}
@@ -121,7 +131,7 @@ function NewsDetail() {
                 rel="noopener noreferrer"
                 className="cb-button-primary text-[length:var(--cb-font-size-caption)]"
               >
-                {item.ctaText || "Learn More"}
+                {item.ctaText || t("news.learnMore")}
               </a>
             </div>
           )}

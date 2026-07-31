@@ -1,13 +1,9 @@
 import { MapPin } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicFixture } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
+import { useI18n, dateLocale } from "@/lib/i18n";
 import type {
   PublicFixture,
   PublicFixtureCardEvent,
@@ -20,11 +16,7 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-function TeamBadge({
-  team,
-}: {
-  team: { logoUrl?: string; shortCode?: string; name: string };
-}) {
+function TeamBadge({ team }: { team: { logoUrl?: string; shortCode?: string; name: string } }) {
   if (team.logoUrl) {
     return (
       <img
@@ -41,9 +33,9 @@ function TeamBadge({
   );
 }
 
-function formatDate(isoDate: string): string {
+function formatDate(isoDate: string, locale: string): string {
   const d = new Date(isoDate);
-  return d.toLocaleDateString("en-US", {
+  return d.toLocaleDateString(dateLocale(locale), {
     weekday: "short",
     month: "short",
     day: "numeric",
@@ -87,9 +79,12 @@ function GoalColumn({
 }) {
   const rowJustify = align === "right" ? "justify-end" : "justify-start";
   const textAlign = align === "right" ? "text-right" : "text-left";
+  const { t } = useI18n();
   if (goals.length === 0) {
     return (
-      <p className={`text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] ${textAlign}`}>
+      <p
+        className={`text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] ${textAlign}`}
+      >
         &mdash;
       </p>
     );
@@ -97,12 +92,9 @@ function GoalColumn({
   return (
     <ul className="space-y-[var(--cb-space-xs)]">
       {goals.map((g) => (
-        <li
-          key={g.id}
-          className={`flex items-center gap-[var(--cb-space-xs)] ${rowJustify}`}
-        >
+        <li key={g.id} className={`flex items-center gap-[var(--cb-space-xs)] ${rowJustify}`}>
           <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
-            {g.playerName || "Unknown player"}
+            {g.playerName || t("fixture.unknownPlayer")}
           </span>
           <CountTag count={g.goals} />
         </li>
@@ -120,9 +112,12 @@ function CardColumn({
 }) {
   const rowJustify = align === "right" ? "justify-end" : "justify-start";
   const textAlign = align === "right" ? "text-right" : "text-left";
+  const { t } = useI18n();
   if (cards.length === 0) {
     return (
-      <p className={`text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] ${textAlign}`}>
+      <p
+        className={`text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] ${textAlign}`}
+      >
         &mdash;
       </p>
     );
@@ -130,14 +125,11 @@ function CardColumn({
   return (
     <ul className="space-y-[var(--cb-space-xs)]">
       {cards.map((c) => (
-        <li
-          key={c.id}
-          className={`flex items-center gap-[var(--cb-space-xs)] ${rowJustify}`}
-        >
+        <li key={c.id} className={`flex items-center gap-[var(--cb-space-xs)] ${rowJustify}`}>
           {align === "right" ? (
             <>
               <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
-                {c.playerName || "Unknown player"}
+                {c.playerName || t("fixture.unknownPlayer")}
               </span>
               <CountTag count={c.cards} />
               <CardChip type={c.cardType} />
@@ -146,7 +138,7 @@ function CardColumn({
             <>
               <CardChip type={c.cardType} />
               <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
-                {c.playerName || "Unknown player"}
+                {c.playerName || t("fixture.unknownPlayer")}
               </span>
               <CountTag count={c.cards} />
             </>
@@ -165,13 +157,7 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
   );
 }
 
-function TeamColumnHeaders({
-  homeName,
-  awayName,
-}: {
-  homeName: string;
-  awayName: string;
-}) {
+function TeamColumnHeaders({ homeName, awayName }: { homeName: string; awayName: string }) {
   return (
     <div className="grid grid-cols-2 gap-[var(--cb-space-lg)] mb-[var(--cb-space-sm)] pb-[var(--cb-space-xs)] border-b border-[var(--cb-border-subtle)]">
       <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] text-left truncate">
@@ -185,9 +171,8 @@ function TeamColumnHeaders({
 }
 
 export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
-  const { data, isLoading, error } = usePublicFixture(
-    open && fixture ? fixture.id : undefined,
-  );
+  const { locale, t } = useI18n();
+  const { data, isLoading, error } = usePublicFixture(open && fixture ? fixture.id : undefined);
 
   const detail = data ?? fixture;
   const homeTeam = detail?.homeTeam;
@@ -205,7 +190,9 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[560px] max-h-[85vh] overflow-y-auto bg-[var(--cb-surface-panel)]">
         <DialogHeader>
-          <DialogTitle className="text-[var(--cb-text-primary)]">Match Details</DialogTitle>
+          <DialogTitle className="text-[var(--cb-text-primary)]">
+            {t("fixture.details")}
+          </DialogTitle>
         </DialogHeader>
 
         {!detail ? null : (
@@ -227,7 +214,7 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
                   </div>
                 ) : (
                   <div className="text-[length:var(--cb-font-size-title)] text-[var(--cb-text-muted)]">
-                    vs
+                    {t("schedule.vs")}
                   </div>
                 )}
               </div>
@@ -242,7 +229,7 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
             {/* Meta */}
             <div className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] space-y-[var(--cb-space-2xs)] pb-[var(--cb-space-md)] border-b border-[var(--cb-border-subtle)]">
               <div>
-                {formatDate(detail.matchDate)}
+                {formatDate(detail.matchDate, locale)}
                 {detail.kickoffTime ? ` · ${detail.kickoffTime}` : ""}
               </div>
               {detail.venue?.name && (
@@ -264,23 +251,20 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
                 </div>
               ) : error ? (
                 <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] py-[var(--cb-space-lg)]">
-                  Match details could not load.
+                  {t("fixture.detailsError")}
                 </p>
               ) : !hasGoals && !hasCards ? (
                 <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] py-[var(--cb-space-lg)]">
-                  No goal or card details recorded for this match.
+                  {t("fixture.noEvents")}
                 </p>
               ) : (
                 <div className="space-y-[var(--cb-space-xl)]">
                   {/* Goals section */}
                   <section>
-                    <SectionHeading>Goals</SectionHeading>
+                    <SectionHeading>{t("fixture.goals")}</SectionHeading>
                     {hasGoals ? (
                       <>
-                        <TeamColumnHeaders
-                          homeName={homeTeam!.name}
-                          awayName={awayTeam!.name}
-                        />
+                        <TeamColumnHeaders homeName={homeTeam!.name} awayName={awayTeam!.name} />
                         <div className="grid grid-cols-2 gap-[var(--cb-space-lg)]">
                           <GoalColumn goals={homeGoals} align="left" />
                           <GoalColumn goals={awayGoals} align="right" />
@@ -288,36 +272,33 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
                       </>
                     ) : (
                       <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
-                        No goals recorded.
+                        {t("fixture.noGoals")}
                       </p>
                     )}
                   </section>
 
                   {/* Cards section */}
                   <section>
-                    <SectionHeading>Cards</SectionHeading>
+                    <SectionHeading>{t("fixture.cards")}</SectionHeading>
                     {hasCards ? (
                       <>
-                        <TeamColumnHeaders
-                          homeName={homeTeam!.name}
-                          awayName={awayTeam!.name}
-                        />
+                        <TeamColumnHeaders homeName={homeTeam!.name} awayName={awayTeam!.name} />
                         <div className="grid grid-cols-2 gap-[var(--cb-space-lg)]">
                           <CardColumn cards={homeCards} align="left" />
                           <CardColumn cards={awayCards} align="right" />
                         </div>
                         <div className="flex items-center justify-center gap-[var(--cb-space-lg)] mt-[var(--cb-space-md)] pt-[var(--cb-space-sm)] border-t border-[var(--cb-border-subtle)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
                           <span className="flex items-center gap-[var(--cb-space-xs)]">
-                            <CardChip type="yellow" /> Yellow
+                            <CardChip type="yellow" /> {t("fixture.yellow")}
                           </span>
                           <span className="flex items-center gap-[var(--cb-space-xs)]">
-                            <CardChip type="red" /> Red
+                            <CardChip type="red" /> {t("fixture.red")}
                           </span>
                         </div>
                       </>
                     ) : (
                       <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
-                        No cards recorded.
+                        {t("fixture.noCards")}
                       </p>
                     )}
                   </section>

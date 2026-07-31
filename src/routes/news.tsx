@@ -8,7 +8,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { PageNav } from "@/components/PageNav";
 import { usePublicNews } from "@/hooks/use-public-api";
 import { normalizeContentImage, normalizeContentExcerpt } from "@/lib/public-api";
-import { useLocale } from "@/lib/locale";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/news")({
   head: () => ({
@@ -21,7 +21,8 @@ export const Route = createFileRoute("/news")({
 });
 
 function News() {
-  const { locale } = useLocale();
+  const { locale, t } = useI18n();
+  usePageTitle("meta.news");
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = usePublicNews(locale, page);
   const items = data?.items ?? [];
@@ -29,12 +30,15 @@ function News() {
 
   return (
     <Layout>
-      <PageHeader title="News & Updates" subtitle="Latest from LigaD1" />
+      <PageHeader title={t("news.title")} subtitle={t("news.subtitle")} />
       <Section muted>
         {isLoading ? (
           <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)]">
             {Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden cb-shadow-panel">
+              <div
+                key={i}
+                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden cb-shadow-panel"
+              >
                 <Skeleton className="h-[190px] w-full rounded-none" />
                 <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
                   <Skeleton className="h-3 w-20" />
@@ -47,16 +51,16 @@ function News() {
           </div>
         ) : error ? (
           <div className="text-center py-[var(--cb-space-section)]">
-            <p className="cb-body">This section could not load.</p>
+            <p className="cb-body">{t("common.sectionError")}</p>
             <button
               onClick={() => window.location.reload()}
               className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
             >
-              Retry
+              {t("common.retry")}
             </button>
           </div>
         ) : items.length === 0 ? (
-          <EmptyState message="No news articles available." />
+          <EmptyState message={t("news.empty")} />
         ) : (
           <>
             <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)]">

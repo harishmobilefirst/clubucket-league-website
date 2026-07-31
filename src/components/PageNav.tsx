@@ -5,6 +5,7 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import { useI18n } from "@/lib/i18n";
 
 export function PageNav({
   page,
@@ -15,19 +16,27 @@ export function PageNav({
   totalPages: number;
   onPageChange: (p: number) => void;
 }) {
+  const { t } = useI18n();
   if (totalPages <= 1) return null;
 
   return (
-    <Pagination className="mt-[var(--cb-space-section)]">
+    <Pagination className="mt-[var(--cb-space-section)]" aria-label={t("pagination.nav")}>
       <PaginationContent>
         <PaginationItem>
           <PaginationPrevious
+            aria-label={t("pagination.previous")}
             onClick={(e) => {
               e.preventDefault();
               if (page > 1) onPageChange(page - 1);
             }}
-            className={page <= 1 ? "pointer-events-none opacity-40" : "cursor-pointer transition-colors cb-focus"}
-          />
+            className={
+              page <= 1
+                ? "pointer-events-none opacity-40"
+                : "cursor-pointer transition-colors cb-focus"
+            }
+          >
+            {t("pagination.previousLabel")}
+          </PaginationPrevious>
         </PaginationItem>
 
         {Array.from({ length: totalPages }, (_, i) => i + 1).map((p) => (
@@ -48,12 +57,19 @@ export function PageNav({
 
         <PaginationItem>
           <PaginationNext
+            aria-label={t("pagination.next")}
             onClick={(e) => {
               e.preventDefault();
               if (page < totalPages) onPageChange(page + 1);
             }}
-            className={page >= totalPages ? "pointer-events-none opacity-40" : "cursor-pointer transition-colors cb-focus"}
-          />
+            className={
+              page >= totalPages
+                ? "pointer-events-none opacity-40"
+                : "cursor-pointer transition-colors cb-focus"
+            }
+          >
+            {t("pagination.nextLabel")}
+          </PaginationNext>
         </PaginationItem>
       </PaginationContent>
     </Pagination>
