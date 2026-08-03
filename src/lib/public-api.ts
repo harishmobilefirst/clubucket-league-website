@@ -1,4 +1,4 @@
-import { getApiBaseUrl, getOrganizationSlug, getPublicSurface } from "./env";
+import { getApiBaseUrl, getPublicSurface } from "./env";
 import type {
   ApiEnvelope,
   PaginationMeta,
@@ -31,11 +31,11 @@ export class PublicApiError extends Error {
 }
 
 async function fetchPublicApiEnvelope<T>(
+  slug: string,
   path: string,
   options?: { params?: Record<string, string | number | undefined>; init?: RequestInit },
 ): Promise<ApiEnvelope<T>> {
   const base = getApiBaseUrl();
-  const slug = getOrganizationSlug();
   const url = new URL(`${base}/public/organizations/${slug}${path}`);
 
   url.searchParams.set("surface", getPublicSurface());
@@ -73,19 +73,21 @@ async function fetchPublicApiEnvelope<T>(
 }
 
 export async function fetchPublicApi<T>(
+  slug: string,
   path: string,
   options?: { params?: Record<string, string | number | undefined>; init?: RequestInit },
 ): Promise<T> {
-  const envelope = await fetchPublicApiEnvelope<T>(path, options);
+  const envelope = await fetchPublicApiEnvelope<T>(slug, path, options);
   return envelope.data;
 }
 
 export async function postPublicApi<T>(
+  slug: string,
   path: string,
   body: Record<string, unknown>,
   options?: { params?: Record<string, string | number | undefined>; init?: RequestInit },
 ): Promise<T> {
-  const envelope = await fetchPublicApiEnvelope<T>(path, {
+  const envelope = await fetchPublicApiEnvelope<T>(slug, path, {
     ...options,
     init: {
       method: "POST",
@@ -97,10 +99,11 @@ export async function postPublicApi<T>(
 }
 
 export async function fetchPublicApiWithMeta<T>(
+  slug: string,
   path: string,
   options?: { params?: Record<string, string | number | undefined>; init?: RequestInit },
 ): Promise<{ data: T; meta?: PaginationMeta; teams?: Record<string, PublicRawTeam> }> {
-  const envelope = await fetchPublicApiEnvelope<T>(path, options);
+  const envelope = await fetchPublicApiEnvelope<T>(slug, path, options);
   return { data: envelope.data, meta: envelope.meta, teams: envelope.teams };
 }
 

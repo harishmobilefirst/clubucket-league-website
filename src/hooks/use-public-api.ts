@@ -10,7 +10,7 @@ import {
   resolveFixtureTeams,
   resolveStandingRow,
 } from "@/lib/public-api";
-import { getOrganizationSlug } from "@/lib/env";
+import { useOrganizationSlug, useInitialOrganizationConfig } from "@/lib/organization-context";
 import type {
   PublicConfigRaw,
   PublicDivision,
@@ -34,9 +34,7 @@ import type {
   PaginationMeta,
 } from "@/types/public-api";
 
-const slug = getOrganizationSlug();
-
-export const queryKeys = {
+export const queryKeys = (slug: string) => ({
   config: ["public-config", slug] as const,
   home: (locale: string) => ["public-home", slug, locale] as const,
   divisions: ["public-divisions", slug] as const,
@@ -59,23 +57,27 @@ export const queryKeys = {
     ["public-highlight-item", slug, itemSlug, locale] as const,
   sponsors: (locale: string) => ["public-sponsors", slug, locale] as const,
   about: (locale: string) => ["public-about", slug, locale] as const,
-};
+});
 
 export function usePublicConfig() {
+  const slug = useOrganizationSlug();
+  const initialConfig = useInitialOrganizationConfig();
   return useQuery({
-    queryKey: queryKeys.config,
-    queryFn: () => fetchPublicApi<PublicConfigRaw>("/config"),
+    queryKey: queryKeys(slug).config,
+    queryFn: () => fetchPublicApi<PublicConfigRaw>(slug, "/config"),
     select: normalizePublicConfig,
     staleTime: 5 * 60 * 1000,
     retry: 1,
+    initialData: initialConfig,
   });
 }
 
 export function usePublicHome(locale: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.home(locale),
+    queryKey: queryKeys(slug).home(locale),
     queryFn: () =>
-      fetchPublicApi<PublicHomeRaw>("/home", {
+      fetchPublicApi<PublicHomeRaw>(slug, "/home", {
         params: { locale },
       }),
     select: (data): PublicHome => ({
@@ -91,17 +93,19 @@ export function usePublicHome(locale: string) {
 }
 
 export function usePublicDivisions() {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.divisions,
-    queryFn: () => fetchPublicApi<PublicDivision[]>("/divisions"),
+    queryKey: queryKeys(slug).divisions,
+    queryFn: () => fetchPublicApi<PublicDivision[]>(slug, "/divisions"),
     staleTime: 5 * 60 * 1000,
   });
 }
 
 export function usePublicTeam(teamId: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.team(teamId),
-    queryFn: () => fetchPublicApi<PublicTeamDetailRaw>(`/teams/${teamId}`),
+    queryKey: queryKeys(slug).team(teamId),
+    queryFn: () => fetchPublicApi<PublicTeamDetailRaw>(slug, `/teams/${teamId}`),
     select: (raw): PublicTeamDetail => ({
       id: raw.id,
       name: raw.name,
@@ -125,9 +129,10 @@ export function usePublicTeam(teamId: string) {
 }
 
 export function usePublicSeasons() {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.seasons,
-    queryFn: () => fetchPublicApi<PublicSeason[]>("/seasons"),
+    queryKey: queryKeys(slug).seasons,
+    queryFn: () => fetchPublicApi<PublicSeason[]>(slug, "/seasons"),
     staleTime: 10 * 60 * 1000,
   });
 }
@@ -138,10 +143,11 @@ export function usePublicSchedule(
   status?: string,
   page?: number,
 ) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.schedule(seasonId, divisionId, status, page),
+    queryKey: queryKeys(slug).schedule(seasonId, divisionId, status, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicFixtureRaw[]>("/schedule", {
+      fetchPublicApiWithMeta<PublicFixtureRaw[]>(slug, "/schedule", {
         params: { seasonId, divisionId, status, page: page ?? 1, limit: 50 },
       }),
     staleTime: 2 * 60 * 1000,
@@ -154,9 +160,10 @@ export function usePublicSchedule(
 }
 
 export function usePublicFixture(fixtureId?: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.fixture(fixtureId ?? ""),
-    queryFn: () => fetchPublicApi<PublicFixtureDetailRaw>(`/schedule/${fixtureId}`),
+    queryKey: queryKeys(slug).fixture(fixtureId ?? ""),
+    queryFn: () => fetchPublicApi<PublicFixtureDetailRaw>(slug, `/schedule/${fixtureId}`),
     select: (raw): PublicFixtureDetail => ({
       ...resolveFixtureTeams(raw, raw.teams),
       goalEvents: raw.goalEvents ?? [],
@@ -169,10 +176,11 @@ export function usePublicFixture(fixtureId?: string) {
 }
 
 export function usePublicStandings(seasonId?: string, divisionId?: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.standings(seasonId, divisionId),
+    queryKey: queryKeys(slug).standings(seasonId, divisionId),
     queryFn: () =>
-      fetchPublicApi<unknown>("/standings", {
+      fetchPublicApi<unknown>(slug, "/standings", {
         params: { seasonId, divisionId },
       }),
     staleTime: 2 * 60 * 1000,
@@ -199,10 +207,11 @@ export function usePublicStandings(seasonId?: string, divisionId?: string) {
 }
 
 export function usePublicTopScorers(seasonId?: string, divisionId?: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.topScorers(seasonId, divisionId),
+    queryKey: queryKeys(slug).topScorers(seasonId, divisionId),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicTopScorerRaw[]>("/top-scorers", {
+      fetchPublicApiWithMeta<PublicTopScorerRaw[]>(slug, "/top-scorers", {
         params: { seasonId, divisionId, limit: 20 },
       }),
     select: (envelope) => (envelope.data ?? []).map((s) => normalizeTopScorer(s, envelope.teams)),
@@ -211,10 +220,11 @@ export function usePublicTopScorers(seasonId?: string, divisionId?: string) {
 }
 
 export function usePublicTopScorersPaginated(page: number, seasonId?: string, divisionId?: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.topScorersPage(seasonId, divisionId, page),
+    queryKey: queryKeys(slug).topScorersPage(seasonId, divisionId, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicTopScorerRaw[]>("/top-scorers", {
+      fetchPublicApiWithMeta<PublicTopScorerRaw[]>(slug, "/top-scorers", {
         params: { seasonId, divisionId, page, limit: 50 },
       }),
     select: (raw) => ({
@@ -226,10 +236,11 @@ export function usePublicTopScorersPaginated(page: number, seasonId?: string, di
 }
 
 export function usePublicNews(locale: string, page?: number) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.news(locale, page),
+    queryKey: queryKeys(slug).news(locale, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicContentItemRaw[]>("/news", {
+      fetchPublicApiWithMeta<PublicContentItemRaw[]>(slug, "/news", {
         params: { locale, page: page ?? 1, limit: 20 },
       }),
     staleTime: 2 * 60 * 1000,
@@ -242,10 +253,11 @@ export function usePublicNews(locale: string, page?: number) {
 }
 
 export function usePublicHighlights(locale: string, page?: number) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.highlights(locale, page),
+    queryKey: queryKeys(slug).highlights(locale, page),
     queryFn: () =>
-      fetchPublicApiWithMeta<PublicContentItemRaw[]>("/highlights", {
+      fetchPublicApiWithMeta<PublicContentItemRaw[]>(slug, "/highlights", {
         params: { locale, page: page ?? 1, limit: 20 },
       }),
     staleTime: 2 * 60 * 1000,
@@ -258,10 +270,11 @@ export function usePublicHighlights(locale: string, page?: number) {
 }
 
 export function usePublicNewsItem(itemSlug: string, locale: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.newsItem(itemSlug, locale),
+    queryKey: queryKeys(slug).newsItem(itemSlug, locale),
     queryFn: () =>
-      fetchPublicApi<PublicContentItemRaw>(`/news/${itemSlug}`, {
+      fetchPublicApi<PublicContentItemRaw>(slug, `/news/${itemSlug}`, {
         params: { locale },
       }),
     select: (raw) => normalizeContentItem(raw, locale),
@@ -272,10 +285,11 @@ export function usePublicNewsItem(itemSlug: string, locale: string) {
 }
 
 export function usePublicHighlightsItem(itemSlug: string, locale: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.highlightItem(itemSlug, locale),
+    queryKey: queryKeys(slug).highlightItem(itemSlug, locale),
     queryFn: () =>
-      fetchPublicApi<PublicContentItemRaw>(`/highlights/${itemSlug}`, {
+      fetchPublicApi<PublicContentItemRaw>(slug, `/highlights/${itemSlug}`, {
         params: { locale },
       }),
     select: (raw) => normalizeContentItem(raw, locale),
@@ -286,10 +300,11 @@ export function usePublicHighlightsItem(itemSlug: string, locale: string) {
 }
 
 export function usePublicSponsors(locale: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.sponsors(locale),
+    queryKey: queryKeys(slug).sponsors(locale),
     queryFn: () =>
-      fetchPublicApi<Parameters<typeof normalizeSponsor>[0][]>("/sponsors", {
+      fetchPublicApi<Parameters<typeof normalizeSponsor>[0][]>(slug, "/sponsors", {
         params: { locale, limit: 20 },
       }),
     select: (data) => data.map(normalizeSponsor),
@@ -299,10 +314,11 @@ export function usePublicSponsors(locale: string) {
 }
 
 export function usePublicAbout(locale: string) {
+  const slug = useOrganizationSlug();
   return useQuery({
-    queryKey: queryKeys.about(locale),
+    queryKey: queryKeys(slug).about(locale),
     queryFn: () =>
-      fetchPublicApi<PublicAboutUs>("/about-us", {
+      fetchPublicApi<PublicAboutUs>(slug, "/about-us", {
         params: { locale },
       }),
     staleTime: 10 * 60 * 1000,
@@ -328,8 +344,9 @@ export type CreateInquiryResponse = {
 };
 
 export function useCreateInquiry() {
+  const slug = useOrganizationSlug();
   return useMutation({
     mutationFn: (body: CreateInquiryBody) =>
-      postPublicApi<CreateInquiryResponse>("/inquiries", body),
+      postPublicApi<CreateInquiryResponse>(slug, "/inquiries", body),
   });
 }
