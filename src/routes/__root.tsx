@@ -16,6 +16,8 @@ import { useLocale } from "@/lib/locale";
 import { useI18n } from "@/lib/i18n";
 import { usePublicConfig } from "@/hooks/use-public-api";
 import { LoadingState } from "@/components/LoadingState";
+import { resolveOrganization } from "@/lib/organization";
+import { OrganizationProvider } from "@/lib/organization-context";
 
 function NotFoundComponent() {
   const { t } = useI18n();
@@ -78,48 +80,65 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   );
 }
 
+function OrganizationNotFound() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
+      <div className="max-w-md">
+        <h1 className="text-2xl font-semibold text-foreground">Site not found</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          We couldn&apos;t find a Clubucket site at this address.
+        </p>
+      </div>
+    </div>
+  );
+}
+
+function OrganizationComingSoon() {
+  return (
+    <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
+      <div className="max-w-md">
+        <h1 className="text-2xl font-semibold text-foreground">Coming soon</h1>
+        <p className="mt-2 text-sm text-muted-foreground">
+          This site is being set up and will be live shortly.
+        </p>
+      </div>
+    </div>
+  );
+}
+
 export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()({
-  head: () => ({
-    meta: [
-      { charSet: "utf-8" },
-      { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "LigaD1 — The Heart of Mexican Soccer" },
-      {
-        name: "description",
-        content: "LigaD1 — Mexico's premier semi-professional soccer league.",
-      },
-      { name: "author", content: "LigaD1" },
-      { property: "og:title", content: "LigaD1 — The Heart of Mexican Soccer" },
-      {
-        property: "og:description",
-        content: "LigaD1 — Mexico's premier semi-professional soccer league.",
-      },
-      { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@LigaD1" },
-      { name: "twitter:title", content: "LigaD1 — The Heart of Mexican Soccer" },
-      {
-        name: "twitter:description",
-        content: "LigaD1 — Mexico's premier semi-professional soccer league.",
-      },
-      {
-        property: "og:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ce2c4863-f731-4afd-9e44-2f87b4d8d4d6/id-preview-f80a9d7d--5266dce4-4ae2-4acd-a139-7caaba531709.lovable.app-1779199738742.png",
-      },
-      {
-        name: "twitter:image",
-        content:
-          "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/ce2c4863-f731-4afd-9e44-2f87b4d8d4d6/id-preview-f80a9d7d--5266dce4-4ae2-4acd-a139-7caaba531709.lovable.app-1779199738742.png",
-      },
-    ],
-    links: [
-      {
-        rel: "stylesheet",
-        href: appCss,
-      },
-    ],
-  }),
+  loader: () => resolveOrganization(),
+  head: ({ loaderData }) => {
+    const title =
+      loaderData?.kind === "published"
+        ? `${loaderData.config.displayName || loaderData.config.organization.name} — Clubucket`
+        : "Clubucket";
+    const description =
+      loaderData?.kind === "published"
+        ? loaderData.config.subtitle || `${loaderData.config.displayName} on Clubucket`
+        : "Clubucket — team and league management.";
+
+    return {
+      meta: [
+        { charSet: "utf-8" },
+        { name: "viewport", content: "width=device-width, initial-scale=1" },
+        { title },
+        { name: "description", content: description },
+        { property: "og:title", content: title },
+        { property: "og:description", content: description },
+        { property: "og:type", content: "website" },
+        { name: "twitter:card", content: "summary_large_image" },
+        { name: "twitter:title", content: title },
+        { name: "twitter:description", content: description },
+      ],
+      links: [
+        {
+          rel: "stylesheet",
+          href: appCss,
+        },
+      ],
+    };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -142,15 +161,29 @@ function RootShell({ children }: { children: React.ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const organization = Route.useLoaderData();
+
+  if (organization.kind === "not_found") {
+    return <OrganizationNotFound />;
+  }
+
+  if (organization.kind === "coming_soon") {
+    return <OrganizationComingSoon />;
+  }
 
   return (
     <QueryClientProvider client={queryClient}>
-      <LocaleProvider defaultLocale="en">
-        <PublicThemeGate>
-          <ConfigLocaleSync />
-          <Outlet />
-        </PublicThemeGate>
-      </LocaleProvider>
+      <OrganizationProvider
+        organizationSlug={organization.organizationSlug}
+        initialConfig={organization.config}
+      >
+        <LocaleProvider defaultLocale="en">
+          <PublicThemeGate>
+            <ConfigLocaleSync />
+            <Outlet />
+          </PublicThemeGate>
+        </LocaleProvider>
+      </OrganizationProvider>
     </QueryClientProvider>
   );
 }

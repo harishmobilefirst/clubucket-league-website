@@ -1,8 +1,6 @@
 import { createContext, useContext, useState, useCallback, type ReactNode } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { getOrganizationSlug } from "./env";
-
-const slug = getOrganizationSlug();
+import { useOrganizationSlug } from "./organization-context";
 
 type LocaleContextType = {
   locale: string;
@@ -19,6 +17,7 @@ export function LocaleProvider({
   children: ReactNode;
 }) {
   const queryClient = useQueryClient();
+  const slug = useOrganizationSlug();
   const [locale, setLocaleState] = useState<string>(() => {
     if (typeof window === "undefined") return defaultLocale;
     return localStorage.getItem("public_locale") || defaultLocale;
@@ -36,7 +35,7 @@ export function LocaleProvider({
       queryClient.invalidateQueries({ queryKey: ["public-about", slug] });
       queryClient.invalidateQueries({ queryKey: ["public-home", slug] });
     },
-    [queryClient],
+    [queryClient, slug],
   );
 
   return <LocaleContext.Provider value={{ locale, setLocale }}>{children}</LocaleContext.Provider>;

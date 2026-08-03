@@ -41,4 +41,11 @@ export default defineConfig({
   tanstackStart: {
     server: { entry: "server" },
   },
+  // Every organisation's default/custom domain hits this same app instance
+  // (white-label multi-tenant hostname resolution) — the dev/preview server
+  // can't allowlist hostnames in advance.
+  vite: {
+    server: { allowedHosts: true },
+    preview: { allowedHosts: true },
+  },
 });
