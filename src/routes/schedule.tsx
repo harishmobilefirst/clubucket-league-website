@@ -235,7 +235,8 @@ function formatDate(isoDate: string, locale: string): string {
   });
 }
 
-function TeamLogoImg({ team }: { team: { logoUrl?: string; shortCode?: string; name: string } }) {
+function TeamLogoImg({ team }: { team?: { logoUrl?: string; shortCode?: string; name: string } }) {
+  if (!team) return null;
   if (team.logoUrl) {
     return (
       <img
