@@ -12,6 +12,7 @@ function TeamBadge({
   team: PublicFixture["homeTeam"];
   accent?: boolean;
 }) {
+  if (!team) return null;
   if (team.logoUrl) {
     return (
       <img

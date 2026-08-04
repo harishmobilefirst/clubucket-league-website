@@ -16,7 +16,8 @@ type Props = {
   onOpenChange: (open: boolean) => void;
 };
 
-function TeamBadge({ team }: { team: { logoUrl?: string; shortCode?: string; name: string } }) {
+function TeamBadge({ team }: { team?: { logoUrl?: string; shortCode?: string; name: string } }) {
+  if (!team) return null;
   if (team.logoUrl) {
     return (
       <img
