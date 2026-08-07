@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss" source(none);
 @source "../src";
 @import "tw-animate-css";
@@ -6,7 +6,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  --font-sans: 'Manrope', sans-serif;
+  --font-sans: 'DM Sans', sans-serif;
   --spacing: var(--cb-space-xs);
   --radius-sm: var(--cb-radius-sm);
   --radius-md: var(--cb-radius-md);
@@ -83,7 +83,7 @@
   --cb-space-48: 48px;
   --cb-space-xl: 40px;
   --cb-space-section: 64px;
-  --cb-font-family: 'Manrope', sans-serif;
+  --cb-font-family: 'DM Sans', sans-serif;
   --cb-font-size-caption: 12px;
   --cb-font-size-body: 16px;
   --cb-font-size-title: 24px;
@@ -133,7 +133,7 @@
     border-color: var(--color-border);
   }
   html, body {
-    font-family: 'Manrope', sans-serif;
+    font-family: 'DM Sans', sans-serif;
     background-color: var(--cb-surface-canvas);
     color: var(--cb-text-primary);
   }

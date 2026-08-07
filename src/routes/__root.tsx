@@ -254,7 +254,7 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
     "--cb-space-lg": px(spacing?.lg),
     "--cb-space-xl": px(spacing?.xl),
     "--cb-space-section": px(spacing?.section),
-    "--cb-font-family": "'Manrope', sans-serif",
+    "--cb-font-family": "'DM Sans', sans-serif",
     "--cb-font-size-caption": px(typography?.scale?.caption),
     "--cb-font-size-body": px(typography?.scale?.body),
     "--cb-font-size-title": px(typography?.scale?.title),
