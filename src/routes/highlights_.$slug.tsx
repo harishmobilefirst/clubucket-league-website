@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicHighlightsItem } from "@/hooks/use-public-api";
@@ -18,7 +19,8 @@ export const Route = createFileRoute("/highlights_/$slug")({
 function HighlightsDetail() {
   const { slug } = Route.useParams();
   const { locale, t } = useI18n();
-  const { data: item, isLoading } = usePublicHighlightsItem(slug, locale);
+  const { data: item, isLoading, error, refetch } = usePublicHighlightsItem(slug, locale);
+  const [imageFailed, setImageFailed] = useState(false);
 
   if (isLoading) {
     return (
@@ -34,6 +36,25 @@ function HighlightsDetail() {
             <Skeleton className="h-4 w-4/6" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />
+          </div>
+        </Container>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <Container className="max-w-[750px] py-[var(--cb-space-section)] text-center">
+          <EmptyState message={t("common.sectionCouldNotLoad")} />
+          <button
+            onClick={() => refetch()}
+            className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
+          >
+            {t("common.retry")}
+          </button>
+          <div className="mt-[var(--cb-space-lg)]">
+            <BackLink to="/highlights">{t("highlights.backToHighlights")}</BackLink>
           </div>
         </Container>
       </Layout>
@@ -92,10 +113,11 @@ function HighlightsDetail() {
               allowFullScreen
             />
           </div>
-        ) : imageUrl ? (
+        ) : imageUrl && !imageFailed ? (
           <img
             src={imageUrl}
             alt={item.title}
+            onError={() => setImageFailed(true)}
             className="w-full rounded-[var(--cb-radius-lg)] mt-[var(--cb-space-xl)] object-cover max-h-[460px]"
           />
         ) : null}

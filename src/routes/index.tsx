@@ -23,6 +23,7 @@ import {
   usePublicSponsors,
 } from "@/hooks/use-public-api";
 import {
+  contentItemSlug,
   generateInitials,
   getDefaultSeasonId,
   normalizeContentImage,
@@ -209,8 +210,8 @@ function Home() {
 
   const apiDivisions = home?.divisions || divisionsData;
   const topScorers = home?.topScorers || topScorersData;
-  const latestNews = home?.latestNews;
-  const highlightsData = home?.highlights;
+  const latestNews = (home?.latestNews || []).filter((n) => contentItemSlug(n));
+  const highlightsData = (home?.highlights || []).filter((h) => contentItemSlug(h));
   const sponsors = home?.sponsors && home.sponsors.length > 0 ? home.sponsors : sponsorsData;
   const completedMatches = getCompletedMatches(scheduleData?.items, home?.recentResults);
   const tickerLoading = scheduleLoading && completedMatches.length === 0;
@@ -347,7 +348,7 @@ function Home() {
       {topScorers && topScorers.length > 0 && <TopScorersSection scorers={topScorers} />}
 
       {/* News */}
-      {latestNews && latestNews.length > 0 ? (
+      {latestNews.length > 0 ? (
         <Section muted>
           <div className="flex items-center justify-between">
             <h2 className="cb-heading">{t("home.latestNews")}</h2>
@@ -363,7 +364,8 @@ function Home() {
               <Link
                 key={`${item.id || item.title}-${idx}`}
                 to="/news/$slug"
-                params={{ slug: item.slug || item.id }}
+                params={{ slug: contentItemSlug(item) }}
+                className="block h-full"
               >
                 <NewsCard
                   category={item.category || ""}
@@ -381,7 +383,7 @@ function Home() {
       ) : null}
 
       {/* Highlights */}
-      {highlightsData && highlightsData.length > 0 ? (
+      {highlightsData.length > 0 ? (
         <Section muted>
           <div className="flex items-center justify-between">
             <h2 className="cb-heading">{t("home.highlights")}</h2>
@@ -397,8 +399,8 @@ function Home() {
               <Link
                 key={`${item.id || item.title}-${idx}`}
                 to="/highlights/$slug"
-                params={{ slug: item.slug || item.id }}
-                className={idx === 0 ? "md:col-span-2" : ""}
+                params={{ slug: contentItemSlug(item) }}
+                className={"block h-full" + (idx === 0 ? " md:col-span-2" : "")}
               >
                 <HighlightCard
                   title={item.title}

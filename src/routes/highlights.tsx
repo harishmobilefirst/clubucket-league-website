@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Layout, PageHeader } from "@/components/Layout";
 import { HighlightCard } from "@/components/HighlightCard";
 import { Section } from "@/components/Section";
@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageNav } from "@/components/PageNav";
 import { usePublicHighlights } from "@/hooks/use-public-api";
-import { normalizeContentImage, normalizeContentExcerpt } from "@/lib/public-api";
+import { contentItemSlug, normalizeContentImage, normalizeContentExcerpt } from "@/lib/public-api";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/highlights")({
@@ -33,8 +33,12 @@ function Highlights() {
   usePageTitle("meta.highlights");
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = usePublicHighlights(locale, page);
-  const items = data?.items ?? [];
+  const items = (data?.items ?? []).filter((h) => contentItemSlug(h));
   const totalPages = data?.meta?.totalPages ?? 1;
+
+  useEffect(() => {
+    setPage(1);
+  }, [locale]);
 
   return (
     <Layout>
@@ -76,8 +80,8 @@ function Highlights() {
                 <Link
                   key={`${h.id}-${idx}`}
                   to="/highlights/$slug"
-                  params={{ slug: h.slug || h.id }}
-                  className={idx === 0 ? "md:col-span-2" : ""}
+                  params={{ slug: contentItemSlug(h) }}
+                  className={"block h-full" + (idx === 0 ? " md:col-span-2" : "")}
                 >
                   <HighlightCard
                     title={h.title}
