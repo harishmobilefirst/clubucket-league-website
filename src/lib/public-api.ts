@@ -390,6 +390,15 @@ export function normalizeContentExcerpt(item: {
   return "";
 }
 
+/**
+ * Resolve the deep-link slug for a content item — the API may send either
+ * `slug` or only `id`. Trims whitespace and returns `""` when neither exists
+ * so callers can filter out items that cannot be routed to.
+ */
+export function contentItemSlug(item: { slug?: string; id?: string }): string {
+  return item.slug?.trim() || item.id?.trim() || "";
+}
+
 export function generateInitials(name: string | undefined | null): string {
   if (!name) return "";
   return name

@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Layout, PageHeader } from "@/components/Layout";
 import { NewsCard } from "@/components/NewsCard";
 import { Section } from "@/components/Section";
@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageNav } from "@/components/PageNav";
 import { usePublicNews } from "@/hooks/use-public-api";
-import { normalizeContentImage, normalizeContentExcerpt } from "@/lib/public-api";
+import { contentItemSlug, normalizeContentImage, normalizeContentExcerpt } from "@/lib/public-api";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/news")({
@@ -25,8 +25,12 @@ function News() {
   usePageTitle("meta.news");
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = usePublicNews(locale, page);
-  const items = data?.items ?? [];
+  const items = (data?.items ?? []).filter((n) => contentItemSlug(n));
   const totalPages = data?.meta?.totalPages ?? 1;
+
+  useEffect(() => {
+    setPage(1);
+  }, [locale]);
 
   return (
     <Layout>
@@ -65,7 +69,12 @@ function News() {
           <>
             <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)]">
               {items.map((n, idx) => (
-                <Link key={`${n.id}-${idx}`} to="/news/$slug" params={{ slug: n.slug || n.id }}>
+                <Link
+                  key={`${n.id}-${idx}`}
+                  to="/news/$slug"
+                  params={{ slug: contentItemSlug(n) }}
+                  className="block h-full"
+                >
                   <NewsCard
                     category={n.category || ""}
                     title={n.title}

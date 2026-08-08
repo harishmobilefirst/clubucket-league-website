@@ -23,9 +23,9 @@ export function HighlightCard({
   }, [image]);
 
   return (
-    <article className="cb-card cb-shadow-panel overflow-hidden group">
+    <article className="cb-card cb-shadow-panel overflow-hidden group h-full flex flex-col">
       {image && !imageFailed ? (
-        <div className="relative h-[220px] overflow-hidden">
+        <div className="relative h-[220px] shrink-0 overflow-hidden">
           <img
             src={image}
             alt={title}
@@ -44,16 +44,16 @@ export function HighlightCard({
           )}
         </div>
       ) : (
-        <div className="h-[220px] cb-card-muted flex items-center justify-center cb-caption">
+        <div className="h-[220px] shrink-0 cb-card-muted flex items-center justify-center cb-caption">
           Highlight
         </div>
       )}
-      <div className="p-[var(--cb-space-lg)]">
-        {category && <div className="cb-eyebrow">{category}</div>}
+      <div className="p-[var(--cb-space-lg)] flex-1 min-w-0">
+        {category && <div className="cb-eyebrow truncate">{category}</div>}
         <h3 className={"cb-title line-clamp-2" + (category ? " mt-[var(--cb-space-sm)]" : "")}>
           {title}
         </h3>
-        {date && <div className="cb-caption mt-[var(--cb-space-xs)]">{date}</div>}
+        {date && <div className="cb-caption mt-[var(--cb-space-xs)] truncate">{date}</div>}
         {excerpt && <p className="cb-body mt-[var(--cb-space-sm)] line-clamp-2">{excerpt}</p>}
       </div>
     </article>

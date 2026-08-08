@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicNewsItem } from "@/hooks/use-public-api";
@@ -18,7 +19,8 @@ export const Route = createFileRoute("/news_/$slug")({
 function NewsDetail() {
   const { slug } = Route.useParams();
   const { locale, t } = useI18n();
-  const { data: item, isLoading } = usePublicNewsItem(slug, locale);
+  const { data: item, isLoading, error, refetch } = usePublicNewsItem(slug, locale);
+  const [imageFailed, setImageFailed] = useState(false);
 
   if (isLoading) {
     return (
@@ -34,6 +36,25 @@ function NewsDetail() {
             <Skeleton className="h-4 w-4/6" />
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-3/4" />
+          </div>
+        </Container>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <Container className="max-w-[750px] py-[var(--cb-space-section)] text-center">
+          <EmptyState message={t("common.sectionCouldNotLoad")} />
+          <button
+            onClick={() => refetch()}
+            className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
+          >
+            {t("common.retry")}
+          </button>
+          <div className="mt-[var(--cb-space-lg)]">
+            <BackLink to="/news">{t("news.backToNews")}</BackLink>
           </div>
         </Container>
       </Layout>
@@ -81,13 +102,14 @@ function NewsDetail() {
           )}
         </div>
 
-        {imageUrl && (
+        {imageUrl && !imageFailed ? (
           <img
             src={imageUrl}
             alt={item.title}
+            onError={() => setImageFailed(true)}
             className="w-full rounded-[var(--cb-radius-lg)] mt-[var(--cb-space-xl)] object-cover max-h-[460px]"
           />
-        )}
+        ) : null}
 
         <div className="mt-[var(--cb-space-xl)] cb-body leading-[1.7] space-y-[var(--cb-space-lg)]">
           {item.bodySections?.length ? (
