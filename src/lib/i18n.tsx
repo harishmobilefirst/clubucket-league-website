@@ -53,7 +53,10 @@ const en = {
   // Home
   "home.heroTitle": "The Heart of Mexican Soccer",
   "home.heroCta": "View Schedule",
+  "home.aboutEyebrow": "About LigaD1",
   "home.aboutTitle": "More Than a League. A Community.",
+  "home.aboutBody1": "LigaD1 is Mexico's premier semi-professional soccer league, bringing together the most competitive clubs from across the country. Founded to bridge the gap between amateur football and the professional game, LigaD1 gives talented players a real platform to grow.",
+  "home.aboutBody2": "With three competitive divisions and a rapidly growing fan base, LigaD1 is more than a competition — it's a movement built on passion, discipline, and community.",
   "home.aboutImgAlt": "LigaD1 season in action",
   "home.our": "OUR",
   "home.divisions": "DIVISIONS",
@@ -298,7 +301,10 @@ const es: Record<TranslationKey, string> = {
 
   "home.heroTitle": "El Corazón del Futbol Mexicano",
   "home.heroCta": "Ver Calendario",
+  "home.aboutEyebrow": "Acerca de LigaD1",
   "home.aboutTitle": "Más que una liga. Una comunidad.",
+  "home.aboutBody1": "LigaD1 es la liga de fútbol semiprofesional premier de México, reuniendo a los clubes más competitivos de todo el país. Fundada para cerrar la brecha entre el fútbol amateur y el profesional, LigaD1 da a los jugadores talentosos una plataforma real para crecer.",
+  "home.aboutBody2": "Con tres divisiones competitivas y una base de fans en rápido crecimiento, LigaD1 es más que una competencia — es un movimiento construido sobre pasión, disciplina y comunidad.",
   "home.aboutImgAlt": "La temporada de LigaD1 en acción",
   "home.our": "NUESTRAS",
   "home.divisions": "DIVISIONES",

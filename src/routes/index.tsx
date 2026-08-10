@@ -158,12 +158,8 @@ function Home() {
           <div>
             <div className="text-[16px] font-extrabold uppercase tracking-[2.5px]" style={{ color: "var(--cb-brand-accent)" }}>{(aboutData as any)?.eyebrow || t("home.aboutEyebrow")}</div>
             <h2 className="text-[32px] font-bold mt-3" style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}>{aboutData?.title || home?.aboutContent?.title || t("home.aboutTitle")}</h2>
-            {aboutData?.summary || home?.aboutContent?.body ? (
-              <>
-                <p className="text-[15px] mt-5" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{aboutData?.summary || home?.aboutContent?.body}</p>
-                {(aboutData as any)?.summary2 && <p className="text-[15px] mt-3" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{(aboutData as any).summary2}</p>}
-              </>
-            ) : null}
+            <p className="text-[15px] mt-5" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{aboutData?.summary || home?.aboutContent?.body || t("home.aboutBody1")}</p>
+            <p className="text-[15px] mt-3" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{(aboutData as any)?.summary2 || t("home.aboutBody2")}</p>
             <Link to="/about" className="mt-7 inline-block text-[14px] uppercase font-semibold hover:underline transition-colors" style={{ color: "var(--cb-brand-accent)" }}>{t("common.learnMore")} &rarr;</Link>
           </div>
           <div className="rounded-xl overflow-hidden min-h-[280px]">
