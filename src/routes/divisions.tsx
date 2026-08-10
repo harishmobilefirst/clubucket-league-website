@@ -1,10 +1,6 @@
 import { useRef } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { Container } from "@/components/Container";
-import { Section } from "@/components/Section";
-import { EmptyState } from "@/components/EmptyState";
-import { BackLink } from "@/components/BackLink";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicDivisions } from "@/hooks/use-public-api";
@@ -29,39 +25,44 @@ function Divisions() {
 
   return (
     <Layout>
-      <Section muted containerClassName="space-y-[var(--cb-space-section)]">
-        {isLoading ? (
-          <>
-            <DivisionCardSkeleton />
-            <DivisionCardSkeleton />
-          </>
-        ) : error ? (
-          <div className="text-center py-[var(--cb-space-section)]">
-            <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">
-              {t("common.sectionError")}
-            </p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
-            >
-              {t("common.retry")}
-            </button>
-          </div>
-        ) : !data || data.length === 0 ? (
-          <EmptyState message={t("divisions.empty")} />
-        ) : (
-          data.map((div, idx) => (
-            <DivisionCard key={`${div.id || div.name}-${idx}`} division={div} />
-          ))
-        )}
-      </Section>
+      <section style={{ backgroundColor: "var(--cb-surface-muted)" }} className="py-[60px]">
+        <div className="max-w-[1200px] mx-auto px-6 space-y-10">
+          {isLoading ? (
+            <>
+              <DivisionCardSkeleton />
+              <DivisionCardSkeleton />
+            </>
+          ) : error ? (
+            <div className="text-center py-[60px]">
+              <p className="text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>
+                {t("common.sectionError")}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-2 text-[12px] font-bold hover:underline"
+                style={{ color: "var(--cb-brand-accent)" }}
+              >
+                {t("common.retry")}
+              </button>
+            </div>
+          ) : !data || data.length === 0 ? (
+            <div className="text-center py-[60px] text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>
+              {t("divisions.empty")}
+            </div>
+          ) : (
+            data.map((div, idx) => (
+              <DivisionCard key={`${div.id || div.name}-${idx}`} division={div} />
+            ))
+          )}
+        </div>
+      </section>
     </Layout>
   );
 }
 
 function DivisionCard({ division }: { division: PublicDivision }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
-  const CARD_STEP = 234;
+  const CARD_STEP = 230;
   const { t } = useI18n();
 
   const scrollBy = (dir: "left" | "right") => {
@@ -73,20 +74,39 @@ function DivisionCard({ division }: { division: PublicDivision }) {
   const teams = division.teams || [];
 
   return (
-    <div className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden cb-shadow-panel">
-      <div className="bg-[var(--cb-surface-muted)] px-[var(--cb-space-xl)] py-[var(--cb-space-lg)] border-b border-[var(--cb-border-subtle)]">
-        <h2 className="cb-title text-[var(--cb-brand-primary)]" style={{ textWrap: "balance" }}>
+    <div
+      style={{
+        backgroundColor: "var(--cb-surface-panel)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
+      }}
+      className="rounded-[10px] overflow-hidden"
+    >
+      <div
+        style={{
+          backgroundColor: "var(--cb-surface-muted)",
+          borderBottomColor: "var(--cb-border-subtle)",
+        }}
+        className="px-8 py-5 border-b"
+      >
+        <h2 className="text-[22px] font-bold" style={{ color: "var(--cb-brand-primary)" }}>
           {division.name}
         </h2>
       </div>
-      <div className="relative px-[var(--cb-space-xl)] py-[var(--cb-space-section)]">
+      <div className="relative px-6 py-10">
         {teams.length > 0 ? (
           <>
             <button
               type="button"
               onClick={() => scrollBy("left")}
               aria-label={t("divisions.scrollLeft")}
-              className="absolute left-[var(--cb-space-12)] top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[var(--cb-brand-primary)] text-[var(--cb-text-inverse)] flex items-center justify-center cb-shadow-panel hover:bg-[var(--cb-brand-accent)] transition-colors cb-focus"
+              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full text-white flex items-center justify-center shadow-md transition-colors"
+              style={{ backgroundColor: "var(--cb-brand-primary)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)";
+              }}
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
@@ -94,7 +114,14 @@ function DivisionCard({ division }: { division: PublicDivision }) {
               type="button"
               onClick={() => scrollBy("right")}
               aria-label={t("divisions.scrollRight")}
-              className="absolute right-[var(--cb-space-12)] top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full bg-[var(--cb-brand-primary)] text-[var(--cb-text-inverse)] flex items-center justify-center cb-shadow-panel hover:bg-[var(--cb-brand-accent)] transition-colors cb-focus"
+              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full text-white flex items-center justify-center shadow-md transition-colors"
+              style={{ backgroundColor: "var(--cb-brand-primary)" }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)";
+              }}
             >
               <ChevronRight className="w-5 h-5" />
             </button>
@@ -104,7 +131,7 @@ function DivisionCard({ division }: { division: PublicDivision }) {
               style={{ scrollbarWidth: "none" }}
             >
               <div
-                className="flex items-stretch gap-[var(--cb-space-lg)]"
+                className="flex items-stretch gap-5"
                 style={{ width: "max-content" }}
               >
                 {teams.map((t, idx) => (
@@ -112,9 +139,20 @@ function DivisionCard({ division }: { division: PublicDivision }) {
                     key={`${t.id}-${idx}`}
                     to="/teams/$teamId"
                     params={{ teamId: t.id }}
-                    className="w-[210px] shrink-0 group/team bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] border border-[var(--cb-border-subtle)] hover:border-[var(--cb-brand-accent)] hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                    className="w-[210px] shrink-0 group/team rounded-[14px] border hover:-translate-y-1 transition-all duration-300 flex flex-col"
+                    style={{
+                      backgroundColor: "var(--cb-surface-panel)",
+                      borderColor: "var(--cb-border-subtle)",
+                      boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.borderColor = "var(--cb-brand-accent)";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                    }}
                   >
-                    <div className="relative px-[var(--cb-space-lg)] pt-[var(--cb-space-lg)] pb-[var(--cb-space-sm)] flex items-center justify-center h-[170px]">
+                    <div className="relative px-5 pt-5 pb-3 flex items-center justify-center h-[170px]">
                       {t.logoUrl ? (
                         <img
                           src={t.logoUrl}
@@ -122,16 +160,25 @@ function DivisionCard({ division }: { division: PublicDivision }) {
                           className="w-[110px] h-[110px] object-contain transition-transform group-hover/team:scale-105"
                         />
                       ) : (
-                        <div className="w-[110px] h-[110px] rounded-[var(--cb-radius-lg)] bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)] text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] flex items-center justify-center transition-transform group-hover/team:scale-105">
+                        <div
+                          className="w-[110px] h-[110px] rounded-[14px] text-[20px] font-bold flex items-center justify-center transition-transform group-hover/team:scale-105"
+                          style={{
+                            backgroundColor: "var(--cb-surface-muted)",
+                            color: "var(--cb-text-secondary)",
+                          }}
+                        >
                           {t.initials || generateInitials(t.name)}
                         </div>
                       )}
                     </div>
-                    <div className="px-[var(--cb-space-md)] pb-[var(--cb-space-lg)] text-center">
-                      <div className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight group-hover/team:text-[var(--cb-brand-accent)] transition-colors">
+                    <div className="px-4 pb-5 text-center">
+                      <div
+                        className="text-[15px] font-bold leading-tight transition-colors group-hover/team:text-[var(--cb-brand-accent)]"
+                        style={{ color: "var(--cb-text-primary)" }}
+                      >
                         {t.name}
                       </div>
-                      <div className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-xs)]">
+                      <div className="text-[12px] mt-1" style={{ color: "var(--cb-text-secondary)" }}>
                         {division.name}
                       </div>
                     </div>
@@ -141,7 +188,9 @@ function DivisionCard({ division }: { division: PublicDivision }) {
             </div>
           </>
         ) : (
-          <EmptyState message={t("divisions.noTeams")} />
+          <div className="text-center py-10 text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>
+            {t("divisions.noTeams")}
+          </div>
         )}
       </div>
     </div>
@@ -150,16 +199,28 @@ function DivisionCard({ division }: { division: PublicDivision }) {
 
 function DivisionCardSkeleton() {
   return (
-    <div className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden cb-shadow-panel">
-      <div className="bg-[var(--cb-surface-muted)] px-[var(--cb-space-xl)] py-[var(--cb-space-lg)] border-b border-[var(--cb-border-subtle)]">
+    <div
+      style={{
+        backgroundColor: "var(--cb-surface-panel)",
+        boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
+      }}
+      className="rounded-[10px] overflow-hidden"
+    >
+      <div
+        style={{
+          backgroundColor: "var(--cb-surface-muted)",
+          borderBottomColor: "var(--cb-border-subtle)",
+        }}
+        className="px-8 py-5 border-b"
+      >
         <Skeleton className="h-6 w-48" />
       </div>
-      <div className="px-[var(--cb-space-xl)] py-[var(--cb-space-section)]">
-        <div className="flex items-stretch gap-[var(--cb-space-lg)]">
+      <div className="px-6 py-10">
+        <div className="flex items-stretch gap-5">
           {[1, 2, 3, 4].map((i) => (
             <div key={i} className="w-[210px] shrink-0">
-              <Skeleton className="h-[170px] w-full rounded-[var(--cb-radius-lg)]" />
-              <div className="px-[var(--cb-space-md)] pb-[var(--cb-space-lg)] mt-[var(--cb-space-md)] space-y-[var(--cb-space-sm)]">
+              <Skeleton className="h-[170px] w-full rounded-[14px]" />
+              <div className="px-4 pb-5 mt-4 space-y-2">
                 <Skeleton className="h-4 w-3/4 mx-auto" />
                 <Skeleton className="h-3 w-1/2 mx-auto" />
               </div>

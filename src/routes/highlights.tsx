@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { Layout, PageHeader } from "@/components/Layout";
 import { HighlightCard } from "@/components/HighlightCard";
-import { Section } from "@/components/Section";
+import { Container } from "@/components/Container";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageNav } from "@/components/PageNav";
@@ -43,61 +43,97 @@ function Highlights() {
   return (
     <Layout>
       <PageHeader title={t("highlights.title")} subtitle={t("highlights.subtitle")} />
-      <Section muted>
-        {isLoading ? (
-          <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)]">
-            {Array.from({ length: 6 }).map((_, i) => (
-              <div
-                key={i}
-                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden cb-shadow-panel"
-              >
-                <Skeleton className="h-[190px] w-full rounded-none" />
-                <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
-                  <Skeleton className="h-3 w-20" />
-                  <Skeleton className="h-5 w-full" />
-                  <Skeleton className="h-4 w-28" />
-                  <Skeleton className="h-4 w-full" />
-                </div>
-              </div>
-            ))}
-          </div>
-        ) : error ? (
-          <div className="text-center py-[var(--cb-space-section)]">
-            <p className="cb-body">{t("common.sectionError")}</p>
-            <button
-              onClick={() => window.location.reload()}
-              className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
-            >
-              {t("common.retry")}
-            </button>
-          </div>
-        ) : items.length === 0 ? (
-          <EmptyState message={t("highlights.empty")} />
-        ) : (
-          <>
-            <div className="grid md:grid-cols-2 gap-[var(--cb-space-xl)]">
-              {items.map((h, idx) => (
-                <Link
-                  key={`${h.id}-${idx}`}
-                  to="/highlights/$slug"
-                  params={{ slug: contentItemSlug(h) }}
-                  className={"block h-full" + (idx === 0 ? " md:col-span-2" : "")}
+      <section className="py-[60px]" style={{ background: "var(--cb-surface-muted)" }}>
+        <Container>
+          {isLoading ? (
+            <div className="grid md:grid-cols-3 gap-6">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <div
+                  key={i}
+                  className="rounded-[10px] overflow-hidden"
+                  style={{ background: "var(--cb-surface-panel)", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}
                 >
-                  <HighlightCard
-                    title={h.title}
-                    date={h.date || ""}
-                    excerpt={normalizeContentExcerpt(h)}
-                    image={normalizeContentImage(h)}
-                    mediaUrl={h.mediaUrl}
-                    category={h.category || ""}
-                  />
-                </Link>
+                  <Skeleton className="h-[220px] w-full rounded-none" />
+                  <div className="p-5 space-y-3">
+                    <Skeleton className="h-3 w-20" />
+                    <Skeleton className="h-5 w-full" />
+                    <Skeleton className="h-4 w-28" />
+                    <Skeleton className="h-4 w-full" />
+                  </div>
+                </div>
               ))}
             </div>
-            <PageNav page={page} totalPages={totalPages} onPageChange={setPage} />
-          </>
-        )}
-      </Section>
+          ) : error ? (
+            <div className="text-center py-[60px]">
+              <p className="text-[15px] leading-[1.7]" style={{ color: "var(--cb-text-secondary)" }}>
+                {t("common.sectionError")}
+              </p>
+              <button
+                onClick={() => window.location.reload()}
+                className="mt-3 text-[14px] font-bold hover:underline"
+                style={{ color: "var(--cb-brand-accent)" }}
+              >
+                {t("common.retry")}
+              </button>
+            </div>
+          ) : items.length === 0 ? (
+            <EmptyState message={t("highlights.empty")} />
+          ) : (
+            <>
+              <div className="grid md:grid-cols-3 gap-6">
+                {items.map((h, idx) => (
+                  <HighlightLinkWrapper
+                    key={`${h.id}-${idx}`}
+                    to="/highlights/$slug"
+                    params={{ slug: contentItemSlug(h) }}
+                  >
+                    <HighlightCard
+                      title={h.title}
+                      date={h.date || ""}
+                      excerpt={normalizeContentExcerpt(h)}
+                      image={normalizeContentImage(h)}
+                      mediaUrl={h.mediaUrl}
+                      category={h.category || ""}
+                    />
+                  </HighlightLinkWrapper>
+                ))}
+              </div>
+              <div className="mt-[60px]">
+                <PageNav page={page} totalPages={totalPages} onPageChange={setPage} />
+              </div>
+            </>
+          )}
+        </Container>
+      </section>
     </Layout>
+  );
+}
+
+function HighlightLinkWrapper({
+  to,
+  params,
+  children,
+}: {
+  to: string;
+  params: Record<string, string>;
+  children: React.ReactNode;
+}) {
+  const [hovered, setHovered] = useState(false);
+  return (
+    <Link
+      to={to}
+      params={params}
+      className="block h-full rounded-[10px] transition-all duration-200"
+      style={{
+        transform: hovered ? "translateY(-2px)" : "translateY(0)",
+        boxShadow: hovered
+          ? "0 8px 24px rgba(0,0,0,0.12)"
+          : "0 2px 12px rgba(0,0,0,0.07)",
+      }}
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+    >
+      {children}
+    </Link>
   );
 }

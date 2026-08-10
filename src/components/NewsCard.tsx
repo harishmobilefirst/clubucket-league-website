@@ -22,7 +22,10 @@ export function NewsCard({
   }, [image]);
 
   return (
-    <article className="cb-card cb-shadow-panel overflow-hidden h-full flex flex-col">
+    <article
+      className="overflow-hidden h-full flex flex-col cb-card cb-shadow-panel"
+      style={{ borderRadius: 10 }}
+    >
       {image && !imageFailed ? (
         <img
           src={image}
@@ -34,17 +37,44 @@ export function NewsCard({
           className="w-full h-[190px] shrink-0 object-cover"
         />
       ) : (
-        <div className="h-[190px] shrink-0 cb-card-muted flex items-center justify-center cb-caption">
+        <div
+          className="h-[190px] shrink-0 flex items-center justify-center text-[13px]"
+          style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-muted)" }}
+        >
           {t("cards.matchPhoto")}
         </div>
       )}
-      <div className="p-[var(--cb-space-lg)] flex-1 min-w-0">
-        {category && <div className="cb-eyebrow truncate">{category}</div>}
-        <h3 className={"cb-title line-clamp-2" + (category ? " mt-[var(--cb-space-sm)]" : "")}>
+      <div className="p-5 flex-1 min-w-0">
+        {category && (
+          <div
+            className="text-[11px] uppercase font-bold truncate"
+            style={{ color: "var(--cb-brand-accent)" }}
+          >
+            {category}
+          </div>
+        )}
+        <h3
+          className={
+            "text-[16px] font-bold line-clamp-2" +
+            (category ? " mt-2" : "")
+          }
+          style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
+        >
           {title}
         </h3>
-        {date && <div className="cb-caption mt-[var(--cb-space-xs)] truncate">{date}</div>}
-        {excerpt && <p className="cb-body mt-[var(--cb-space-sm)] line-clamp-2">{excerpt}</p>}
+        {date && (
+          <div className="text-[12px] mt-1.5 truncate" style={{ color: "var(--cb-text-muted)" }}>
+            {date}
+          </div>
+        )}
+        {excerpt && (
+          <p
+            className="text-[13px] mt-2 line-clamp-2"
+            style={{ color: "var(--cb-text-secondary)" }}
+          >
+            {excerpt}
+          </p>
+        )}
       </div>
     </article>
   );

@@ -23,7 +23,10 @@ export function HighlightCard({
   }, [image]);
 
   return (
-    <article className="cb-card cb-shadow-panel overflow-hidden group h-full flex flex-col">
+    <article
+      className="overflow-hidden group h-full flex flex-col cb-card cb-shadow-panel"
+      style={{ borderRadius: 10 }}
+    >
       {image && !imageFailed ? (
         <div className="relative h-[220px] shrink-0 overflow-hidden">
           <img
@@ -36,25 +39,58 @@ export function HighlightCard({
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {mediaUrl && (
-            <div className="absolute inset-0 flex items-center justify-center bg-[var(--cb-surface-inverse)]/30 group-hover:bg-[var(--cb-surface-inverse)]/40 transition-colors">
-              <div className="w-12 h-12 rounded-full bg-[var(--cb-brand-accent)] text-[var(--cb-text-inverse)] flex items-center justify-center shadow-lg">
+            <div
+              className="absolute inset-0 flex items-center justify-center group-hover:bg-black/40 transition-colors"
+              style={{ background: "color-mix(in srgb, var(--cb-surface-inverse), transparent 70%)" }}
+            >
+              <div
+                className="w-12 h-12 rounded-full flex items-center justify-center shadow-lg"
+                style={{ background: "var(--cb-brand-accent)", color: "var(--cb-text-inverse)" }}
+              >
                 <Play size={20} className="ml-0.5" />
               </div>
             </div>
           )}
         </div>
       ) : (
-        <div className="h-[220px] shrink-0 cb-card-muted flex items-center justify-center cb-caption">
+        <div
+          className="h-[220px] shrink-0 flex items-center justify-center text-[13px]"
+          style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-muted)" }}
+        >
           Highlight
         </div>
       )}
-      <div className="p-[var(--cb-space-lg)] flex-1 min-w-0">
-        {category && <div className="cb-eyebrow truncate">{category}</div>}
-        <h3 className={"cb-title line-clamp-2" + (category ? " mt-[var(--cb-space-sm)]" : "")}>
+      <div className="p-5 flex-1 min-w-0">
+        {category && (
+          <div
+            className="text-[11px] uppercase font-bold truncate"
+            style={{ color: "var(--cb-brand-accent)" }}
+          >
+            {category}
+          </div>
+        )}
+        <h3
+          className={
+            "text-[16px] font-bold line-clamp-2" +
+            (category ? " mt-2" : "")
+          }
+          style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
+        >
           {title}
         </h3>
-        {date && <div className="cb-caption mt-[var(--cb-space-xs)] truncate">{date}</div>}
-        {excerpt && <p className="cb-body mt-[var(--cb-space-sm)] line-clamp-2">{excerpt}</p>}
+        {date && (
+          <div className="text-[12px] mt-1.5 truncate" style={{ color: "var(--cb-text-muted)" }}>
+            {date}
+          </div>
+        )}
+        {excerpt && (
+          <p
+            className="text-[13px] mt-2 line-clamp-2"
+            style={{ color: "var(--cb-text-secondary)" }}
+          >
+            {excerpt}
+          </p>
+        )}
       </div>
     </article>
   );

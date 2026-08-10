@@ -83,8 +83,11 @@ export function Navbar() {
   const locales = config?.supportedLocales.length ? config.supportedLocales : fallbackLocales;
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-[1000] h-[68px] text-[var(--cb-text-inverse)] cb-section-inverse">
-      <Container className="h-full flex items-center gap-[var(--cb-space-lg)]">
+    <header
+      className="fixed top-0 left-0 right-0 z-[1000] h-[68px] cb-section-inverse"
+      style={{ color: "var(--cb-text-inverse)" }}
+    >
+      <Container className="h-full flex items-center gap-6">
         <Link
           to="/"
           className="flex items-center gap-[var(--cb-space-sm)] leading-none shrink-0 cb-focus"
@@ -94,7 +97,7 @@ export function Navbar() {
 
         <div className="flex-1" />
 
-        <nav className="hidden xl:flex items-center gap-[20px] shrink-0">
+        <nav className="hidden xl:flex items-center gap-7 shrink-0">
           {navLinks.map((l) => {
             const active = l.to === "/" ? pathname === "/" : pathname.startsWith(l.to);
             return (
@@ -102,7 +105,10 @@ export function Navbar() {
                 key={l.to}
                 to={l.to}
                 aria-current={active ? "page" : undefined}
-                className="group relative whitespace-nowrap font-[var(--cb-font-weight-heading)] uppercase tracking-normal text-[length:var(--cb-font-size-body)] text-[var(--cb-text-inverse)] cb-focus"
+                className="relative whitespace-nowrap text-[14px] font-semibold uppercase tracking-[1.2px] transition-colors cb-focus"
+                style={{
+                  color: active ? "var(--cb-brand-accent)" : "var(--cb-text-inverse)",
+                }}
               >
                 {t(l.labelKey)}
                 {active ? (
@@ -111,36 +117,43 @@ export function Navbar() {
                     style={{ background: "var(--cb-brand-accent)" }}
                   />
                 ) : (
-                  <span className="absolute -bottom-2 left-0 right-0 h-[2px] scale-x-0 bg-[var(--cb-text-inverse)] transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100 motion-reduce:transform-none" />
+                  <span
+                    className="absolute -bottom-2 left-0 right-0 h-[2px] scale-x-0 transition-transform duration-200 ease-[cubic-bezier(0.22,1,0.36,1)] group-hover:scale-x-100 motion-reduce:transform-none"
+                    style={{ background: "var(--cb-brand-accent)" }}
+                  />
                 )}
               </Link>
             );
           })}
         </nav>
 
-        <div className="hidden xl:flex items-center gap-[var(--cb-space-md)] shrink-0">
-          <div
-            role="group"
-            aria-label={t("nav.language")}
-            className="inline-flex items-center rounded-full border border-[var(--cb-text-inverse)]/25 p-[3px]"
-          >
-            {locales.map((item) => {
+        <div className="hidden xl:flex items-center gap-4 shrink-0">
+          <div className="text-[12px] flex items-center gap-1">
+            {locales.map((item, idx) => {
               const active = locale === item.locale;
               return (
-                <button
-                  key={item.locale}
-                  type="button"
-                  onClick={() => setLocale(item.locale)}
-                  aria-pressed={active}
-                  className={
-                    "cb-focus rounded-full px-[var(--cb-space-sm)] py-[var(--cb-space-2xs)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal transition-colors " +
-                    (active
-                      ? "bg-[var(--cb-brand-accent)] text-[var(--cb-text-inverse)]"
-                      : "text-[var(--cb-text-inverse)] hover:bg-white/10")
-                  }
-                >
-                  {item.locale.toUpperCase()}
-                </button>
+                <span key={item.locale} className="flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => setLocale(item.locale)}
+                    className={
+                      active
+                        ? "underline decoration-2 underline-offset-4"
+                        : "opacity-70 hover:opacity-100 transition-opacity cb-focus"
+                    }
+                    style={{
+                      color: "var(--cb-text-inverse)",
+                      textDecorationColor: "var(--cb-brand-accent)",
+                    }}
+                  >
+                    {item.locale.toUpperCase()}
+                  </button>
+                  {idx < locales.length - 1 ? (
+                    <span style={{ color: "color-mix(in srgb, var(--cb-text-inverse), transparent 60%)" }}>
+                      |
+                    </span>
+                  ) : null}
+                </span>
               );
             })}
           </div>
@@ -149,17 +162,25 @@ export function Navbar() {
               onClick={() => setOpen((o) => !o)}
               aria-expanded={open}
               aria-haspopup="true"
-              className="cb-button-primary cb-focus"
-              style={{ padding: "var(--cb-space-sm) var(--cb-space-lg)" }}
+              className="text-[13px] font-bold uppercase rounded-full px-5 py-2 transition-colors cb-focus"
+              style={{
+                background: "var(--cb-brand-accent)",
+                color: "var(--cb-text-inverse)",
+              }}
             >
               {t("nav.register")}
             </button>
             {open && (
-              <div className="absolute right-0 mt-[var(--cb-space-xs)] w-[240px] cb-panel cb-shadow-panel overflow-hidden">
+              <div className="absolute right-0 mt-2 w-[240px] cb-panel cb-shadow-panel overflow-hidden">
                 <Link
                   to="/register"
                   onClick={() => setOpen(false)}
-                  className="block cb-body px-[var(--cb-space-lg)] py-[var(--cb-space-md)] hover:bg-[var(--cb-surface-muted)]"
+                  className="block text-[14px] px-5 py-3"
+                  style={{
+                    color: "var(--cb-text-primary)",
+                  }}
+                  onMouseEnter={(e) => (e.currentTarget.style.background = "var(--cb-surface-muted)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.background = "")}
                 >
                   {t("nav.newTeamMembership")}
                 </Link>
@@ -184,7 +205,8 @@ export function Navbar() {
           role="dialog"
           aria-modal="true"
           aria-label={t("nav.navigationMenu")}
-          className="xl:hidden fixed inset-0 top-[68px] z-[999] bg-[var(--cb-brand-primary)]"
+          className="xl:hidden fixed inset-0 top-[68px] z-[999]"
+          style={{ background: "var(--cb-brand-primary)" }}
         >
           <nav className="flex flex-col p-[var(--cb-space-xl)] gap-[var(--cb-space-sm)]">
             {navLinks.map((l) => {
@@ -205,7 +227,10 @@ export function Navbar() {
                 </Link>
               );
             })}
-            <div className="border-t border-white/20 mt-[var(--cb-space-md)] pt-[var(--cb-space-md)] flex items-center gap-[var(--cb-space-md)]">
+            <div
+              className="border-t mt-[var(--cb-space-md)] pt-[var(--cb-space-md)] flex items-center gap-[var(--cb-space-md)]"
+              style={{ borderColor: "color-mix(in srgb, var(--cb-text-inverse), transparent 80%)" }}
+            >
               {locales.map((item) => {
                 const active = locale === item.locale;
                 return (
@@ -218,10 +243,12 @@ export function Navbar() {
                     aria-pressed={active}
                     className={
                       "py-[var(--cb-space-sm)] px-[var(--cb-space-md)] rounded-[var(--cb-radius-md)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal cb-focus " +
-                      (active
-                        ? "bg-[var(--cb-brand-accent)] text-[var(--cb-text-inverse)]"
-                        : "text-[var(--cb-text-inverse)]")
+                      (active ? "" : "opacity-80")
                     }
+                    style={{
+                      background: active ? "var(--cb-brand-accent)" : "transparent",
+                      color: "var(--cb-text-inverse)",
+                    }}
                   >
                     {t(`language.${item.locale}`)}
                   </button>

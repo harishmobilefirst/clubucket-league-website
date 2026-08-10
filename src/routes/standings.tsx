@@ -1,8 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
-import { Container } from "@/components/Container";
-import { Section } from "@/components/Section";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { usePublicStandings, usePublicDivisions, usePublicConfig } from "@/hooks/use-public-api";
@@ -34,8 +32,14 @@ function Standing() {
 
   return (
     <Layout>
-      <div className="bg-[var(--cb-surface-panel)] border-b border-[var(--cb-border-subtle)]">
-        <Container className="flex gap-[var(--cb-space-xl)]">
+      <div
+        className=""
+        style={{
+          background: "var(--cb-surface-panel)",
+          borderBottom: "1px solid var(--cb-border-subtle)",
+        }}
+      >
+        <div className="max-w-[1200px] mx-auto px-6 flex gap-8">
           {divisions?.map((d) => {
             const active = d.id === divisionId;
             return (
@@ -43,105 +47,127 @@ function Standing() {
                 key={d.id}
                 type="button"
                 onClick={() => setSelectedDivisionId(d.id)}
-                className="relative py-[var(--cb-space-md)] text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] cursor-pointer cb-focus transition-colors"
+                className="relative py-4 text-[13px] uppercase cursor-pointer transition-colors cb-focus"
                 style={{
                   color: active ? "var(--cb-text-primary)" : "var(--cb-text-muted)",
-                  fontWeight: active
-                    ? "var(--cb-font-weight-heading)"
-                    : "var(--cb-font-weight-medium)",
+                  fontWeight: active ? 700 : 600,
                 }}
               >
                 {d.name}
                 {active && (
-                  <span className="absolute bottom-0 left-0 right-0 h-[2px] bg-[var(--cb-brand-accent)] pointer-events-none" />
+                  <span
+                    className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none"
+                    style={{ background: "var(--cb-brand-accent)" }}
+                  />
                 )}
               </button>
             );
           })}
-        </Container>
+        </div>
       </div>
 
-      <Section>
-        <div className="overflow-hidden rounded-[var(--cb-radius-md)] border border-[var(--cb-border-subtle)]">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="cb-table-header h-14">
-                <th className="w-[8%] text-left pl-[var(--cb-space-xl)]">#</th>
-                <th className="w-[30%] text-left">{t("standings.team")}</th>
-                <th className="w-[10%] text-left">{t("standings.p")}</th>
-                <th className="w-[10%] text-left">{t("standings.w")}</th>
-                <th className="w-[10%] text-left">{t("standings.l")}</th>
-                <th className="w-[10%] text-left">{t("standings.gf")}</th>
-                <th className="w-[10%] text-left">{t("standings.ga")}</th>
-                <th className="w-[6%] text-left">{t("standings.gd")}</th>
-                <th className="w-[10%] text-left pr-[var(--cb-space-xl)]">{t("standings.pts")}</th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                Array.from({ length: 8 }).map((_, i) => (
+      <section className="py-10" style={{ background: "var(--cb-surface-panel)" }}>
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div
+            className="overflow-hidden rounded-md"
+            style={{ border: "1px solid var(--cb-border-subtle)" }}
+          >
+            <table className="w-full border-collapse">
+              <thead>
+                <tr
+                  className="text-[13px] font-extrabold uppercase tracking-wider h-14"
+                  style={{
+                    background: "var(--cb-status-success)",
+                    color: "var(--cb-text-primary)",
+                  }}
+                >
+                  <th className="w-[8%] text-left pl-8">#</th>
+                  <th className="w-[30%] text-left">{t("standings.team")}</th>
+                  <th className="w-[10%] text-left">{t("standings.p")}</th>
+                  <th className="w-[10%] text-left">{t("standings.w")}</th>
+                  <th className="w-[10%] text-left">{t("standings.l")}</th>
+                  <th className="w-[10%] text-left">{t("standings.gf")}</th>
+                  <th className="w-[10%] text-left">{t("standings.ga")}</th>
+                  <th className="w-[6%] text-left">{t("standings.gd")}</th>
+                  <th className="w-[10%] text-left pr-8">{t("standings.pts")}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <tr
+                      key={i}
+                      className="h-[72px]"
+                      style={{
+                        borderTop: "1px solid var(--cb-border-subtle)",
+                      }}
+                    >
+                      <td className="pl-8">
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-4">
+                          <Skeleton className="w-10 h-10 rounded-[8px]" />
+                          <Skeleton className="h-5 w-32" />
+                        </div>
+                      </td>
+                      <td>
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td>
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td className="pr-8">
+                        <Skeleton className="h-5 w-8" />
+                      </td>
+                    </tr>
+                  ))
+                ) : error ? (
                   <tr
-                    key={i}
-                    className="border-t border-[var(--cb-border-subtle)] h-[var(--cb-space-48)]"
+                    className="h-[72px]"
+                    style={{ borderTop: "1px solid var(--cb-border-subtle)" }}
                   >
-                    <td className="pl-[var(--cb-space-xl)]">
-                      <Skeleton className="h-5 w-6" />
-                    </td>
-                    <td>
-                      <div className="flex items-center gap-[var(--cb-space-md)]">
-                        <Skeleton className="w-10 h-10 rounded-[var(--cb-radius-md)]" />
-                        <Skeleton className="h-5 w-32" />
-                      </div>
-                    </td>
-                    <td>
-                      <Skeleton className="h-5 w-6" />
-                    </td>
-                    <td>
-                      <Skeleton className="h-5 w-6" />
-                    </td>
-                    <td>
-                      <Skeleton className="h-5 w-6" />
-                    </td>
-                    <td>
-                      <Skeleton className="h-5 w-6" />
-                    </td>
-                    <td>
-                      <Skeleton className="h-5 w-6" />
-                    </td>
-                    <td className="pr-[var(--cb-space-xl)]">
-                      <Skeleton className="h-5 w-8" />
+                    <td colSpan={9} className="text-center text-[15px]">
+                      This section could not load.
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="ml-1 text-[13px] font-bold hover:underline cb-focus transition-colors"
+                        style={{ color: "var(--cb-brand-accent)" }}
+                      >
+                        {t("common.retry")}
+                      </button>
                     </td>
                   </tr>
-                ))
-              ) : error ? (
-                <tr className="border-t border-[var(--cb-border-subtle)] h-[var(--cb-space-48)]">
-                  <td colSpan={9} className="text-center cb-body">
-                    This section could not load.
-                    <button
-                      onClick={() => window.location.reload()}
-                      className="ml-[var(--cb-space-xs)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus transition-colors"
-                    >
-                      {t("common.retry")}
-                    </button>
-                  </td>
-                </tr>
-              ) : !standings || standings.length === 0 ? (
-                <tr className="border-t border-[var(--cb-border-subtle)]">
-                  <td colSpan={9}>
-                    <EmptyState message={t("standings.empty")} />
-                  </td>
-                </tr>
-              ) : (
-                standings.map((r, idx) => <Row key={`${r.id}-${idx}`} r={r} />)
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : !standings || standings.length === 0 ? (
+                  <tr style={{ borderTop: "1px solid var(--cb-border-subtle)" }}>
+                    <td colSpan={9}>
+                      <EmptyState message={t("standings.empty")} />
+                    </td>
+                  </tr>
+                ) : (
+                  standings.map((r, idx) => <Row key={`${r.id}-${idx}`} r={r} />)
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-md)]">
-          {t("standings.legend")}
-        </p>
-      </Section>
+          <p className="text-[11px] mt-4" style={{ color: "var(--cb-text-muted)" }}>
+            {t("standings.legend")}
+          </p>
+        </div>
+      </section>
     </Layout>
   );
 }
@@ -149,44 +175,67 @@ function Standing() {
 function Row({ r }: { r: PublicStandingRow }) {
   const gd = r.goalDifference ?? r.goalsFor - r.goalsAgainst;
   return (
-    <tr className="border-t border-[var(--cb-border-subtle)] bg-[var(--cb-surface-panel)] hover:bg-[var(--cb-surface-muted)] transition-colors h-[var(--cb-space-48)]">
-      <td className="pl-[var(--cb-space-xl)] text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+    <tr
+      className="h-[72px]"
+      style={{
+        borderTop: "1px solid var(--cb-border-subtle)",
+        background: "var(--cb-surface-panel)",
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = "var(--cb-surface-muted)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = "var(--cb-surface-panel)";
+      }}
+    >
+      <td
+        className="pl-8 text-[15px]"
+        style={{ color: "var(--cb-text-primary)" }}
+      >
         {r.rank}
       </td>
       <td>
-        <div className="flex items-center gap-[var(--cb-space-md)]">
+        <div className="flex items-center gap-4">
           {r.team.logoUrl ? (
             <img
               src={r.team.logoUrl}
               alt={r.team.name}
-              className="w-10 h-10 rounded-[var(--cb-radius-md)] object-contain border border-[var(--cb-border-subtle)]"
+              className="w-10 h-10 rounded-[8px] object-contain"
+              style={{ border: "1px solid var(--cb-border-subtle)" }}
             />
           ) : (
-            <div className="w-10 h-10 rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] flex items-center justify-center border border-[var(--cb-border-subtle)]">
+            <div
+              className="w-10 h-10 rounded-[8px] text-[11px] font-bold flex items-center justify-center"
+              style={{
+                background: "var(--cb-surface-muted)",
+                color: "var(--cb-text-secondary)",
+                border: "1px solid var(--cb-border-subtle)",
+              }}
+            >
               {r.team.shortCode || generateInitials(r.team.name)}
             </div>
           )}
-          <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+          <span className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
             {r.team.name}
           </span>
         </div>
       </td>
-      <td className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {r.played}
       </td>
-      <td className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {r.losses}
       </td>
-      <td className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {r.goalsFor}
       </td>
-      <td className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {r.goalsAgainst}
       </td>
-      <td className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {gd > 0 ? `+${gd}` : gd}
       </td>
-      <td className="pr-[var(--cb-space-xl)] text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+      <td className="pr-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {r.points}
       </td>
     </tr>

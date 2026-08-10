@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import seasonHighlights from "@/assets/season-highlights.jpg";
 import { Layout } from "@/components/Layout";
@@ -84,7 +84,10 @@ function HeroSlider({
   }, [count]);
 
   return (
-    <section className="relative w-full h-[600px] overflow-hidden bg-[var(--cb-brand-primary)]">
+    <section
+      className="relative w-full h-[600px] overflow-hidden"
+      style={{ background: "var(--cb-brand-primary)" }}
+    >
       {(!slides || slides.length === 0
         ? fallbackSlides.map((src) => ({ imageUrl: src }))
         : slides
@@ -109,23 +112,29 @@ function HeroSlider({
           />
         </div>
       ))}
-      <div className="relative z-10 h-full flex items-center justify-center px-[var(--cb-space-xl)]">
+      <div className="relative z-10 h-full flex items-center justify-center px-6">
         <div className="text-center max-w-3xl">
           {slides && slides[current]?.headline ? (
             <>
               <h1
-                className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]"
-                style={{ textWrap: "balance" }}
+                className="text-[52px] font-extrabold uppercase leading-[1.05]"
+                style={{ color: "var(--cb-text-inverse)", textWrap: "balance" }}
               >
                 {slides[current].headline}
               </h1>
               {slides[current].subheadline && (
-                <p className="text-[color-mix(in_srgb,var(--cb-text-inverse),transparent_20%)] text-[length:var(--cb-font-size-title)] mt-[var(--cb-space-lg)]">
+                <p
+                  className="text-[18px] mt-5"
+                  style={{
+                    color:
+                      "color-mix(in srgb, var(--cb-text-inverse), transparent 20%)",
+                  }}
+                >
                   {slides[current].subheadline}
                 </p>
               )}
               {slides[current].ctaText && (
-                <div className="mt-[var(--cb-space-xl)]">
+                <div className="mt-8">
                   <Link
                     to={slides[current].ctaLink || "/schedule"}
                     className="inline-block cb-button-primary"
@@ -138,15 +147,21 @@ function HeroSlider({
           ) : (
             <>
               <h1
-                className="text-[var(--cb-text-inverse)] text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase leading-[1.05]"
-                style={{ textWrap: "balance" }}
+                className="text-[52px] font-extrabold uppercase leading-[1.05]"
+                style={{ color: "var(--cb-text-inverse)", textWrap: "balance" }}
               >
                 {t("home.heroTitle")}
               </h1>
-              <p className="text-[color-mix(in_srgb,var(--cb-text-inverse),transparent_20%)] text-[length:var(--cb-font-size-title)] mt-[var(--cb-space-lg)]">
+              <p
+                className="text-[18px] mt-5"
+                style={{
+                  color:
+                    "color-mix(in srgb, var(--cb-text-inverse), transparent 20%)",
+                }}
+              >
                 LigaD1
               </p>
-              <div className="mt-[var(--cb-space-xl)]">
+              <div className="mt-8">
                 <Link to="/schedule" className="inline-block cb-button-primary">
                   {t("home.heroCta")}
                 </Link>
@@ -159,22 +174,24 @@ function HeroSlider({
         <>
           <button
             onClick={() => setCurrent((current - 1 + count) % count)}
-            className="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[var(--cb-surface-inverse)]/60 text-[var(--cb-text-inverse)] flex items-center justify-center hover:bg-[var(--cb-surface-inverse)]/40 cb-focus"
+            className="absolute left-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full text-[var(--cb-text-inverse)] flex items-center justify-center cb-focus"
+            style={{ background: "color-mix(in srgb, var(--cb-surface-inverse), transparent 40%)" }}
           >
             <ChevronLeft size={22} />
           </button>
           <button
             onClick={() => setCurrent((current + 1) % count)}
-            className="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-[var(--cb-surface-inverse)]/60 text-[var(--cb-text-inverse)] flex items-center justify-center hover:bg-[var(--cb-surface-inverse)]/40 cb-focus"
+            className="absolute right-6 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full text-[var(--cb-text-inverse)] flex items-center justify-center cb-focus"
+            style={{ background: "color-mix(in srgb, var(--cb-surface-inverse), transparent 40%)" }}
           >
             <ChevronRight size={22} />
           </button>
-          <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center gap-[var(--cb-space-xs)]">
+          <div className="absolute bottom-6 left-0 right-0 z-20 flex justify-center gap-2">
             {Array.from({ length: count }).map((_, dotIdx) => (
               <button
                 key={dotIdx}
                 onClick={() => setCurrent(dotIdx)}
-                className="w-3 h-3 rounded-full cb-focus"
+                className="w-2.5 h-2.5 rounded-full cb-focus"
                 style={{
                   background:
                     dotIdx === current
@@ -230,14 +247,14 @@ function Home() {
       <div>
         {tickerLoading ? (
           <div
-            className="w-full py-[var(--cb-space-sm)]"
+            className="w-full py-3"
             style={{ background: "var(--cb-brand-primary)" }}
           >
             <Container>
-              <div className="flex gap-[var(--cb-space-sm)]">
-                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
-                <Skeleton className="h-10 w-[180px] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)]/20" />
+              <div className="flex gap-2">
+                <Skeleton className="h-10 w-[180px] rounded-md" style={{ background: "color-mix(in srgb, var(--cb-surface-panel), transparent 80%)" }} />
+                <Skeleton className="h-10 w-[180px] rounded-md" style={{ background: "color-mix(in srgb, var(--cb-surface-panel), transparent 80%)" }} />
+                <Skeleton className="h-10 w-[180px] rounded-md" style={{ background: "color-mix(in srgb, var(--cb-surface-panel), transparent 80%)" }} />
               </div>
             </Container>
           </div>
@@ -249,10 +266,13 @@ function Home() {
 
       {homeError && (
         <Section muted containerClassName="text-center">
-          <p className="cb-body">{t("common.sectionCouldNotLoad")}</p>
+          <p className="text-[15px]" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>
+            {t("common.sectionCouldNotLoad")}
+          </p>
           <button
             onClick={() => window.location.reload()}
-            className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
+            className="mt-7 text-[14px] uppercase font-semibold hover:underline cb-focus"
+            style={{ color: "var(--cb-brand-accent)" }}
           >
             {t("common.retry")}
           </button>
@@ -260,24 +280,52 @@ function Home() {
       )}
 
       {/* About */}
-      <Section muted containerClassName="grid md:grid-cols-2 gap-[var(--cb-space-xl)] items-center">
+      <Section
+        muted
+        noPadding
+        className="py-20"
+        containerClassName="grid md:grid-cols-2 gap-16 items-center"
+      >
         <div>
-          <h2 className="cb-heading">
+          <div
+            className="text-[16px] font-extrabold uppercase tracking-[2.5px]"
+            style={{ color: "var(--cb-brand-accent)" }}
+          >
+            {aboutData?.eyebrow || t("home.aboutEyebrow")}
+          </div>
+          <h2
+            className="text-[32px] font-bold mt-3"
+            style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
+          >
             {aboutData?.title || home?.aboutContent?.title || t("home.aboutTitle")}
           </h2>
           {aboutData?.summary || home?.aboutContent?.body ? (
-            <p className="cb-body mt-[var(--cb-space-lg)]">
-              {aboutData?.summary || home?.aboutContent?.body}
-            </p>
+            <>
+              <p
+                className="text-[15px] mt-5"
+                style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}
+              >
+                {aboutData?.summary || home?.aboutContent?.body}
+              </p>
+              {(aboutData as any)?.summary2 && (
+                <p
+                  className="text-[15px] mt-3"
+                  style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}
+                >
+                  {(aboutData as any).summary2}
+                </p>
+              )}
+            </>
           ) : null}
           <Link
             to="/about"
-            className="mt-[var(--cb-space-xl)] inline-block text-[var(--cb-brand-accent)] text-[length:var(--cb-font-size-body)] uppercase font-[var(--cb-font-weight-heading)] hover:underline"
+            className="mt-7 inline-block text-[14px] uppercase font-semibold hover:underline"
+            style={{ color: "var(--cb-brand-accent)" }}
           >
             {t("common.learnMore")} &rarr;
           </Link>
         </div>
-        <div className="rounded-[var(--cb-radius-lg)] overflow-hidden min-h-[280px]">
+        <div className="rounded-xl overflow-hidden min-h-[280px]">
           <img
             src={aboutData?.imageUrl || home?.aboutContent?.imageUrl || seasonHighlights}
             alt={aboutData?.title || t("home.aboutImgAlt")}
@@ -290,38 +338,67 @@ function Home() {
       </Section>
 
       {/* Our Divisions */}
-      <Section inverse>
+      <Section inverse noPadding className="py-20">
         <h2
-          className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal"
+          className="text-[40px] md:text-[44px] font-extrabold uppercase tracking-tight"
           style={{ textWrap: "balance" }}
         >
-          <span className="text-[var(--cb-text-inverse)]">{t("home.our")} </span>
-          <span className="text-[var(--cb-brand-accent)]">{t("home.divisions")}</span>
+          <span style={{ color: "var(--cb-text-inverse)" }}>{t("home.our")} </span>
+          <span style={{ color: "var(--cb-brand-accent)" }}>{t("home.divisions")}</span>
         </h2>
         {apiDivisions && apiDivisions.length > 0 ? (
-          <div className="mt-[var(--cb-space-section)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--cb-space-xl)]">
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {apiDivisions.map((div, idx) => (
               <Link
                 key={`${div.id || div.name}-${idx}`}
                 to="/divisions"
-                className="group relative bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] overflow-hidden hover:-translate-y-1 transition-all duration-300 cb-shadow-panel cb-focus"
+                className="group relative overflow-hidden hover:-translate-y-1 transition-all duration-300 cb-shadow-panel cb-focus"
+                style={{
+                  background: "var(--cb-surface-panel)",
+                  borderRadius: 12,
+                  padding: 24,
+                }}
               >
-                <span className="absolute top-0 left-0 h-1 w-0 bg-[var(--cb-brand-accent)] group-hover:w-full transition-all duration-300" />
+                <span
+                  className="absolute top-0 left-0 h-1 w-0 group-hover:w-full transition-all duration-300"
+                  style={{ background: "var(--cb-brand-accent)" }}
+                />
                 <div className="flex items-start justify-between">
-                  <div className="w-12 h-12 rounded-[var(--cb-radius-md)] border-2 border-[var(--cb-brand-primary)] flex items-center justify-center bg-[var(--cb-surface-panel)]">
-                    <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-primary)]">
+                  <div
+                    className="w-12 h-12 rounded-[10px] border-2 flex items-center justify-center"
+                    style={{
+                      borderColor: "var(--cb-brand-primary)",
+                      background: "var(--cb-surface-panel)",
+                    }}
+                  >
+                    <span
+                      className="text-[10px] font-extrabold"
+                      style={{ color: "var(--cb-brand-primary)" }}
+                    >
                       {config?.displayName ? generateInitials(config.displayName) : "L1"}
                     </span>
                   </div>
                 </div>
-                <h3 className="mt-[var(--cb-space-lg)] text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal text-[var(--cb-brand-primary)] leading-tight">
+                <h3
+                  className="mt-6 text-[22px] font-extrabold uppercase tracking-tight leading-tight"
+                  style={{ color: "var(--cb-brand-primary)" }}
+                >
                   {div.name}
                 </h3>
-                <div className="mt-[var(--cb-space-lg)] flex items-center justify-between">
-                  <span className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] tracking-normal text-[var(--cb-brand-accent)]">
+                <div className="mt-6 flex items-center justify-between">
+                  <span
+                    className="text-[12px] uppercase font-bold tracking-[1.5px]"
+                    style={{ color: "var(--cb-brand-accent)" }}
+                  >
                     {t("home.viewStandings")}
                   </span>
-                  <div className="w-9 h-9 rounded-[var(--cb-radius-md)] bg-[var(--cb-brand-accent)] text-[var(--cb-text-inverse)] flex items-center justify-center group-hover:opacity-90 transition-colors">
+                  <div
+                    className="w-9 h-9 rounded-md flex items-center justify-center group-hover:opacity-90 transition-colors"
+                    style={{
+                      background: "var(--cb-brand-accent)",
+                      color: "var(--cb-text-inverse)",
+                    }}
+                  >
                     <ChevronRight size={18} />
                   </div>
                 </div>
@@ -329,15 +406,16 @@ function Home() {
             ))}
           </div>
         ) : homeLoading ? (
-          <div className="mt-[var(--cb-space-section)] grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[var(--cb-space-xl)]">
+          <div className="mt-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {[1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)]"
+                className="p-6"
+                style={{ background: "var(--cb-surface-panel)", borderRadius: 12 }}
               >
-                <Skeleton className="w-12 h-12 rounded-[var(--cb-radius-md)]" />
-                <Skeleton className="h-7 w-3/4 mt-[var(--cb-space-lg)]" />
-                <Skeleton className="h-4 w-1/3 mt-[var(--cb-space-lg)]" />
+                <Skeleton className="w-12 h-12 rounded-[10px]" />
+                <Skeleton className="h-7 w-3/4 mt-6" />
+                <Skeleton className="h-4 w-1/3 mt-6" />
               </div>
             ))}
           </div>
@@ -345,38 +423,48 @@ function Home() {
       </Section>
 
       {/* Top Scorers */}
-      {topScorers && topScorers.length > 0 && <TopScorersSection scorers={topScorers} />}
+      {topScorers && topScorers.length > 0 && (
+        <TopScorersSection scorers={topScorers} />
+      )}
 
       {/* News */}
       {latestNews.length > 0 ? (
-        <Section muted>
-          <div className="flex items-center justify-between">
-            <h2 className="cb-heading">{t("home.latestNews")}</h2>
-            <Link
-              to="/news"
-              className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]"
-            >
-              {t("home.viewAllNews")} &rarr;
-            </Link>
-          </div>
-          <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
-            {latestNews.slice(0, 3).map((item, idx) => (
-              <Link
-                key={`${item.id || item.title}-${idx}`}
-                to="/news/$slug"
-                params={{ slug: contentItemSlug(item) }}
-                className="block h-full"
+        <Section muted noPadding className="pt-10 pb-20">
+          <Container>
+            <div className="flex items-center justify-between">
+              <h2
+                className="text-[32px] font-bold"
+                style={{ color: "var(--cb-text-primary)" }}
               >
-                <NewsCard
-                  category={item.category || ""}
-                  title={item.title}
-                  date={item.date || ""}
-                  excerpt={normalizeContentExcerpt(item)}
-                  image={normalizeContentImage(item)}
-                />
+                {t("home.latestNews")}
+              </h2>
+              <Link
+                to="/news"
+                className="text-[13px] uppercase font-semibold"
+                style={{ color: "var(--cb-brand-accent)" }}
+              >
+                {t("home.viewAllNews")} &rarr;
               </Link>
-            ))}
-          </div>
+            </div>
+            <div className="grid md:grid-cols-3 gap-6 mt-12">
+              {latestNews.slice(0, 3).map((item, idx) => (
+                <Link
+                  key={`${item.id || item.title}-${idx}`}
+                  to="/news/$slug"
+                  params={{ slug: contentItemSlug(item) }}
+                  className="block h-full"
+                >
+                  <NewsCard
+                    category={item.category || ""}
+                    title={item.title}
+                    date={item.date || ""}
+                    excerpt={normalizeContentExcerpt(item)}
+                    image={normalizeContentImage(item)}
+                  />
+                </Link>
+              ))}
+            </div>
+          </Container>
         </Section>
       ) : homeLoading ? (
         <SectionSkeleton />
@@ -384,35 +472,43 @@ function Home() {
 
       {/* Highlights */}
       {highlightsData.length > 0 ? (
-        <Section muted>
-          <div className="flex items-center justify-between">
-            <h2 className="cb-heading">{t("home.highlights")}</h2>
-            <Link
-              to="/highlights"
-              className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]"
-            >
-              {t("home.viewAllHighlights")} &rarr;
-            </Link>
-          </div>
-          <div className="mt-[var(--cb-space-xl)] grid md:grid-cols-2 gap-[var(--cb-space-xl)]">
-            {highlightsData.slice(0, 3).map((item, idx) => (
-              <Link
-                key={`${item.id || item.title}-${idx}`}
-                to="/highlights/$slug"
-                params={{ slug: contentItemSlug(item) }}
-                className={"block h-full" + (idx === 0 ? " md:col-span-2" : "")}
+        <Section muted noPadding className="pb-20">
+          <Container>
+            <div className="flex items-center justify-between">
+              <h2
+                className="text-[32px] font-bold"
+                style={{ color: "var(--cb-text-primary)" }}
               >
-                <HighlightCard
-                  title={item.title}
-                  date={item.date || ""}
-                  excerpt={normalizeContentExcerpt(item)}
-                  image={normalizeContentImage(item)}
-                  mediaUrl={item.mediaUrl}
-                  category={item.category || ""}
-                />
+                {t("home.highlights")}
+              </h2>
+              <Link
+                to="/highlights"
+                className="text-[13px] uppercase font-semibold"
+                style={{ color: "var(--cb-brand-accent)" }}
+              >
+                {t("home.viewAllHighlights")} &rarr;
               </Link>
-            ))}
-          </div>
+            </div>
+            <div className="mt-8 grid md:grid-cols-2 gap-6">
+              {highlightsData.slice(0, 3).map((item, idx) => (
+                <Link
+                  key={`${item.id || item.title}-${idx}`}
+                  to="/highlights/$slug"
+                  params={{ slug: contentItemSlug(item) }}
+                  className={"block h-full" + (idx === 0 ? " md:col-span-2" : "")}
+                >
+                  <HighlightCard
+                    title={item.title}
+                    date={item.date || ""}
+                    excerpt={normalizeContentExcerpt(item)}
+                    image={normalizeContentImage(item)}
+                    mediaUrl={item.mediaUrl}
+                    category={item.category || ""}
+                  />
+                </Link>
+              ))}
+            </div>
+          </Container>
         </Section>
       ) : homeLoading ? (
         <SectionHighlightSkeleton />
@@ -426,84 +522,136 @@ function Home() {
 
 function SectionHighlightSkeleton() {
   return (
-    <Section muted>
-      <Skeleton className="h-8 w-48" />
-      <div className="grid md:grid-cols-2 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
-        <div className="md:col-span-2 bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden">
-          <Skeleton className="h-[220px] w-full rounded-none" />
-          <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
-            <Skeleton className="h-5 w-3/4" />
-            <Skeleton className="h-3 w-20" />
-            <Skeleton className="h-4 w-2/3" />
-          </div>
-        </div>
-        {[1, 2].map((i) => (
+    <Section muted noPadding className="pb-20">
+      <Container>
+        <Skeleton className="h-8 w-48" />
+        <div className="grid md:grid-cols-2 gap-6 mt-8">
           <div
-            key={i}
-            className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden"
+            className="md:col-span-2 overflow-hidden"
+            style={{ background: "var(--cb-surface-panel)", borderRadius: 10 }}
           >
             <Skeleton className="h-[220px] w-full rounded-none" />
-            <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
+            <div className="p-5 space-y-4">
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-3 w-20" />
               <Skeleton className="h-4 w-2/3" />
             </div>
           </div>
-        ))}
-      </div>
+          {[1, 2].map((i) => (
+            <div
+              key={i}
+              className="overflow-hidden"
+              style={{ background: "var(--cb-surface-panel)", borderRadius: 10 }}
+            >
+              <Skeleton className="h-[220px] w-full rounded-none" />
+              <div className="p-5 space-y-4">
+                <Skeleton className="h-5 w-3/4" />
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-4 w-2/3" />
+              </div>
+            </div>
+          ))}
+        </div>
+      </Container>
     </Section>
   );
 }
 
 function SectionSkeleton() {
   return (
-    <Section muted>
-      <Skeleton className="h-8 w-48" />
-      <div className="grid md:grid-cols-3 gap-[var(--cb-space-xl)] mt-[var(--cb-space-xl)]">
-        {[1, 2, 3].map((i) => (
-          <div
-            key={i}
-            className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] overflow-hidden"
-          >
-            <Skeleton className="h-[190px] w-full rounded-none" />
-            <div className="p-[var(--cb-space-lg)] space-y-[var(--cb-space-md)]">
-              <Skeleton className="h-3 w-24" />
-              <Skeleton className="h-5 w-full" />
-              <Skeleton className="h-3 w-20" />
-              <Skeleton className="h-4 w-full" />
+    <Section muted noPadding className="pt-10 pb-20">
+      <Container>
+        <Skeleton className="h-8 w-48" />
+        <div className="grid md:grid-cols-3 gap-6 mt-12">
+          {[1, 2, 3].map((i) => (
+            <div
+              key={i}
+              className="overflow-hidden"
+              style={{ background: "var(--cb-surface-panel)", borderRadius: 10 }}
+            >
+              <Skeleton className="h-[190px] w-full rounded-none" />
+              <div className="p-5 space-y-2">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-5 w-full" />
+                <Skeleton className="h-3 w-20" />
+                <Skeleton className="h-4 w-full" />
+              </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </div>
+      </Container>
     </Section>
   );
 }
 
 function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
   const { t } = useI18n();
+  const scrollerRef = useRef<HTMLDivElement>(null);
+  const scrollBy = (dir: "left" | "right") => {
+    const el = scrollerRef.current;
+    if (!el) return;
+    el.scrollBy({ left: dir === "left" ? -230 : 230, behavior: "smooth" });
+  };
   return (
-    <Section muted>
-      <div className="flex items-center justify-between mb-[var(--cb-space-xl)]">
-        <h2 className="cb-heading">{t("home.topScorers")}</h2>
-        <Link
-          to="/top-scorers"
-          className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)]"
-        >
-          {t("common.viewAll")} &rarr;
-        </Link>
-      </div>
-      <div className="relative">
-        <div className="overflow-x-auto">
-          <div
-            className="flex items-stretch gap-[var(--cb-space-lg)]"
-            style={{ width: "max-content" }}
+    <Section muted noPadding className="pt-20 pb-10">
+      <Container>
+        <div className="flex items-center justify-between mb-8">
+          <h2
+            className="text-[32px] font-bold"
+            style={{ color: "var(--cb-text-primary)" }}
           >
+            {t("home.topScorers")}
+          </h2>
+          <div className="flex gap-2">
+            <button
+              onClick={() => scrollBy("left")}
+              aria-label="Scroll left"
+              className="w-10 h-10 rounded-full flex items-center justify-center transition-colors cb-focus"
+              style={{
+                background: "var(--cb-brand-primary)",
+                color: "var(--cb-text-inverse)",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--cb-brand-accent)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--cb-brand-primary)")}
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => scrollBy("right")}
+              aria-label="Scroll right"
+              className="w-10 h-10 rounded-full flex items-center justify-center transition-colors cb-focus"
+              style={{
+                background: "var(--cb-brand-primary)",
+                color: "var(--cb-text-inverse)",
+              }}
+              onMouseEnter={(e) => (e.currentTarget.style.background = "var(--cb-brand-accent)")}
+              onMouseLeave={(e) => (e.currentTarget.style.background = "var(--cb-brand-primary)")}
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+        <div ref={scrollerRef} className="overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+          <div className="flex items-stretch gap-5" style={{ width: "max-content" }}>
             {scorers.map((p, idx) => (
               <div
                 key={`${p.playerId || p.playerName}-${idx}`}
-                className="w-[210px] shrink-0 bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-lg)] overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
+                className="w-[210px] shrink-0 overflow-hidden hover:-translate-y-1 transition-transform duration-300 flex flex-col cb-shadow-panel"
+                style={{
+                  background: "var(--cb-surface-panel)",
+                  borderRadius: 14,
+                  boxShadow: "0 4px 16px color-mix(in srgb, var(--cb-border-strong), transparent 92%)",
+                }}
               >
-                <div className="relative aspect-[3/4] bg-gradient-to-b from-[var(--cb-surface-muted)] to-[var(--cb-border-subtle)] flex items-center justify-center text-[var(--cb-text-secondary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-screen)]">
+                <div
+                  className="relative aspect-[3/4] flex items-center justify-center font-extrabold"
+                  style={{
+                    background:
+                      "linear-gradient(to bottom, var(--cb-surface-muted), color-mix(in srgb, var(--cb-border-subtle), white 20%))",
+                    color: "var(--cb-text-secondary)",
+                    fontSize: 48,
+                  }}
+                >
                   {p.imageUrl ? (
                     <img
                       src={p.imageUrl}
@@ -514,20 +662,32 @@ function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
                     generateInitials(p.playerName)
                   )}
                 </div>
-                <div className="px-[var(--cb-space-md)] pt-[var(--cb-space-sm)] pb-[var(--cb-space-md)]">
-                  <div className="flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-text-primary)] font-[var(--cb-font-weight-heading)] text-[length:var(--cb-font-size-title)]">
-                    <span aria-hidden className="text-[length:var(--cb-font-size-body)]">
+                <div className="px-4 pt-3 pb-4">
+                  <div
+                    className="flex items-center gap-1.5 font-extrabold text-[18px]"
+                    style={{ color: "var(--cb-text-primary)" }}
+                  >
+                    <span aria-hidden className="text-[16px]">
                       ⚽
                     </span>
                     <span>{p.goals}</span>
                   </div>
-                  <h3 className="mt-[var(--cb-space-xs)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
+                  <h3
+                    className="mt-2 text-[15px] font-extrabold leading-tight"
+                    style={{ color: "var(--cb-text-primary)" }}
+                  >
                     {p.playerName}
                   </h3>
-                  <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-2xs)]">
+                  <p
+                    className="text-[12px] mt-0.5"
+                    style={{ color: "var(--cb-text-secondary)" }}
+                  >
                     {p.teamName || ""}
                   </p>
-                  <p className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)] tracking-normal">
+                  <p
+                    className="mt-3 text-[11px] font-bold tracking-[1.5px]"
+                    style={{ color: "var(--cb-text-muted)" }}
+                  >
                     {p.position || ""}
                   </p>
                 </div>
@@ -535,7 +695,7 @@ function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
             ))}
           </div>
         </div>
-      </div>
+      </Container>
     </Section>
   );
 }
@@ -543,28 +703,34 @@ function TopScorersSection({ scorers }: { scorers: PublicTopScorer[] }) {
 function SponsorsSection({ sponsors }: { sponsors: PublicSponsor[] }) {
   const { t } = useI18n();
   return (
-    <Section
-      className="border-t-4 border-[var(--cb-brand-accent)]"
-      containerClassName="text-center pb-[var(--cb-space-section)]"
+    <section
+      className="py-14"
+      style={{
+        background: "var(--cb-surface-panel)",
+        borderTop: "4px solid var(--cb-brand-accent)",
+        borderBottom: "4px solid var(--cb-brand-accent)",
+      }}
     >
-      <h2
-        className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] tracking-normal text-[var(--cb-text-primary)] uppercase"
-        style={{ textWrap: "balance" }}
-      >
-        {t("home.sponsors")}
-      </h2>
-      <div className="mt-[var(--cb-space-xl)] flex items-center justify-center gap-[var(--cb-space-xl)] flex-wrap">
-        {sponsors.map((s, idx) =>
-          s.logoUrl ? (
-            <img
-              key={`${s.id}-${idx}`}
-              src={s.logoUrl}
-              alt={s.name}
-              className="h-16 object-contain"
-            />
-          ) : null,
-        )}
-      </div>
-    </Section>
+      <Container className="text-center">
+        <h2
+          className="text-[20px] font-bold tracking-[3px] uppercase"
+          style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
+        >
+          {t("home.sponsors")}
+        </h2>
+        <div className="mt-8 flex items-center justify-center gap-16 flex-wrap">
+          {sponsors.map((s, idx) =>
+            s.logoUrl ? (
+              <img
+                key={`${s.id}-${idx}`}
+                src={s.logoUrl}
+                alt={s.name}
+                className="h-16 object-contain"
+              />
+            ) : null,
+          )}
+        </div>
+      </Container>
+    </section>
   );
 }

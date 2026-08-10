@@ -25,16 +25,24 @@ export function PageHeader({
   subtitle?: string;
 }) {
   return (
-    <div className="w-full py-[var(--cb-space-xl)] flex items-center justify-center cb-section-inverse">
-      <div className="text-center px-[var(--cb-space-lg)]">
-        {label && <div className="cb-eyebrow mb-[var(--cb-space-md)]">{label}</div>}
+    <div className="w-full py-8 flex items-center justify-center cb-section-inverse">
+      <div className="text-center px-6">
+        {label && (
+          <div className="text-[11px] uppercase tracking-[2.5px] mb-3" style={{ color: "var(--cb-brand-accent)" }}>
+            {label}
+          </div>
+        )}
         <h1
-          className="font-[var(--cb-font-weight-heading)] leading-tight text-[length:var(--cb-font-size-screen)] text-[var(--cb-text-inverse)]"
-          style={{ textWrap: "balance" }}
+          className="font-extrabold text-[28px] leading-tight"
+          style={{ color: "var(--cb-text-inverse)", textWrap: "balance" }}
         >
           {title}
         </h1>
-        {subtitle && <p className="cb-caption mt-[var(--cb-space-md)]">{subtitle}</p>}
+        {subtitle && (
+          <p className="text-[16px] mt-3" style={{ color: "var(--cb-text-muted-inverse)" }}>
+            {subtitle}
+          </p>
+        )}
       </div>
     </div>
   );
@@ -51,7 +59,7 @@ export function TeamLogo({
 }) {
   return (
     <div
-      className="flex items-center justify-center font-[var(--cb-font-weight-heading)] shrink-0 cb-logo-fallback"
+      className="rounded-[8px] flex items-center justify-center font-bold shrink-0 cb-logo-fallback"
       style={{
         width: size,
         height: size,

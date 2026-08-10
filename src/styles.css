@@ -7,19 +7,10 @@
 
 @theme inline {
   --font-sans: 'DM Sans', sans-serif;
-  --spacing: var(--cb-space-xs);
   --radius-sm: var(--cb-radius-sm);
   --radius-md: var(--cb-radius-md);
   --radius-lg: var(--cb-radius-lg);
   --radius-xl: var(--cb-radius-lg);
-  --text-xs: var(--cb-font-size-caption);
-  --text-sm: var(--cb-font-size-body);
-  --text-base: var(--cb-font-size-body);
-  --text-xl: var(--cb-font-size-title);
-  --font-weight-normal: var(--cb-font-weight-body);
-  --font-weight-medium: var(--cb-font-weight-medium);
-  --font-weight-semibold: var(--cb-font-weight-medium);
-  --font-weight-bold: var(--cb-font-weight-heading);
   --shadow-xs: 0 1px 2px color-mix(in srgb, var(--cb-border-strong), transparent 80%);
   --shadow-sm: 0 1px 3px color-mix(in srgb, var(--cb-border-strong), transparent 76%);
   --shadow: 0 1px 3px color-mix(in srgb, var(--cb-border-strong), transparent 76%);
@@ -52,19 +43,19 @@
      the .cb-page wrapper (see __root.tsx) and overrides these. When a value is missing
      (partial/absent theme), React omits the inline style and these defaults hold, so the
      layout never collapses. Keep in sync with the backend/CMS theme contract. */
-  --cb-brand-primary: #166534;
+  --cb-brand-primary: #001D4C;
   --cb-brand-secondary: #111827;
-  --cb-brand-accent: #dc2626;
-  --cb-text-primary: #111827;
-  --cb-text-secondary: #475569;
-  --cb-text-muted: #64748b;
+  --cb-brand-accent: #ED2D23;
+  --cb-text-primary: #111111;
+  --cb-text-secondary: #6B6B6B;
+  --cb-text-muted: #9CA3AF;
   --cb-text-muted-inverse: color-mix(in srgb, var(--cb-text-inverse), transparent 15%);
   --cb-text-inverse: #ffffff;
-  --cb-surface-canvas: #f8fafc;
+  --cb-surface-canvas: #FFFFFF;
   --cb-surface-panel: #ffffff;
-  --cb-surface-muted: #f1f5f9;
-  --cb-surface-inverse: #111827;
-  --cb-border-subtle: #e2e8f0;
+  --cb-surface-muted: #F7F7F7;
+  --cb-surface-inverse: #001D4C;
+  --cb-border-subtle: #E5E5E5;
   --cb-border-strong: #94a3b8;
   --cb-status-success: #16a34a;
   --cb-status-warning: #f59e0b;
@@ -73,7 +64,7 @@
   --cb-radius-xs: 4px;
   --cb-radius-sm: 6px;
   --cb-radius-md: 8px;
-  --cb-radius-lg: 16px;
+  --cb-radius-lg: 12px;
   --cb-space-2xs: 2px;
   --cb-space-xs: 4px;
   --cb-space-sm: 8px;
@@ -82,17 +73,17 @@
   --cb-space-lg: 24px;
   --cb-space-48: 48px;
   --cb-space-xl: 40px;
-  --cb-space-section: 64px;
+  --cb-space-section: 80px;
   --cb-font-family: 'DM Sans', sans-serif;
   --cb-font-size-caption: 12px;
   --cb-font-size-body: 16px;
   --cb-font-size-title: 24px;
-  --cb-font-size-screen: clamp(1.75rem, 4.5vw, 3.5rem);
+  --cb-font-size-screen: clamp(1.75rem, 4.5vw, 3.25rem);
   --cb-font-weight-body: 400;
   --cb-font-weight-medium: 500;
   --cb-font-weight-heading: 700;
 
-  --radius: var(--cb-radius-md);
+  --radius: 0.625rem;
   --background: var(--cb-surface-canvas);
   --foreground: var(--cb-text-primary);
   --card: var(--cb-surface-panel);
@@ -184,36 +175,37 @@
 
   .cb-eyebrow {
     color: var(--cb-brand-accent);
-    font-size: var(--cb-font-size-caption);
-    font-weight: var(--cb-font-weight-heading);
+    font-size: 11px;
+    font-weight: 800;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
+    letter-spacing: 2.5px;
   }
 
   .cb-heading {
     color: var(--cb-text-primary);
-    font-size: var(--cb-font-size-screen);
-    font-weight: var(--cb-font-weight-heading);
+    font-size: 32px;
+    font-weight: 700;
     text-wrap: balance;
   }
 
   .cb-title {
     color: var(--cb-text-primary);
-    font-size: var(--cb-font-size-title);
-    font-weight: var(--cb-font-weight-heading);
+    font-size: 16px;
+    font-weight: 700;
     text-wrap: balance;
   }
 
   .cb-body {
     color: var(--cb-text-secondary);
-    font-size: var(--cb-font-size-body);
+    font-size: 15px;
     font-weight: var(--cb-font-weight-body);
+    line-height: 1.7;
     text-wrap: pretty;
   }
 
   .cb-caption {
     color: var(--cb-text-muted);
-    font-size: var(--cb-font-size-caption);
+    font-size: 12px;
   }
 
   .cb-link {
@@ -228,10 +220,10 @@
     justify-content: center;
     background: var(--cb-brand-accent);
     color: var(--cb-text-inverse);
-    border-radius: var(--cb-radius-lg);
-    padding: var(--cb-space-md) var(--cb-space-xl);
-    font-size: var(--cb-font-size-body);
-    font-weight: var(--cb-font-weight-heading);
+    border-radius: 9999px;
+    padding: 12px 28px;
+    font-size: 14px;
+    font-weight: 700;
     text-transform: uppercase;
   }
 
@@ -248,7 +240,7 @@
   }
 
   .cb-pill {
-    border-radius: var(--cb-radius-lg);
+    border-radius: 9999px;
     padding: var(--cb-space-xs) var(--cb-space-md);
     font-size: var(--cb-font-size-caption);
     font-weight: var(--cb-font-weight-heading);
@@ -257,9 +249,10 @@
   .cb-table-header {
     background: var(--cb-brand-primary);
     color: var(--cb-text-inverse);
-    font-size: var(--cb-font-size-caption);
-    font-weight: var(--cb-font-weight-heading);
+    font-size: 13px;
+    font-weight: 800;
     text-transform: uppercase;
+    letter-spacing: 0.1em;
   }
 
   .cb-logo-fallback {
@@ -312,22 +305,14 @@
   }
 }
 
-/* Thin scrollbars — never hidden */
+/* Hide scrollbars globally while keeping scroll functionality */
 html {
-  scrollbar-width: thin;
-  -ms-overflow-style: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
 html::-webkit-scrollbar,
 body::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-html::-webkit-scrollbar-thumb,
-body::-webkit-scrollbar-thumb {
-  background: var(--cb-border-strong);
-  border-radius: 3px;
-}
-html::-webkit-scrollbar-track,
-body::-webkit-scrollbar-track {
-  background: transparent;
+  width: 0;
+  height: 0;
+  display: none;
 }

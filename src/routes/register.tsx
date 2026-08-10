@@ -2,7 +2,6 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { CheckCircle2, Check, AlertCircle } from "lucide-react";
 import { Layout, PageHeader } from "@/components/Layout";
-import { Section } from "@/components/Section";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 import { useCreateInquiry, usePublicDivisions } from "@/hooks/use-public-api";
 
@@ -17,9 +16,11 @@ export const Route = createFileRoute("/register")({
 });
 
 const inputCls =
-  "w-full h-10 px-[var(--cb-space-md)] text-[length:var(--cb-font-size-body)] border border-[var(--cb-border-subtle)] rounded-[var(--cb-radius-md)] focus:outline-none focus:border-[var(--cb-text-primary)] disabled:opacity-50";
-const labelCls =
-  "block text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mb-[var(--cb-space-2xs)]";
+  "w-full h-10 px-3.5 text-[14px] rounded-md focus:outline-none disabled:opacity-50";
+const inputStyle = {
+  borderColor: "var(--cb-border-subtle)",
+};
+const labelCls = "block text-[13px] font-semibold mb-1.5";
 
 function Register() {
   const [submitted, setSubmitted] = useState(false);
@@ -60,191 +61,305 @@ function Register() {
   return (
     <Layout>
       <PageHeader title={t("register.title")} subtitle={t("register.subtitle")} />
-      <Section muted containerClassName="grid lg:grid-cols-[3fr_2fr] gap-[var(--cb-space-xl)]">
-        <div className="bg-[var(--cb-surface-panel)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-48)] border border-[var(--cb-border-subtle)]">
-          {submitted ? (
-            <div className="text-center py-[var(--cb-space-section)]">
-              <CheckCircle2 size={40} className="text-[var(--cb-status-success)] mx-auto" />
-              <h3
-                className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] mt-[var(--cb-space-md)]"
-                style={{ textWrap: "balance" }}
-              >
-                {t("register.requestSubmitted")}
-              </h3>
-              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)] mt-[var(--cb-space-sm)] max-w-md mx-auto">
-                {t("register.thankYou")}
-              </p>
-              <Link to="/" className="inline-block mt-[var(--cb-space-lg)] cb-button-secondary">
-                {t("register.backHome")}
-              </Link>
-            </div>
-          ) : (
-            <form onSubmit={handleSubmit}>
-              <h2 className="cb-title" style={{ textWrap: "balance" }}>
-                {t("register.formTitle")}
-              </h2>
-              <p className="cb-body mt-[var(--cb-space-xs)]">{t("register.formIntro")}</p>
-
-              {inquiry.error && (
-                <div className="mt-[var(--cb-space-lg)] flex items-start gap-[var(--cb-space-sm)] bg-[color-mix(in_srgb,var(--cb-status-danger),transparent_86%)] border border-[var(--cb-status-danger)] rounded-[var(--cb-radius-md)] px-[var(--cb-space-md)] py-[var(--cb-space-sm)]">
-                  <AlertCircle
-                    size={16}
-                    className="text-[var(--cb-status-danger)] shrink-0 mt-[var(--cb-space-2xs)]"
-                  />
-                  <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-status-danger)]">
-                    {inquiry.error instanceof Error
-                      ? inquiry.error.message
-                      : t("register.genericError")}
-                  </p>
-                </div>
-              )}
-
-              <div className="mt-[var(--cb-space-xl)] space-y-[var(--cb-space-lg)]">
-                <div className="grid md:grid-cols-2 gap-[var(--cb-space-lg)]">
-                  <div>
-                    <label className={labelCls}>{t("register.teamName")}</label>
-                    <input
-                      className={inputCls}
-                      value={form.teamName}
-                      onChange={set("teamName")}
-                      required
-                      disabled={inquiry.isPending}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>{t("register.city")}</label>
-                    <input
-                      className={inputCls}
-                      value={form.city}
-                      onChange={set("city")}
-                      required
-                      disabled={inquiry.isPending}
-                    />
-                  </div>
-                </div>
-                <div className="grid md:grid-cols-2 gap-[var(--cb-space-lg)]">
-                  <div>
-                    <label className={labelCls}>{t("register.contactName")}</label>
-                    <input
-                      className={inputCls}
-                      value={form.contactName}
-                      onChange={set("contactName")}
-                      required
-                      disabled={inquiry.isPending}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>{t("register.contactRole")}</label>
-                    <input
-                      className={inputCls}
-                      value={form.contactRole}
-                      onChange={set("contactRole")}
-                      placeholder={t("register.contactRolePlaceholder")}
-                      disabled={inquiry.isPending}
-                    />
-                  </div>
-                </div>
-                <div className="grid md:grid-cols-2 gap-[var(--cb-space-lg)]">
-                  <div>
-                    <label className={labelCls}>{t("register.email")}</label>
-                    <input
-                      type="email"
-                      className={inputCls}
-                      value={form.contactEmail}
-                      onChange={set("contactEmail")}
-                      required
-                      disabled={inquiry.isPending}
-                    />
-                  </div>
-                  <div>
-                    <label className={labelCls}>{t("register.phone")}</label>
-                    <input
-                      className={inputCls}
-                      value={form.contactPhone}
-                      onChange={set("contactPhone")}
-                      required
-                      disabled={inquiry.isPending}
-                    />
-                  </div>
-                </div>
-                <div>
-                  <label className={labelCls}>{t("register.divisionInterest")}</label>
-                  <select
-                    className={inputCls}
-                    value={form.divisionInterestId}
-                    onChange={set("divisionInterestId")}
-                    disabled={inquiry.isPending || divisionsLoading}
-                  >
-                    <option value="">
-                      {divisionsLoading
-                        ? t("register.loadingDivisions")
-                        : t("register.noPreference")}
-                    </option>
-                    {divisions?.map((division) => (
-                      <option key={division.id} value={division.id}>
-                        {division.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div>
-                  <label className={labelCls}>{t("register.aboutTeam")}</label>
-                  <textarea
-                    rows={4}
-                    className="w-full px-[var(--cb-space-md)] py-[var(--cb-space-sm)] text-[length:var(--cb-font-size-body)] border border-[var(--cb-border-subtle)] rounded-[var(--cb-radius-md)] focus:outline-none focus:border-[var(--cb-text-primary)] disabled:opacity-50"
-                    value={form.aboutTeam}
-                    onChange={set("aboutTeam")}
-                    placeholder={t("register.aboutTeamPlaceholder")}
-                    disabled={inquiry.isPending}
-                  />
-                </div>
-              </div>
-
-              <button
-                type="submit"
-                disabled={inquiry.isPending}
-                className="w-full mt-[var(--cb-space-xl)] cb-button-primary cb-focus disabled:opacity-50"
-              >
-                {inquiry.isPending ? t("register.submitting") : t("register.submit")}
-              </button>
-              <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] text-center mt-[var(--cb-space-sm)]">
-                {t("register.consent")}
-              </p>
-            </form>
-          )}
-        </div>
-
-        <aside className="bg-[var(--cb-brand-primary)] rounded-[var(--cb-radius-md)] p-[var(--cb-space-xl)] text-[var(--cb-text-inverse)] h-fit">
-          <h3
-            className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)]"
-            style={{ textWrap: "balance" }}
+      <section style={{ backgroundColor: "var(--cb-surface-muted)" }} className="py-[60px]">
+        <div className="max-w-[1200px] mx-auto px-6 grid lg:grid-cols-[3fr_2fr] gap-8">
+          <div
+            style={{
+              backgroundColor: "var(--cb-surface-panel)",
+              boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
+            }}
+            className="rounded-[10px] p-10 border"
           >
-            {t("register.whyJoin")}
-          </h3>
-          <ul className="mt-[var(--cb-space-lg)] space-y-[var(--cb-space-lg)]">
-            {[t("register.benefit1"), t("register.benefit2"), t("register.benefit3")].map(
-              (text) => (
-                <li key={text} className="flex gap-[var(--cb-space-sm)]">
-                  <Check
-                    size={16}
-                    className="text-[var(--cb-brand-accent)] shrink-0 mt-[var(--cb-space-2xs)]"
-                  />
-                  <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-inverse)]/85 leading-[1.7]">
-                    {text}
-                  </span>
-                </li>
-              ),
+            {submitted ? (
+              <div className="text-center py-10">
+                <CheckCircle2 size={40} className="text-[#166534] mx-auto" />
+                <h3 className="text-[20px] font-bold mt-4" style={{ color: "var(--cb-text-primary)" }}>
+                  {t("register.requestSubmitted")}
+                </h3>
+                <p className="text-[14px] mt-3 max-w-md mx-auto" style={{ color: "var(--cb-text-secondary)" }}>
+                  {t("register.thankYou")}
+                </p>
+                <Link
+                  to="/"
+                  className="inline-block mt-6 rounded-md px-5 py-2.5 text-[13px] font-semibold"
+                  style={{
+                    backgroundColor: "var(--cb-brand-primary)",
+                    color: "var(--cb-text-inverse)",
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.opacity = "0.9";
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.opacity = "1";
+                  }}
+                >
+                  {t("register.backHome")}
+                </Link>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmit}>
+                <h2 className="text-[20px] font-bold" style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}>
+                  {t("register.formTitle")}
+                </h2>
+                <p className="text-[14px] mt-2" style={{ color: "var(--cb-text-secondary)" }}>
+                  {t("register.formIntro")}
+                </p>
+
+                {inquiry.error && (
+                  <div
+                    className="mt-5 flex items-start gap-2 border rounded-md px-3.5 py-2.5"
+                    style={{
+                      backgroundColor: "rgba(220,38,38,0.08)",
+                      borderColor: "var(--cb-status-danger)",
+                    }}
+                  >
+                    <AlertCircle
+                      size={16}
+                      className="shrink-0 mt-0.5"
+                      style={{ color: "var(--cb-status-danger)" }}
+                    />
+                    <p className="text-[13px]" style={{ color: "var(--cb-status-danger)" }}>
+                      {inquiry.error instanceof Error
+                        ? inquiry.error.message
+                        : t("register.genericError")}
+                    </p>
+                  </div>
+                )}
+
+                <div className="mt-7 space-y-5">
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <div>
+                      <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                        {t("register.teamName")}
+                      </label>
+                      <input
+                        className={inputCls + " border"}
+                        style={inputStyle}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                        }}
+                        value={form.teamName}
+                        onChange={set("teamName")}
+                        required
+                        disabled={inquiry.isPending}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                        {t("register.city")}
+                      </label>
+                      <input
+                        className={inputCls + " border"}
+                        style={inputStyle}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                        }}
+                        value={form.city}
+                        onChange={set("city")}
+                        required
+                        disabled={inquiry.isPending}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <div>
+                      <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                        {t("register.contactName")}
+                      </label>
+                      <input
+                        className={inputCls + " border"}
+                        style={inputStyle}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                        }}
+                        value={form.contactName}
+                        onChange={set("contactName")}
+                        required
+                        disabled={inquiry.isPending}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                        {t("register.contactRole")}
+                      </label>
+                      <input
+                        className={inputCls + " border"}
+                        style={inputStyle}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                        }}
+                        value={form.contactRole}
+                        onChange={set("contactRole")}
+                        placeholder={t("register.contactRolePlaceholder")}
+                        disabled={inquiry.isPending}
+                      />
+                    </div>
+                  </div>
+                  <div className="grid md:grid-cols-2 gap-5">
+                    <div>
+                      <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                        {t("register.email")}
+                      </label>
+                      <input
+                        type="email"
+                        className={inputCls + " border"}
+                        style={inputStyle}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                        }}
+                        value={form.contactEmail}
+                        onChange={set("contactEmail")}
+                        required
+                        disabled={inquiry.isPending}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                        {t("register.phone")}
+                      </label>
+                      <input
+                        className={inputCls + " border"}
+                        style={inputStyle}
+                        onFocus={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                        }}
+                        onBlur={(e) => {
+                          e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                        }}
+                        value={form.contactPhone}
+                        onChange={set("contactPhone")}
+                        required
+                        disabled={inquiry.isPending}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                      {t("register.divisionInterest")}
+                    </label>
+                    <select
+                      className={inputCls + " border"}
+                      style={inputStyle}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                      }}
+                      value={form.divisionInterestId}
+                      onChange={set("divisionInterestId")}
+                      disabled={inquiry.isPending || divisionsLoading}
+                    >
+                      <option value="">
+                        {divisionsLoading
+                          ? t("register.loadingDivisions")
+                          : t("register.noPreference")}
+                      </option>
+                      {divisions?.map((division) => (
+                        <option key={division.id} value={division.id}>
+                          {division.name}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div>
+                    <label className={labelCls} style={{ color: "var(--cb-text-primary)" }}>
+                      {t("register.aboutTeam")}
+                    </label>
+                    <textarea
+                      rows={4}
+                      className="w-full px-3.5 py-2.5 text-[14px] border rounded-md focus:outline-none disabled:opacity-50"
+                      style={inputStyle}
+                      onFocus={(e) => {
+                        e.currentTarget.style.borderColor = "var(--cb-text-primary)";
+                      }}
+                      onBlur={(e) => {
+                        e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+                      }}
+                      value={form.aboutTeam}
+                      onChange={set("aboutTeam")}
+                      placeholder={t("register.aboutTeamPlaceholder")}
+                      disabled={inquiry.isPending}
+                    />
+                  </div>
+                </div>
+
+                <button
+                  type="submit"
+                  disabled={inquiry.isPending}
+                  className="w-full mt-7 text-white rounded-full py-3 text-[15px] font-bold uppercase disabled:opacity-50 transition-colors"
+                  style={{ backgroundColor: "var(--cb-brand-accent)" }}
+                  onMouseEnter={(e) => {
+                    if (!inquiry.isPending) {
+                      e.currentTarget.style.backgroundColor = "#c0241b";
+                    }
+                  }}
+                  onMouseLeave={(e) => {
+                    if (!inquiry.isPending) {
+                      e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)";
+                    }
+                  }}
+                >
+                  {inquiry.isPending ? t("register.submitting") : t("register.submit")}
+                </button>
+                <p className="text-[11px] text-center mt-3" style={{ color: "var(--cb-text-muted)" }}>
+                  {t("register.consent")}
+                </p>
+              </form>
             )}
-          </ul>
-          <div className="h-px bg-[var(--cb-surface-panel)]/10 my-[var(--cb-space-xl)]" />
-          <p className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)]">
-            {t("register.haveQuestions")}
-          </p>
-          <p className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-xs)]">
-            info@ligad1.com
-          </p>
-        </aside>
-      </Section>
+          </div>
+
+          <aside
+            style={{ backgroundColor: "var(--cb-brand-primary)" }}
+            className="rounded-[10px] p-8 h-fit"
+          >
+            <h3 className="text-[18px] font-bold" style={{ color: "var(--cb-text-inverse)", textWrap: "balance" }}>
+              {t("register.whyJoin")}
+            </h3>
+            <ul className="mt-5 space-y-4">
+              {[t("register.benefit1"), t("register.benefit2"), t("register.benefit3")].map(
+                (text) => (
+                  <li key={text} className="flex gap-3">
+                    <Check
+                      size={16}
+                      className="shrink-0 mt-0.5"
+                      style={{ color: "var(--cb-brand-accent)" }}
+                    />
+                    <span
+                      className="text-[14px] leading-[1.7]"
+                      style={{ color: "rgba(255,255,255,0.85)" }}
+                    >
+                      {text}
+                    </span>
+                  </li>
+                ),
+              )}
+            </ul>
+            <div className="h-px my-6" style={{ backgroundColor: "rgba(255,255,255,0.1)" }} />
+            <p className="text-[14px] font-semibold" style={{ color: "var(--cb-text-inverse)" }}>
+              {t("register.haveQuestions")}
+            </p>
+            <p className="text-[13px] mt-1" style={{ color: "var(--cb-text-muted-inverse)" }}>
+              info@ligad1.com
+            </p>
+          </aside>
+        </div>
+      </section>
     </Layout>
   );
 }

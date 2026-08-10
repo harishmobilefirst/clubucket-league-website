@@ -95,16 +95,15 @@ function Schedule() {
 
   return (
     <Layout>
-      {/* Tier 1: Tabs */}
-      <div className="bg-[var(--cb-brand-primary)]">
-        <div className="max-w-[1200px] mx-auto px-[var(--cb-space-xl)] flex gap-[var(--cb-space-xs)] pt-[var(--cb-space-sm)]">
+      <div style={{ background: "var(--cb-brand-primary)" }}>
+        <div className="max-w-[1200px] mx-auto px-6 flex gap-2 pt-3">
           {tabs.map((t) => {
             const active = view === t.id;
             return (
               <button
                 key={t.id}
                 onClick={() => setView(t.id)}
-                className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] tracking-normal px-[var(--cb-space-xl)] py-[var(--cb-space-sm)] rounded-t-[var(--cb-radius-lg)] transition-colors"
+                className="text-[13px] font-bold tracking-wider px-7 py-3 rounded-t-[16px] transition-colors"
                 style={{
                   background: active ? "var(--cb-surface-panel)" : "transparent",
                   color: active
@@ -119,15 +118,27 @@ function Schedule() {
         </div>
       </div>
 
-      {/* Tier 2: Dropdown filters */}
-      <div className="bg-[var(--cb-surface-panel)] border-b border-[var(--cb-border-subtle)] py-[var(--cb-space-lg)]">
-        <div className="max-w-[1200px] mx-auto px-[var(--cb-space-xl)] flex flex-wrap items-center gap-[var(--cb-space-sm)]">
+      <div
+        className="py-5"
+        style={{
+          background: "var(--cb-surface-panel)",
+          borderBottom: "1px solid var(--cb-border-subtle)",
+        }}
+      >
+        <div className="max-w-[1200px] mx-auto px-6 flex flex-wrap items-center gap-3">
           <Select
             value={divisionId}
             onValueChange={setDivisionId}
             disabled={!divisions || divisions.length === 0}
           >
-            <SelectTrigger className="w-[220px] h-11 text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal border-[var(--cb-border-subtle)] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)] text-[var(--cb-text-primary)]">
+            <SelectTrigger
+              className="w-[220px] h-11 text-[13px] font-semibold uppercase tracking-wide rounded-md"
+              style={{
+                borderColor: "var(--cb-border-subtle)",
+                background: "var(--cb-surface-panel)",
+                color: "var(--cb-text-primary)",
+              }}
+            >
               <SelectValue placeholder={t("schedule.allDivisions")} />
             </SelectTrigger>
             <SelectContent>
@@ -145,7 +156,14 @@ function Schedule() {
             onValueChange={(v) => setSeasonId(v || undefined)}
             disabled={seasonsLoading || !seasons || seasons.length === 0}
           >
-            <SelectTrigger className="w-[220px] h-11 text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal border-[var(--cb-border-subtle)] rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-panel)] text-[var(--cb-text-primary)]">
+            <SelectTrigger
+              className="w-[220px] h-11 text-[13px] font-semibold uppercase tracking-wide rounded-md"
+              style={{
+                borderColor: "var(--cb-border-subtle)",
+                background: "var(--cb-surface-panel)",
+                color: "var(--cb-text-primary)",
+              }}
+            >
               <SelectValue placeholder={t("schedule.selectSeason")} />
             </SelectTrigger>
             <SelectContent>
@@ -159,38 +177,45 @@ function Schedule() {
         </div>
       </div>
 
-      <section className="bg-[var(--cb-surface-muted)] py-[var(--cb-space-section)]">
-        <div className="max-w-[1200px] mx-auto px-[var(--cb-space-xl)]">
+      <section className="py-10" style={{ background: "var(--cb-surface-muted)" }}>
+        <div className="max-w-[1200px] mx-auto px-6">
           {isLoading ? (
-            <div className="space-y-[var(--cb-space-md)]">
+            <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-28 w-full rounded-[var(--cb-radius-md)]" />
+                <Skeleton key={i} className="h-28 w-full rounded-[10px]" />
               ))}
             </div>
           ) : error ? (
-            <div className="text-center py-[var(--cb-space-section)]">
-              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">
+            <div className="text-center py-10">
+              <p className="text-[15px]" style={{ color: "var(--cb-text-secondary)" }}>
                 {t("common.sectionError")}
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline"
+                className="mt-2 text-[13px] font-bold hover:underline"
+                style={{ color: "var(--cb-brand-accent)" }}
               >
                 {t("common.retry")}
               </button>
             </div>
           ) : fixtures.length === 0 ? (
-            <div className="text-center py-[var(--cb-space-section)]">
-              <p className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-secondary)]">
+            <div className="text-center py-10">
+              <p className="text-[15px]" style={{ color: "var(--cb-text-secondary)" }}>
                 {t("schedule.noFixtures")}
               </p>
             </div>
           ) : (
-            <div className="mb-[calc(var(--cb-space-xl)*2)]">
+            <div className="mb-12">
               {groupedFixtures.map(([groupKey, groupFixtures]) => (
-                <div key={groupKey} className="mb-[var(--cb-space-lg)]">
-                  <div className="bg-[var(--cb-surface-muted)] rounded-[var(--cb-radius-md)] px-[var(--cb-space-lg)] py-[var(--cb-space-sm)] mb-[var(--cb-space-sm)]">
-                    <span className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] tracking-normal">
+                <div key={groupKey} className="mb-6">
+                  <div
+                    className="rounded-md px-5 py-2.5 mb-3"
+                    style={{ background: "var(--cb-surface-muted)" }}
+                  >
+                    <span
+                      className="text-[12px] uppercase font-bold tracking-wider"
+                      style={{ color: "var(--cb-text-primary)" }}
+                    >
                       {groupKey.length === 10 ? formatGroupDate(groupKey, locale) : groupKey}
                     </span>
                   </div>
@@ -242,12 +267,20 @@ function TeamLogoImg({ team }: { team?: { logoUrl?: string; shortCode?: string; 
       <img
         src={team.logoUrl}
         alt={team.name}
-        className="w-10 h-10 rounded-[var(--cb-radius-md)] object-contain border border-[var(--cb-border-subtle)]"
+        className="w-10 h-10 rounded-[8px] object-contain"
+        style={{ border: "1px solid var(--cb-border-subtle)" }}
       />
     );
   }
   return (
-    <div className="w-10 h-10 rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] flex items-center justify-center border border-[var(--cb-border-subtle)]">
+    <div
+      className="w-10 h-10 rounded-[8px] text-[11px] font-bold flex items-center justify-center"
+      style={{
+        background: "var(--cb-surface-muted)",
+        color: "var(--cb-text-secondary)",
+        border: "1px solid var(--cb-border-subtle)",
+      }}
+    >
       {team.shortCode || generateInitials(team.name)}
     </div>
   );
@@ -255,16 +288,12 @@ function TeamLogoImg({ team }: { team?: { logoUrl?: string; shortCode?: string; 
 
 function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
   const { locale, t } = useI18n();
-  const statusPill =
-    m.status === "completed"
-      ? "bg-[color-mix(in_srgb,var(--cb-status-success),transparent_86%)] text-[var(--cb-status-success)]"
-      : "bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)]";
-  const statusLabel =
-    m.status === "completed"
-      ? t("schedule.completed")
-      : m.status === "scheduled"
-        ? t("schedule.upcoming")
-        : m.status;
+  const isCompleted = m.status === "completed";
+  const statusLabel = isCompleted
+    ? t("schedule.completed")
+    : m.status === "scheduled"
+      ? t("schedule.upcoming")
+      : m.status;
 
   return (
     <div
@@ -277,57 +306,87 @@ function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
           onClick?.();
         }
       }}
-      className="bg-[var(--cb-surface-panel)] border border-[var(--cb-border-subtle)] rounded-[var(--cb-radius-md)] px-[var(--cb-space-xl)] py-[var(--cb-space-lg)] mb-[var(--cb-space-xs)].5 cursor-pointer hover:border-[var(--cb-brand-accent)] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-[var(--cb-brand-accent)]"
+      onMouseEnter={(e) => {
+        e.currentTarget.style.borderColor = "var(--cb-brand-accent)";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
+      }}
+      className="rounded-[10px] px-7 py-5 mb-2.5 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2"
+      style={{
+        background: "var(--cb-surface-panel)",
+        border: "1px solid var(--cb-border-subtle)",
+      }}
     >
-      <div className="flex items-center gap-[var(--cb-space-md)]">
+      <div className="flex items-center gap-4">
         <div className="w-[15%] text-center">
-          <div className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">
+          <div className="text-[13px] font-bold" style={{ color: "var(--cb-text-primary)" }}>
             {formatDate(m.matchDate, locale)}
           </div>
           {m.kickoffTime && (
-            <div className="text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
+            <div className="text-[12px]" style={{ color: "var(--cb-text-muted)" }}>
               {m.kickoffTime}
             </div>
           )}
         </div>
-        <div className="w-[25%] flex items-center justify-end gap-[var(--cb-space-sm)]">
-          <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] text-right">
+        <div className="w-[25%] flex items-center justify-end gap-2.5">
+          <span
+            className="text-[15px] font-semibold text-right"
+            style={{ color: "var(--cb-text-primary)" }}
+          >
             {m.homeTeam.name}
           </span>
           <TeamLogoImg team={m.homeTeam} />
         </div>
         <div className="w-[20%] text-center">
-          {m.status === "completed" &&
+          {isCompleted &&
           m.result?.homeScore != null &&
           m.result?.awayScore != null ? (
             <div
-              className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]"
-              style={{ textWrap: "balance" }}
+              className="text-[28px] font-extrabold"
+              style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
             >
               {m.result.homeScore} &ndash; {m.result.awayScore}
             </div>
           ) : (
-            <div className="text-[length:var(--cb-font-size-title)] text-[var(--cb-text-muted)]">
+            <div className="text-[20px]" style={{ color: "var(--cb-text-muted)" }}>
               {t("schedule.vs")}
             </div>
           )}
         </div>
-        <div className="w-[25%] flex items-center gap-[var(--cb-space-sm)]">
+        <div className="w-[25%] flex items-center gap-2.5">
           <TeamLogoImg team={m.awayTeam} />
-          <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">
+          <span
+            className="text-[15px] font-semibold"
+            style={{ color: "var(--cb-text-primary)" }}
+          >
             {m.awayTeam.name}
           </span>
         </div>
         <div className="w-[15%] text-right">
           <span
-            className={`inline-block text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] px-[var(--cb-space-sm)] py-[var(--cb-space-xs)] rounded-full ${statusPill}`}
+            className="inline-block text-[11px] font-semibold px-3 py-1 rounded-full"
+            style={{
+              background: isCompleted
+                ? "color-mix(in srgb, var(--cb-status-success), transparent 86%)"
+                : "var(--cb-surface-muted)",
+              color: isCompleted
+                ? "var(--cb-status-success)"
+                : "var(--cb-text-secondary)",
+            }}
           >
             {statusLabel}
           </span>
         </div>
       </div>
       {m.venue?.name && (
-        <div className="mt-[var(--cb-space-sm)] pt-[var(--cb-space-sm)] border-t border-[var(--cb-border-subtle)] flex items-center justify-center gap-[var(--cb-space-xs)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)]">
+        <div
+          className="mt-3 pt-3 flex items-center justify-center gap-1.5 text-[12px]"
+          style={{
+            borderTop: "1px solid var(--cb-border-subtle)",
+            color: "var(--cb-text-secondary)",
+          }}
+        >
           <MapPin className="w-3.5 h-3.5" />
           <span>{m.venue.name}</span>
         </div>

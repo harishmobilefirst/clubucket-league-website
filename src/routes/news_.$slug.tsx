@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -25,12 +25,12 @@ function NewsDetail() {
   if (isLoading) {
     return (
       <Layout>
-        <Container className="max-w-[750px] py-[var(--cb-space-section)]">
-          <Skeleton className="h-4 w-24 mb-[var(--cb-space-xl)]" />
-          <Skeleton className="h-8 w-full mb-[var(--cb-space-md)]" />
-          <Skeleton className="h-5 w-48 mb-[var(--cb-space-xl)]" />
-          <Skeleton className="h-[400px] w-full rounded-[var(--cb-radius-lg)] mb-[var(--cb-space-xl)]" />
-          <div className="space-y-[var(--cb-space-md)]">
+        <Container className="max-w-[750px] py-[60px]">
+          <Skeleton className="h-4 w-24 mb-8" />
+          <Skeleton className="h-8 w-full mb-2" />
+          <Skeleton className="h-5 w-48 mb-8" />
+          <Skeleton className="h-[400px] w-full rounded-[10px] mb-8" />
+          <div className="space-y-3">
             <Skeleton className="h-4 w-full" />
             <Skeleton className="h-4 w-5/6" />
             <Skeleton className="h-4 w-4/6" />
@@ -45,15 +45,16 @@ function NewsDetail() {
   if (error) {
     return (
       <Layout>
-        <Container className="max-w-[750px] py-[var(--cb-space-section)] text-center">
+        <Container className="max-w-[750px] py-[60px] text-center">
           <EmptyState message={t("common.sectionCouldNotLoad")} />
           <button
             onClick={() => refetch()}
-            className="mt-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus"
+            className="mt-3 text-[14px] font-bold hover:underline"
+            style={{ color: "var(--cb-brand-accent)" }}
           >
             {t("common.retry")}
           </button>
-          <div className="mt-[var(--cb-space-lg)]">
+          <div className="mt-5">
             <BackLink to="/news">{t("news.backToNews")}</BackLink>
           </div>
         </Container>
@@ -64,9 +65,11 @@ function NewsDetail() {
   if (!item) {
     return (
       <Layout>
-        <Container className="max-w-[750px] py-[var(--cb-space-section)] text-center">
+        <Container className="max-w-[750px] py-[60px] text-center">
           <EmptyState message={t("news.notFound")} />
-          <BackLink to="/news">{t("news.backToNews")}</BackLink>
+          <div className="mt-5">
+            <BackLink to="/news">{t("news.backToNews")}</BackLink>
+          </div>
         </Container>
       </Layout>
     );
@@ -76,23 +79,29 @@ function NewsDetail() {
 
   return (
     <Layout>
-      <article className="max-w-[750px] mx-auto px-[var(--cb-space-xl)] py-[var(--cb-space-section)]">
+      <article
+        className="max-w-[750px] mx-auto px-6 py-[60px]"
+        style={{ background: "var(--cb-surface-canvas)" }}
+      >
         <BackLink to="/news">{t("news.backToNews")}</BackLink>
 
         {item.category && (
-          <div className="text-[length:var(--cb-font-size-caption)] uppercase font-[var(--cb-font-weight-heading)] text-[var(--cb-brand-accent)] mt-[var(--cb-space-lg)] tracking-normal">
+          <div
+            className="text-[11px] uppercase font-bold mt-5 tracking-[2.5px]"
+            style={{ color: "var(--cb-brand-accent)" }}
+          >
             {item.category}
           </div>
         )}
 
         <h1
-          className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-sm)] leading-tight"
-          style={{ textWrap: "balance" }}
+          className={"text-[32px] font-bold leading-tight" + (item.category ? " mt-3" : " mt-5")}
+          style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
         >
           {item.title}
         </h1>
 
-        <div className="flex items-center gap-[var(--cb-space-sm)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] mt-[var(--cb-space-sm)]">
+        <div className="flex items-center gap-2 text-[12px] mt-2" style={{ color: "var(--cb-text-muted)" }}>
           {item.date && <span>{item.date}</span>}
           {item.author && (
             <>
@@ -107,18 +116,21 @@ function NewsDetail() {
             src={imageUrl}
             alt={item.title}
             onError={() => setImageFailed(true)}
-            className="w-full rounded-[var(--cb-radius-lg)] mt-[var(--cb-space-xl)] object-cover max-h-[460px]"
+            className="w-full rounded-[10px] mt-5 object-cover max-h-[460px]"
           />
         ) : null}
 
-        <div className="mt-[var(--cb-space-xl)] cb-body leading-[1.7] space-y-[var(--cb-space-lg)]">
+        <div
+          className="mt-5 space-y-5"
+          style={{ color: "var(--cb-text-secondary)", fontSize: 15, lineHeight: 1.7 }}
+        >
           {item.bodySections?.length ? (
             item.bodySections.map((section, i) => (
               <div key={i}>
                 {section.title && (
                   <h2
-                    className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] mt-[var(--cb-space-xl)] mb-[var(--cb-space-sm)]"
-                    style={{ textWrap: "balance" }}
+                    className="text-[20px] font-bold mt-6 mb-3"
+                    style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
                   >
                     {section.title}
                   </h2>
@@ -133,12 +145,13 @@ function NewsDetail() {
           ) : null}
 
           {item.mediaUrl && (
-            <div className="mt-[var(--cb-space-lg)]">
+            <div className="mt-5">
               <a
                 href={item.mediaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline"
+                className="text-[15px] font-bold hover:underline"
+                style={{ color: "var(--cb-brand-accent)" }}
               >
                 {item.ctaText || t("news.watchVideo")}
               </a>
@@ -146,12 +159,22 @@ function NewsDetail() {
           )}
 
           {item.ctaUrl && !item.mediaUrl && (
-            <div className="mt-[var(--cb-space-lg)]">
+            <div className="mt-5">
               <a
                 href={item.ctaUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="cb-button-primary text-[length:var(--cb-font-size-caption)]"
+                className="inline-block rounded-full px-7 py-3 text-[14px] font-bold uppercase"
+                style={{
+                  background: "var(--cb-brand-accent)",
+                  color: "var(--cb-text-inverse)",
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "0.9";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLElement).style.opacity = "1";
+                }}
               >
                 {item.ctaText || t("news.learnMore")}
               </a>
@@ -159,11 +182,18 @@ function NewsDetail() {
           )}
 
           {item.tags?.length ? (
-            <div className="flex flex-wrap gap-[var(--cb-space-xs)] mt-[var(--cb-space-xl)] pt-[var(--cb-space-lg)] border-t border-[var(--cb-border-subtle)]">
+            <div
+              className="flex flex-wrap gap-2 mt-8 pt-5"
+              style={{ borderTop: "1px solid var(--cb-border-subtle)" }}
+            >
               {item.tags.map((tag) => (
                 <span
                   key={tag}
-                  className="text-[length:var(--cb-font-size-caption)] bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)] px-[var(--cb-space-sm)] py-[var(--cb-space-xs)] rounded-full font-[var(--cb-font-weight-heading)]"
+                  className="text-[12px] px-3 py-1.5 rounded-full font-bold"
+                  style={{
+                    background: "var(--cb-surface-muted)",
+                    color: "var(--cb-text-secondary)",
+                  }}
                 >
                   {tag}
                 </span>

@@ -37,26 +37,35 @@ export function Footer() {
   const socialLinks = config?.socialLinks;
   const locales = config?.supportedLocales.map((item) => item.locale.toUpperCase()) || ["EN", "ES"];
   return (
-    <footer className="text-[var(--cb-text-inverse)] pt-[var(--cb-space-section)] pb-[var(--cb-space-xl)] cb-section-inverse">
+    <footer
+      className="pt-[60px] pb-[30px] cb-section-inverse"
+      style={{ color: "var(--cb-text-inverse)" }}
+    >
       <Container>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-[var(--cb-space-xl)]">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
             <img src={logoUrl} alt={leagueName} className="h-16 w-auto" />
-            <p className="cb-caption text-[var(--cb-text-muted-inverse)] mt-[var(--cb-space-md)]">
+            <p
+              className="text-[13px] mt-3"
+              style={{ color: "var(--cb-text-muted-inverse)" }}
+            >
               {leagueName}
             </p>
-            <div className="flex gap-[var(--cb-space-lg)] mt-[var(--cb-space-lg)]">
+            <div className="flex gap-4 mt-5">
               {socialLinks?.instagram ? (
                 <a
                   href={socialLinks.instagram}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-[var(--cb-brand-accent)] cb-focus"
+                  className="transition-colors cb-focus"
+                  style={{ color: "var(--cb-text-inverse)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cb-brand-accent)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--cb-text-inverse)")}
                 >
                   <Instagram size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted-inverse)]">
+                <span style={{ color: "var(--cb-text-muted-inverse)" }}>
                   <Instagram size={20} />
                 </span>
               )}
@@ -65,12 +74,15 @@ export function Footer() {
                   href={socialLinks.twitter || socialLinks.x}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-[var(--cb-brand-accent)] cb-focus"
+                  className="transition-colors cb-focus"
+                  style={{ color: "var(--cb-text-inverse)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cb-brand-accent)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--cb-text-inverse)")}
                 >
                   <Twitter size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted-inverse)]">
+                <span style={{ color: "var(--cb-text-muted-inverse)" }}>
                   <Twitter size={20} />
                 </span>
               )}
@@ -79,12 +91,15 @@ export function Footer() {
                   href={socialLinks.youtube}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-[var(--cb-brand-accent)] cb-focus"
+                  className="transition-colors cb-focus"
+                  style={{ color: "var(--cb-text-inverse)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cb-brand-accent)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--cb-text-inverse)")}
                 >
                   <Youtube size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted-inverse)]">
+                <span style={{ color: "var(--cb-text-muted-inverse)" }}>
                   <Youtube size={20} />
                 </span>
               )}
@@ -93,27 +108,36 @@ export function Footer() {
                   href={socialLinks.facebook}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="transition-colors hover:text-[var(--cb-brand-accent)] cb-focus"
+                  className="transition-colors cb-focus"
+                  style={{ color: "var(--cb-text-inverse)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cb-brand-accent)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--cb-text-inverse)")}
                 >
                   <Facebook size={20} />
                 </a>
               ) : (
-                <span className="text-[var(--cb-text-muted-inverse)]">
+                <span style={{ color: "var(--cb-text-muted-inverse)" }}>
                   <Facebook size={20} />
                 </span>
               )}
             </div>
           </div>
           <div>
-            <h4 className="cb-caption text-[var(--cb-text-muted-inverse)] uppercase tracking-normal mb-[var(--cb-space-lg)]">
+            <h4
+              className="text-[11px] uppercase tracking-[1px] mb-4"
+              style={{ color: "var(--cb-text-muted-inverse)" }}
+            >
               {t("footer.quickLinks")}
             </h4>
-            <ul className="space-y-[var(--cb-space-sm)]">
+            <ul className="space-y-[10px]">
               {quickLinks.map((l) => (
                 <li key={l.to}>
                   <Link
                     to={l.to}
-                    className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-inverse)] hover:text-[var(--cb-brand-accent)] transition-colors cb-focus"
+                    className="text-[14px] transition-colors cb-focus"
+                    style={{ color: "var(--cb-text-inverse)" }}
+                    onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cb-brand-accent)")}
+                    onMouseLeave={(e) => (e.currentTarget.style.color = "var(--cb-text-inverse)")}
                   >
                     {t(l.labelKey)}
                   </Link>
@@ -122,31 +146,40 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="cb-caption text-[var(--cb-text-muted-inverse)] uppercase tracking-normal mb-[var(--cb-space-lg)]">
+            <h4
+              className="text-[11px] uppercase tracking-[1px] mb-4"
+              style={{ color: "var(--cb-text-muted-inverse)" }}
+            >
               {t("footer.contact")}
             </h4>
-            <ul className="space-y-[var(--cb-space-sm)]">
+            <ul className="space-y-[10px]">
               <li>
                 <a
                   href={`mailto:${contactEmail}`}
-                  className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-inverse)] hover:text-[var(--cb-brand-accent)] transition-colors cb-focus"
+                  className="text-[14px] transition-colors cb-focus"
+                  style={{ color: "var(--cb-text-inverse)" }}
+                  onMouseEnter={(e) => (e.currentTarget.style.color = "var(--cb-brand-accent)")}
+                  onMouseLeave={(e) => (e.currentTarget.style.color = "var(--cb-text-inverse)")}
                 >
                   {contactEmail}
                 </a>
               </li>
-              <li className="text-[length:var(--cb-font-size-body)]">{website}</li>
-              <li className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-muted-inverse)]">
-                <span className="text-[var(--cb-text-inverse)]">{locales[0]}</span>
+              <li className="text-[14px]">{website}</li>
+              <li className="text-[14px]" style={{ color: "var(--cb-text-muted-inverse)" }}>
+                <span style={{ color: "var(--cb-text-inverse)" }}>{locales[0]}</span>
                 {locales.length > 1 ? ` | ${locales.slice(1).join(" | ")}` : null}
               </li>
             </ul>
           </div>
         </div>
-        <div className="border-t border-[var(--cb-border-strong)] mt-[var(--cb-space-xl)] pt-[var(--cb-space-xl)] flex flex-col md:flex-row justify-between text-[length:var(--cb-font-size-caption)]">
-          <span className="text-[var(--cb-text-muted-inverse)]">
+        <div
+          className="border-t mt-12 pt-6 flex flex-col md:flex-row justify-between text-[12px]"
+          style={{ borderColor: "color-mix(in srgb, var(--cb-text-inverse), transparent 92%)" }}
+        >
+          <span style={{ color: "var(--cb-text-muted-inverse)" }}>
             {t("footer.copyright", { year: 2026, league: leagueName })}
           </span>
-          <span className="text-[var(--cb-text-muted-inverse)]">{t("footer.poweredBy")}</span>
+          <span style={{ color: "var(--cb-text-muted-inverse)" }}>{t("footer.poweredBy")}</span>
         </div>
       </Container>
     </footer>

@@ -1,9 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 import { Layout, PageHeader } from "@/components/Layout";
-import { Container } from "@/components/Container";
-import { Section } from "@/components/Section";
-import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Select,
@@ -58,8 +55,14 @@ function TopScorers() {
     <Layout>
       <PageHeader title={t("topScorers.title")} subtitle={t("topScorers.subtitle")} />
 
-      <Section>
-        <div className="flex items-center gap-[var(--cb-space-md)] mb-[var(--cb-space-xl)]">
+      <div
+        style={{
+          backgroundColor: "var(--cb-surface-panel)",
+          borderBottomColor: "var(--cb-border-subtle)",
+        }}
+        className="border-b"
+      >
+        <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center gap-8">
           {seasons && seasons.length > 0 && (
             <Select
               value={seasonId || "ALL"}
@@ -103,102 +106,152 @@ function TopScorers() {
             </Select>
           )}
         </div>
+      </div>
 
-        <div className="overflow-hidden rounded-[var(--cb-radius-md)] border border-[var(--cb-border-subtle)]">
-          <table className="w-full border-collapse">
-            <thead>
-              <tr className="cb-table-header h-14">
-                <th className="w-[10%] text-left pl-[var(--cb-space-xl)]">#</th>
-                <th className="w-[40%] text-left">{t("topScorers.player")}</th>
-                <th className="w-[30%] text-left">{t("topScorers.team")}</th>
-                <th className="w-[20%] text-left pr-[var(--cb-space-xl)]">
-                  {t("topScorers.goals")}
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {isLoading ? (
-                Array.from({ length: 8 }).map((_, i) => (
+      <section style={{ backgroundColor: "var(--cb-surface-panel)" }} className="py-10">
+        <div className="max-w-[1200px] mx-auto px-6">
+          <div
+            style={{ borderColor: "var(--cb-border-subtle)" }}
+            className="overflow-hidden rounded-md border"
+          >
+            <table className="w-full border-collapse">
+              <thead>
+                <tr
+                  style={{
+                    backgroundColor: "#1FA13B",
+                    color: "#0B1F12",
+                    height: 56,
+                  }}
+                  className="text-[13px] font-extrabold uppercase tracking-wider"
+                >
+                  <th className="w-[10%] text-left pl-8">#</th>
+                  <th className="w-[40%] text-left">{t("topScorers.player")}</th>
+                  <th className="w-[30%] text-left">{t("topScorers.team")}</th>
+                  <th className="w-[20%] text-left pr-8">
+                    {t("topScorers.goals")}
+                  </th>
+                </tr>
+              </thead>
+              <tbody>
+                {isLoading ? (
+                  Array.from({ length: 8 }).map((_, i) => (
+                    <tr
+                      key={i}
+                      style={{
+                        borderTopColor: "var(--cb-border-subtle)",
+                        height: 72,
+                      }}
+                      className="border-t"
+                    >
+                      <td className="pl-8">
+                        <Skeleton className="h-5 w-6" />
+                      </td>
+                      <td>
+                        <div className="flex items-center gap-4">
+                          <Skeleton className="w-12 h-12 rounded-full" />
+                          <Skeleton className="h-5 w-36" />
+                        </div>
+                      </td>
+                      <td>
+                        <Skeleton className="h-5 w-24" />
+                      </td>
+                      <td className="pr-8">
+                        <Skeleton className="h-5 w-8" />
+                      </td>
+                    </tr>
+                  ))
+                ) : error ? (
                   <tr
-                    key={i}
-                    className="border-t border-[var(--cb-border-subtle)] h-[var(--cb-space-48)]"
+                    style={{
+                      borderTopColor: "var(--cb-border-subtle)",
+                      height: 72,
+                    }}
+                    className="border-t"
                   >
-                    <td className="pl-[var(--cb-space-xl)]">
-                      <Skeleton className="h-5 w-6" />
-                    </td>
-                    <td>
-                      <div className="flex items-center gap-[var(--cb-space-md)]">
-                        <Skeleton className="w-12 h-12 rounded-full" />
-                        <Skeleton className="h-5 w-36" />
-                      </div>
-                    </td>
-                    <td>
-                      <Skeleton className="h-5 w-24" />
-                    </td>
-                    <td className="pr-[var(--cb-space-xl)]">
-                      <Skeleton className="h-5 w-8" />
+                    <td colSpan={4} className="text-center text-[14px]" style={{ color: "var(--cb-text-primary)" }}>
+                      This section could not load.
+                      <button
+                        onClick={() => window.location.reload()}
+                        className="ml-1 text-[12px] font-bold hover:underline transition-colors"
+                        style={{ color: "var(--cb-brand-accent)" }}
+                      >
+                        {t("common.retry")}
+                      </button>
                     </td>
                   </tr>
-                ))
-              ) : error ? (
-                <tr className="border-t border-[var(--cb-border-subtle)] h-[var(--cb-space-48)]">
-                  <td colSpan={4} className="text-center cb-body">
-                    This section could not load.
-                    <button
-                      onClick={() => window.location.reload()}
-                      className="ml-[var(--cb-space-xs)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline cb-focus transition-colors"
-                    >
-                      {t("common.retry")}
-                    </button>
-                  </td>
-                </tr>
-              ) : !scorers || scorers.length === 0 ? (
-                <tr className="border-t border-[var(--cb-border-subtle)]">
-                  <td colSpan={4}>
-                    <EmptyState message={t("topScorers.empty")} />
-                  </td>
-                </tr>
-              ) : (
-                scorers.map((s, idx) => <Row key={`${s.playerId || s.playerName}-${idx}`} s={s} />)
-              )}
-            </tbody>
-          </table>
-        </div>
+                ) : !scorers || scorers.length === 0 ? (
+                  <tr style={{ borderTopColor: "var(--cb-border-subtle)" }} className="border-t">
+                    <td colSpan={4}>
+                      <div className="py-10 text-center text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>
+                        {t("topScorers.empty")}
+                      </div>
+                    </td>
+                  </tr>
+                ) : (
+                  scorers.map((s, idx) => (
+                    <Row key={`${s.playerId || s.playerName}-${idx}`} s={s} />
+                  ))
+                )}
+              </tbody>
+            </table>
+          </div>
 
-        {meta && <PageNav page={page} totalPages={meta.totalPages ?? 1} onPageChange={setPage} />}
-      </Section>
+          {meta && <PageNav page={page} totalPages={meta.totalPages ?? 1} onPageChange={setPage} />}
+        </div>
+      </section>
     </Layout>
   );
 }
 
 function Row({ s }: { s: PublicTopScorer }) {
   return (
-    <tr className="border-t border-[var(--cb-border-subtle)] bg-[var(--cb-surface-panel)] hover:bg-[var(--cb-surface-muted)] transition-colors h-[var(--cb-space-48)]">
-      <td className="pl-[var(--cb-space-xl)] text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+    <tr
+      style={{
+        borderTopColor: "var(--cb-border-subtle)",
+        backgroundColor: "var(--cb-surface-panel)",
+        height: 72,
+      }}
+      className="border-t transition-colors"
+      onMouseEnter={(e) => {
+        e.currentTarget.style.backgroundColor = "#FAFAFA";
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.backgroundColor = "var(--cb-surface-panel)";
+      }}
+    >
+      <td className="pl-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {s.rank}
       </td>
       <td>
-        <div className="flex items-center gap-[var(--cb-space-md)]">
+        <div className="flex items-center gap-4">
           {s.imageUrl ? (
             <img
               src={s.imageUrl}
               alt={s.playerName}
-              className="w-12 h-12 rounded-full object-cover border border-[var(--cb-border-subtle)]"
+              className="w-12 h-12 rounded-full object-cover border"
+              style={{ borderColor: "var(--cb-border-subtle)" }}
             />
           ) : (
-            <div className="w-12 h-12 rounded-full bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] flex items-center justify-center border border-[var(--cb-border-subtle)]">
+            <div
+              className="w-12 h-12 rounded-full text-[11px] font-bold flex items-center justify-center border"
+              style={{
+                backgroundColor: "var(--cb-surface-muted)",
+                color: "var(--cb-text-secondary)",
+                borderColor: "var(--cb-border-subtle)",
+              }}
+            >
               {generateInitials(s.playerName)}
             </div>
           )}
-          <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">
+          <span className="text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>
             {s.playerName}
           </span>
         </div>
       </td>
-      <td className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
+      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>
         {s.teamName || "-"}
       </td>
-      <td className="pr-[var(--cb-space-xl)] text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)]">
+      <td className="pr-8 text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>
         {s.goals}
       </td>
     </tr>
