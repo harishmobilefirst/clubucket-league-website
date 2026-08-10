@@ -8,7 +8,6 @@ import {
   Scripts,
 } from "@tanstack/react-router";
 import { useEffect } from "react";
-import type { CSSProperties, ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { LocaleProvider } from "@/lib/locale";
@@ -22,19 +21,20 @@ import { OrganizationProvider } from "@/lib/organization-context";
 function NotFoundComponent() {
   const { t } = useI18n();
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-[var(--cb-space-md)]">
+    <div className="flex min-h-screen items-center justify-center px-4" style={{ background: "var(--cb-surface-canvas)" }}>
       <div className="max-w-md text-center">
-        <h1 className="text-7xl font-[var(--cb-font-weight-heading)] text-foreground">404</h1>
-        <h2 className="mt-[var(--cb-space-md)] text-xl font-[var(--cb-font-weight-heading)] text-foreground">
+        <h1 className="text-7xl font-bold" style={{ color: "var(--cb-text-primary)" }}>404</h1>
+        <h2 className="mt-4 text-xl font-semibold" style={{ color: "var(--cb-text-primary)" }}>
           {t("notFound.title")}
         </h2>
-        <p className="mt-[var(--cb-space-xs)] text-sm text-muted-foreground">
+        <p className="mt-2 text-sm" style={{ color: "var(--cb-text-muted)" }}>
           {t("notFound.body")}
         </p>
-        <div className="mt-[var(--cb-space-lg)]">
+        <div className="mt-6">
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-[var(--cb-radius-md)] bg-[var(--cb-brand-accent)] px-[var(--cb-space-md)] py-[var(--cb-space-sm)] text-sm font-[var(--cb-font-weight-medium)] text-[var(--cb-text-inverse)] transition-colors hover:bg-[var(--cb-brand-accent)]/90"
+            className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:opacity-90"
+            style={{ background: "var(--cb-brand-accent)", color: "var(--cb-text-inverse)" }}
           >
             {t("notFound.goHome")}
           </Link>
@@ -50,57 +50,33 @@ function ErrorComponent({ error, reset }: { error: Error; reset: () => void }) {
   const { t } = useI18n();
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-[var(--cb-space-md)]">
+    <div className="flex min-h-screen items-center justify-center px-4" style={{ background: "var(--cb-surface-canvas)" }}>
       <div className="max-w-md text-center">
-        <h1 className="text-xl font-[var(--cb-font-weight-heading)] tracking-normal text-foreground">
+        <h1 className="text-xl font-semibold tracking-tight" style={{ color: "var(--cb-text-primary)" }}>
           {t("error.title")}
         </h1>
-        <p className="mt-[var(--cb-space-xs)] text-sm text-muted-foreground">
+        <p className="mt-2 text-sm" style={{ color: "var(--cb-text-muted)" }}>
           {error.message || t("error.body")}
         </p>
-        <div className="mt-[var(--cb-space-lg)] flex flex-wrap justify-center gap-[var(--cb-space-xs)]">
+        <div className="mt-6 flex flex-wrap justify-center gap-2">
           <button
             onClick={() => {
               router.invalidate();
               reset();
             }}
-            className="inline-flex items-center justify-center rounded-[var(--cb-radius-md)] bg-[var(--cb-brand-accent)] px-[var(--cb-space-md)] py-[var(--cb-space-sm)] text-sm font-[var(--cb-font-weight-medium)] text-[var(--cb-text-inverse)] transition-colors hover:bg-[var(--cb-brand-accent)]/90"
+            className="inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium transition-colors hover:opacity-90"
+            style={{ background: "var(--cb-brand-accent)", color: "var(--cb-text-inverse)" }}
           >
             {t("error.tryAgain")}
           </button>
           <a
             href="/"
-            className="inline-flex items-center justify-center rounded-[var(--cb-radius-md)] border border-[var(--cb-border-subtle)] bg-[var(--cb-surface-canvas)] px-[var(--cb-space-md)] py-[var(--cb-space-sm)] text-sm font-[var(--cb-font-weight-medium)] text-[var(--cb-text-primary)] transition-colors hover:bg-[var(--cb-surface-muted)]"
+            className="inline-flex items-center justify-center rounded-md border px-4 py-2 text-sm font-medium transition-colors hover:bg-[var(--cb-surface-muted)]"
+            style={{ borderColor: "var(--cb-border-subtle)", background: "var(--cb-surface-canvas)", color: "var(--cb-text-primary)" }}
           >
             {t("error.goHome")}
           </a>
         </div>
-      </div>
-    </div>
-  );
-}
-
-function OrganizationNotFound() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
-      <div className="max-w-md">
-        <h1 className="text-2xl font-semibold text-foreground">Site not found</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          We couldn&apos;t find a Clubucket site at this address.
-        </p>
-      </div>
-    </div>
-  );
-}
-
-function OrganizationComingSoon() {
-  return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-6 text-center">
-      <div className="max-w-md">
-        <h1 className="text-2xl font-semibold text-foreground">Coming soon</h1>
-        <p className="mt-2 text-sm text-muted-foreground">
-          This site is being set up and will be live shortly.
-        </p>
       </div>
     </div>
   );
@@ -164,11 +140,29 @@ function RootComponent() {
   const organization = Route.useLoaderData();
 
   if (organization.kind === "not_found") {
-    return <OrganizationNotFound />;
+    return (
+      <div className="flex min-h-screen items-center justify-center px-6 text-center" style={{ background: "var(--cb-surface-canvas)" }}>
+        <div className="max-w-md">
+          <h1 className="text-2xl font-semibold" style={{ color: "var(--cb-text-primary)" }}>Site not found</h1>
+          <p className="mt-2 text-sm" style={{ color: "var(--cb-text-muted)" }}>
+            We couldn&apos;t find a Clubucket site at this address.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   if (organization.kind === "coming_soon") {
-    return <OrganizationComingSoon />;
+    return (
+      <div className="flex min-h-screen items-center justify-center px-6 text-center" style={{ background: "var(--cb-surface-canvas)" }}>
+        <div className="max-w-md">
+          <h1 className="text-2xl font-semibold" style={{ color: "var(--cb-text-primary)" }}>Coming soon</h1>
+          <p className="mt-2 text-sm" style={{ color: "var(--cb-text-muted)" }}>
+            This site is being set up and will be live shortly.
+          </p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -188,11 +182,7 @@ function RootComponent() {
   );
 }
 
-function px(value: number | undefined): string | undefined {
-  return value == null ? undefined : `${value}px`;
-}
-
-function PublicThemeGate({ children }: { children: ReactNode }) {
+function PublicThemeGate({ children }: { children: React.ReactNode }) {
   const { data: config, isLoading, error } = usePublicConfig();
 
   if (isLoading) {
@@ -205,12 +195,12 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
 
   if (error || !config) {
     return (
-      <div className="min-h-screen flex items-center justify-center px-[var(--cb-space-md)] text-center">
+      <div className="min-h-screen flex items-center justify-center px-4 text-center" style={{ background: "var(--cb-surface-canvas)" }}>
         <div>
-          <h1 className="cb-heading text-[length:var(--cb-font-size-title)]">
+          <h1 className="text-[length:var(--cb-font-size-title)] font-[var(--cb-font-weight-heading)]" style={{ color: "var(--cb-text-primary)" }}>
             Website unavailable
           </h1>
-          <p className="mt-[var(--cb-space-xs)] cb-body">
+          <p className="mt-2 text-sm" style={{ color: "var(--cb-text-secondary)" }}>
             The public website configuration could not be loaded.
           </p>
         </div>
@@ -218,56 +208,7 @@ function PublicThemeGate({ children }: { children: ReactNode }) {
     );
   }
 
-  const theme = config.theme;
-  const colors = theme?.colors;
-  const radii = theme?.radii;
-  const spacing = theme?.spacing;
-  const typography = theme?.typography;
-
-  const themeVars = {
-    // The API returns a flat brand shape ({ primary, secondary, accent }); the
-    // nested colors.brand.* path is kept as a fallback for forward-compat.
-    "--cb-brand-primary": theme?.primary ?? colors?.brand?.primary,
-    "--cb-brand-accent": theme?.accent ?? colors?.brand?.accent,
-    "--cb-brand-secondary": theme?.secondary ?? colors?.brand?.secondary,
-    "--cb-text-primary": colors?.text?.primary,
-    "--cb-text-secondary": colors?.text?.secondary,
-    "--cb-text-muted": colors?.text?.muted,
-    "--cb-text-inverse": colors?.text?.inverse,
-    "--cb-surface-canvas": colors?.surface?.canvas,
-    "--cb-surface-panel": colors?.surface?.panel,
-    "--cb-surface-muted": colors?.surface?.muted,
-    "--cb-surface-inverse": colors?.surface?.inverse,
-    "--cb-border-subtle": colors?.border?.subtle,
-    "--cb-border-strong": colors?.border?.strong,
-    "--cb-status-success": colors?.status?.success,
-    "--cb-status-warning": colors?.status?.warning,
-    "--cb-status-danger": colors?.status?.danger,
-    "--cb-status-info": colors?.status?.info,
-    "--cb-radius-xs": px(radii?.xs),
-    "--cb-radius-sm": px(radii?.sm),
-    "--cb-radius-md": px(radii?.md),
-    "--cb-radius-lg": px(radii?.lg),
-    "--cb-space-xs": px(spacing?.xs),
-    "--cb-space-sm": px(spacing?.sm),
-    "--cb-space-md": px(spacing?.md),
-    "--cb-space-lg": px(spacing?.lg),
-    "--cb-space-xl": px(spacing?.xl),
-    "--cb-space-section": px(spacing?.section),
-    "--cb-font-family": "'DM Sans', sans-serif",
-    "--cb-font-size-caption": px(typography?.scale?.caption),
-    "--cb-font-size-body": px(typography?.scale?.body),
-    "--cb-font-size-title": px(typography?.scale?.title),
-    "--cb-font-size-screen": px(typography?.scale?.screen),
-    "--cb-font-weight-body": typography?.bodyWeight,
-    "--cb-font-weight-heading": typography?.headingWeight,
-  } as CSSProperties;
-
-  return (
-    <div className="cb-page" style={themeVars}>
-      {children}
-    </div>
-  );
+  return <>{children}</>;
 }
 
 function ConfigLocaleSync() {

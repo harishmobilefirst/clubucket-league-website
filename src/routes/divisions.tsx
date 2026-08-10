@@ -25,7 +25,7 @@ function Divisions() {
 
   return (
     <Layout>
-      <section style={{ backgroundColor: "var(--cb-surface-muted)" }} className="py-[60px]">
+      <section className="py-[60px]" style={{ background: "var(--cb-surface-muted)" }}>
         <div className="max-w-[1200px] mx-auto px-6 space-y-10">
           {isLoading ? (
             <>
@@ -34,25 +34,13 @@ function Divisions() {
             </>
           ) : error ? (
             <div className="text-center py-[60px]">
-              <p className="text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>
-                {t("common.sectionError")}
-              </p>
-              <button
-                onClick={() => window.location.reload()}
-                className="mt-2 text-[12px] font-bold hover:underline"
-                style={{ color: "var(--cb-brand-accent)" }}
-              >
-                {t("common.retry")}
-              </button>
+              <p className="text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>{t("common.sectionError")}</p>
+              <button onClick={() => window.location.reload()} className="mt-2 text-[12px] font-bold hover:underline transition-colors" style={{ color: "var(--cb-brand-accent)" }}>{t("common.retry")}</button>
             </div>
           ) : !data || data.length === 0 ? (
-            <div className="text-center py-[60px] text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>
-              {t("divisions.empty")}
-            </div>
+            <div className="text-center py-[60px] text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>{t("divisions.empty")}</div>
           ) : (
-            data.map((div, idx) => (
-              <DivisionCard key={`${div.id || div.name}-${idx}`} division={div} />
-            ))
+            data.map((div, idx) => <DivisionCard key={`${div.id || div.name}-${idx}`} division={div} />)
           )}
         </div>
       </section>
@@ -74,113 +62,29 @@ function DivisionCard({ division }: { division: PublicDivision }) {
   const teams = division.teams || [];
 
   return (
-    <div
-      style={{
-        backgroundColor: "var(--cb-surface-panel)",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
-      }}
-      className="rounded-[10px] overflow-hidden"
-    >
-      <div
-        style={{
-          backgroundColor: "var(--cb-surface-muted)",
-          borderBottomColor: "var(--cb-border-subtle)",
-        }}
-        className="px-8 py-5 border-b"
-      >
-        <h2 className="text-[22px] font-bold" style={{ color: "var(--cb-brand-primary)" }}>
-          {division.name}
-        </h2>
+    <div className="rounded-[10px] overflow-hidden" style={{ background: "var(--cb-surface-panel)", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
+      <div className="px-8 py-5 border-b" style={{ background: "var(--cb-surface-muted)", borderBottomColor: "var(--cb-border-subtle)" }}>
+        <h2 className="text-[22px] font-bold" style={{ color: "var(--cb-brand-primary)" }}>{division.name}</h2>
       </div>
       <div className="relative px-6 py-10">
         {teams.length > 0 ? (
           <>
-            <button
-              type="button"
-              onClick={() => scrollBy("left")}
-              aria-label={t("divisions.scrollLeft")}
-              className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full text-white flex items-center justify-center shadow-md transition-colors"
-              style={{ backgroundColor: "var(--cb-brand-primary)" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)";
-              }}
-            >
-              <ChevronLeft className="w-5 h-5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => scrollBy("right")}
-              aria-label={t("divisions.scrollRight")}
-              className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full text-white flex items-center justify-center shadow-md transition-colors"
-              style={{ backgroundColor: "var(--cb-brand-primary)" }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)";
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)";
-              }}
-            >
-              <ChevronRight className="w-5 h-5" />
-            </button>
-            <div
-              ref={scrollerRef}
-              className="overflow-x-auto scroll-smooth"
-              style={{ scrollbarWidth: "none" }}
-            >
-              <div
-                className="flex items-stretch gap-5"
-                style={{ width: "max-content" }}
-              >
+            <button type="button" onClick={() => scrollBy("left")} aria-label={t("divisions.scrollLeft")} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-colors" style={{ backgroundColor: "var(--cb-brand-primary)", color: "var(--cb-text-inverse)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)"; }}><ChevronLeft className="w-5 h-5" /></button>
+            <button type="button" onClick={() => scrollBy("right")} aria-label={t("divisions.scrollRight")} className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-colors" style={{ backgroundColor: "var(--cb-brand-primary)", color: "var(--cb-text-inverse)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)"; }}><ChevronRight className="w-5 h-5" /></button>
+            <div ref={scrollerRef} className="overflow-x-auto scroll-smooth" style={{ scrollbarWidth: "none" }}>
+              <div className="flex items-stretch gap-5" style={{ width: "max-content" }}>
                 {teams.map((t, idx) => (
-                  <Link
-                    key={`${t.id}-${idx}`}
-                    to="/teams/$teamId"
-                    params={{ teamId: t.id }}
-                    className="w-[210px] shrink-0 group/team rounded-[14px] border hover:-translate-y-1 transition-all duration-300 flex flex-col"
-                    style={{
-                      backgroundColor: "var(--cb-surface-panel)",
-                      borderColor: "var(--cb-border-subtle)",
-                      boxShadow: "0 2px 10px rgba(0,0,0,0.05)",
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.borderColor = "var(--cb-brand-accent)";
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
-                    }}
-                  >
+                  <Link key={`${t.id}-${idx}`} to="/teams/$teamId" params={{ teamId: t.id }} className="w-[210px] shrink-0 group/team rounded-[14px] border hover:-translate-y-1 transition-all duration-300 flex flex-col" style={{ backgroundColor: "var(--cb-surface-panel)", borderColor: "var(--cb-border-subtle)", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--cb-border-subtle)"; }}>
                     <div className="relative px-5 pt-5 pb-3 flex items-center justify-center h-[170px]">
                       {t.logoUrl ? (
-                        <img
-                          src={t.logoUrl}
-                          alt={t.name}
-                          className="w-[110px] h-[110px] object-contain transition-transform group-hover/team:scale-105"
-                        />
+                        <img src={t.logoUrl} alt={t.name} className="w-[110px] h-[110px] object-contain transition-transform group-hover/team:scale-105" />
                       ) : (
-                        <div
-                          className="w-[110px] h-[110px] rounded-[14px] text-[20px] font-bold flex items-center justify-center transition-transform group-hover/team:scale-105"
-                          style={{
-                            backgroundColor: "var(--cb-surface-muted)",
-                            color: "var(--cb-text-secondary)",
-                          }}
-                        >
-                          {t.initials || generateInitials(t.name)}
-                        </div>
+                        <div className="w-[110px] h-[110px] rounded-[14px] text-[20px] font-bold flex items-center justify-center transition-transform group-hover/team:scale-105" style={{ backgroundColor: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)" }}>{t.initials || generateInitials(t.name)}</div>
                       )}
                     </div>
                     <div className="px-4 pb-5 text-center">
-                      <div
-                        className="text-[15px] font-bold leading-tight transition-colors group-hover/team:text-[var(--cb-brand-accent)]"
-                        style={{ color: "var(--cb-text-primary)" }}
-                      >
-                        {t.name}
-                      </div>
-                      <div className="text-[12px] mt-1" style={{ color: "var(--cb-text-secondary)" }}>
-                        {division.name}
-                      </div>
+                      <div className="text-[15px] font-bold leading-tight transition-colors group-hover/team:text-[var(--cb-brand-accent)]" style={{ color: "var(--cb-text-primary)" }}>{t.name}</div>
+                      <div className="text-[12px] mt-1" style={{ color: "var(--cb-text-secondary)" }}>{division.name}</div>
                     </div>
                   </Link>
                 ))}
@@ -188,9 +92,7 @@ function DivisionCard({ division }: { division: PublicDivision }) {
             </div>
           </>
         ) : (
-          <div className="text-center py-10 text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>
-            {t("divisions.noTeams")}
-          </div>
+          <div className="text-center py-10 text-[14px]" style={{ color: "var(--cb-text-secondary)" }}>{t("divisions.noTeams")}</div>
         )}
       </div>
     </div>
@@ -199,20 +101,8 @@ function DivisionCard({ division }: { division: PublicDivision }) {
 
 function DivisionCardSkeleton() {
   return (
-    <div
-      style={{
-        backgroundColor: "var(--cb-surface-panel)",
-        boxShadow: "0 2px 12px rgba(0,0,0,0.07)",
-      }}
-      className="rounded-[10px] overflow-hidden"
-    >
-      <div
-        style={{
-          backgroundColor: "var(--cb-surface-muted)",
-          borderBottomColor: "var(--cb-border-subtle)",
-        }}
-        className="px-8 py-5 border-b"
-      >
+    <div className="rounded-[10px] overflow-hidden" style={{ background: "var(--cb-surface-panel)", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
+      <div className="px-8 py-5 border-b" style={{ background: "var(--cb-surface-muted)", borderBottomColor: "var(--cb-border-subtle)" }}>
         <Skeleton className="h-6 w-48" />
       </div>
       <div className="px-6 py-10">

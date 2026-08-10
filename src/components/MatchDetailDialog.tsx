@@ -20,15 +20,11 @@ function TeamBadge({ team }: { team?: { logoUrl?: string; shortCode?: string; na
   if (!team) return null;
   if (team.logoUrl) {
     return (
-      <img
-        src={team.logoUrl}
-        alt={team.name}
-        className="w-12 h-12 rounded-[var(--cb-radius-md)] object-contain border border-[var(--cb-border-subtle)] bg-[var(--cb-surface-panel)]"
-      />
+      <img src={team.logoUrl} alt={team.name} className="w-12 h-12 rounded-[var(--cb-radius-md)] object-contain border bg-[var(--cb-surface-panel)]" style={{ borderColor: "var(--cb-border-subtle)" }} />
     );
   }
   return (
-    <div className="w-12 h-12 rounded-[var(--cb-radius-md)] bg-[var(--cb-surface-muted)] text-[var(--cb-text-secondary)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] flex items-center justify-center border border-[var(--cb-border-subtle)]">
+    <div className="w-12 h-12 rounded-[var(--cb-radius-md)] text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] flex items-center justify-center border" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>
       {team.shortCode || generateInitials(team.name)}
     </div>
   );
@@ -45,58 +41,33 @@ function formatDate(isoDate: string, locale: string): string {
   });
 }
 
-/** Small colored rectangle representing a booking. */
 function CardChip({ type }: { type: "yellow" | "red" }) {
   return (
-    <span
-      aria-hidden
-      className="inline-block w-2.5 h-3.5 rounded-[2px] shrink-0"
-      style={{
-        background: type === "red" ? "var(--cb-status-danger)" : "var(--cb-status-warning)",
-      }}
-    />
+    <span aria-hidden className="inline-block w-2.5 h-3.5 rounded-[2px] shrink-0" style={{ background: type === "red" ? "var(--cb-status-danger)" : "var(--cb-status-warning)" }} />
   );
 }
 
 function CountTag({ count }: { count: number }) {
   if (count <= 1) return null;
   return (
-    <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-muted)]">
+    <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)]" style={{ color: "var(--cb-text-muted)" }}>
       &times;{count}
     </span>
   );
 }
 
-/**
- * One side of an event section. `align` decides whether rows read left→right
- * (home team) or right→left (away team) so each column visually belongs to its side.
- */
-function GoalColumn({
-  goals,
-  align,
-}: {
-  goals: PublicFixtureGoalEvent[];
-  align: "left" | "right";
-}) {
+function GoalColumn({ goals, align }: { goals: PublicFixtureGoalEvent[]; align: "left" | "right" }) {
   const rowJustify = align === "right" ? "justify-end" : "justify-start";
   const textAlign = align === "right" ? "text-right" : "text-left";
   const { t } = useI18n();
   if (goals.length === 0) {
-    return (
-      <p
-        className={`text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] ${textAlign}`}
-      >
-        &mdash;
-      </p>
-    );
+    return <p className={`text-[length:var(--cb-font-size-caption)] ${textAlign}`} style={{ color: "var(--cb-text-muted)" }}>&mdash;</p>;
   }
   return (
     <ul className="space-y-[var(--cb-space-xs)]">
       {goals.map((g) => (
         <li key={g.id} className={`flex items-center gap-[var(--cb-space-xs)] ${rowJustify}`}>
-          <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
-            {g.playerName || t("fixture.unknownPlayer")}
-          </span>
+          <span className="text-[length:var(--cb-font-size-body)]" style={{ color: "var(--cb-text-primary)" }}>{g.playerName || t("fixture.unknownPlayer")}</span>
           <CountTag count={g.goals} />
         </li>
       ))}
@@ -104,24 +75,12 @@ function GoalColumn({
   );
 }
 
-function CardColumn({
-  cards,
-  align,
-}: {
-  cards: PublicFixtureCardEvent[];
-  align: "left" | "right";
-}) {
+function CardColumn({ cards, align }: { cards: PublicFixtureCardEvent[]; align: "left" | "right" }) {
   const rowJustify = align === "right" ? "justify-end" : "justify-start";
   const textAlign = align === "right" ? "text-right" : "text-left";
   const { t } = useI18n();
   if (cards.length === 0) {
-    return (
-      <p
-        className={`text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)] ${textAlign}`}
-      >
-        &mdash;
-      </p>
-    );
+    return <p className={`text-[length:var(--cb-font-size-caption)] ${textAlign}`} style={{ color: "var(--cb-text-muted)" }}>&mdash;</p>;
   }
   return (
     <ul className="space-y-[var(--cb-space-xs)]">
@@ -129,18 +88,14 @@ function CardColumn({
         <li key={c.id} className={`flex items-center gap-[var(--cb-space-xs)] ${rowJustify}`}>
           {align === "right" ? (
             <>
-              <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
-                {c.playerName || t("fixture.unknownPlayer")}
-              </span>
+              <span className="text-[length:var(--cb-font-size-body)]" style={{ color: "var(--cb-text-primary)" }}>{c.playerName || t("fixture.unknownPlayer")}</span>
               <CountTag count={c.cards} />
               <CardChip type={c.cardType} />
             </>
           ) : (
             <>
               <CardChip type={c.cardType} />
-              <span className="text-[length:var(--cb-font-size-body)] text-[var(--cb-text-primary)]">
-                {c.playerName || t("fixture.unknownPlayer")}
-              </span>
+              <span className="text-[length:var(--cb-font-size-body)]" style={{ color: "var(--cb-text-primary)" }}>{c.playerName || t("fixture.unknownPlayer")}</span>
               <CountTag count={c.cards} />
             </>
           )}
@@ -152,7 +107,7 @@ function CardColumn({
 
 function SectionHeading({ children }: { children: React.ReactNode }) {
   return (
-    <h4 className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal text-[var(--cb-text-secondary)] text-center mb-[var(--cb-space-sm)]">
+    <h4 className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] uppercase tracking-normal text-center mb-[var(--cb-space-sm)]" style={{ color: "var(--cb-text-secondary)" }}>
       {children}
     </h4>
   );
@@ -160,13 +115,9 @@ function SectionHeading({ children }: { children: React.ReactNode }) {
 
 function TeamColumnHeaders({ homeName, awayName }: { homeName: string; awayName: string }) {
   return (
-    <div className="grid grid-cols-2 gap-[var(--cb-space-lg)] mb-[var(--cb-space-sm)] pb-[var(--cb-space-xs)] border-b border-[var(--cb-border-subtle)]">
-      <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] text-left truncate">
-        {homeName}
-      </span>
-      <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] text-right truncate">
-        {awayName}
-      </span>
+    <div className="grid grid-cols-2 gap-[var(--cb-space-lg)] mb-[var(--cb-space-sm)] pb-[var(--cb-space-xs)] border-b" style={{ borderColor: "var(--cb-border-subtle)" }}>
+      <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-left truncate" style={{ color: "var(--cb-text-primary)" }}>{homeName}</span>
+      <span className="text-[length:var(--cb-font-size-caption)] font-[var(--cb-font-weight-heading)] text-right truncate" style={{ color: "var(--cb-text-primary)" }}>{awayName}</span>
     </div>
   );
 }
@@ -189,50 +140,33 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-[560px] max-h-[85vh] overflow-y-auto bg-[var(--cb-surface-panel)]">
+      <DialogContent className="max-w-[560px] max-h-[85vh] overflow-y-auto" style={{ background: "var(--cb-surface-panel)" }}>
         <DialogHeader>
-          <DialogTitle className="text-[var(--cb-text-primary)]">
-            {t("fixture.details")}
-          </DialogTitle>
+          <DialogTitle style={{ color: "var(--cb-text-primary)" }}>{t("fixture.details")}</DialogTitle>
         </DialogHeader>
 
         {!detail ? null : (
           <>
-            {/* Scoreline */}
             <div className="grid grid-cols-[1fr_auto_1fr] items-start gap-[var(--cb-space-md)] py-[var(--cb-space-md)]">
               <div className="flex flex-col items-center gap-[var(--cb-space-xs)] text-center">
                 <TeamBadge team={homeTeam!} />
-                <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
-                  {homeTeam!.name}
-                </span>
+                <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] leading-tight" style={{ color: "var(--cb-text-primary)" }}>{homeTeam!.name}</span>
               </div>
               <div className="text-center pt-[var(--cb-space-sm)]">
-                {detail.status === "completed" &&
-                detail.result?.homeScore != null &&
-                detail.result?.awayScore != null ? (
-                  <div className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] whitespace-nowrap">
-                    {detail.result.homeScore} &ndash; {detail.result.awayScore}
-                  </div>
+                {detail.status === "completed" && detail.result?.homeScore != null && detail.result?.awayScore != null ? (
+                  <div className="text-[length:var(--cb-font-size-screen)] font-[var(--cb-font-weight-heading)] whitespace-nowrap" style={{ color: "var(--cb-text-primary)" }}>{detail.result.homeScore} &ndash; {detail.result.awayScore}</div>
                 ) : (
-                  <div className="text-[length:var(--cb-font-size-title)] text-[var(--cb-text-muted)]">
-                    {t("schedule.vs")}
-                  </div>
+                  <div className="text-[length:var(--cb-font-size-title)]" style={{ color: "var(--cb-text-muted)" }}>{t("schedule.vs")}</div>
                 )}
               </div>
               <div className="flex flex-col items-center gap-[var(--cb-space-xs)] text-center">
                 <TeamBadge team={awayTeam!} />
-                <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] text-[var(--cb-text-primary)] leading-tight">
-                  {awayTeam!.name}
-                </span>
+                <span className="text-[length:var(--cb-font-size-body)] font-[var(--cb-font-weight-heading)] leading-tight" style={{ color: "var(--cb-text-primary)" }}>{awayTeam!.name}</span>
               </div>
             </div>
 
-            {/* Meta */}
-            <div className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] space-y-[var(--cb-space-2xs)] pb-[var(--cb-space-md)] border-b border-[var(--cb-border-subtle)]">
-              <div>
-                {formatDate(detail.matchDate, locale)}
-                {detail.kickoffTime ? ` · ${detail.kickoffTime}` : ""}
-              </div>
+            <div className="text-center text-[length:var(--cb-font-size-caption)] space-y-[var(--cb-space-2xs)] pb-[var(--cb-space-md)] border-b" style={{ color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>
+              <div>{formatDate(detail.matchDate, locale)}{detail.kickoffTime ? ` · ${detail.kickoffTime}` : ""}</div>
               {detail.venue?.name && (
                 <div className="flex items-center justify-center gap-[var(--cb-space-xs)]">
                   <MapPin className="w-3.5 h-3.5" />
@@ -242,25 +176,17 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
               {detail.roundName && <div>{detail.roundName}</div>}
             </div>
 
-            {/* Events */}
             <div className="pt-[var(--cb-space-lg)]">
               {isLoading ? (
                 <div className="space-y-[var(--cb-space-sm)]">
-                  {[1, 2, 3].map((i) => (
-                    <Skeleton key={i} className="h-6 w-full" />
-                  ))}
+                  {[1, 2, 3].map((i) => <Skeleton key={i} className="h-6 w-full" />)}
                 </div>
               ) : error ? (
-                <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] py-[var(--cb-space-lg)]">
-                  {t("fixture.detailsError")}
-                </p>
+                <p className="text-center text-[length:var(--cb-font-size-caption)] py-[var(--cb-space-lg)]" style={{ color: "var(--cb-text-secondary)" }}>{t("fixture.detailsError")}</p>
               ) : !hasGoals && !hasCards ? (
-                <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-secondary)] py-[var(--cb-space-lg)]">
-                  {t("fixture.noEvents")}
-                </p>
+                <p className="text-center text-[length:var(--cb-font-size-caption)] py-[var(--cb-space-lg)]" style={{ color: "var(--cb-text-secondary)" }}>{t("fixture.noEvents")}</p>
               ) : (
                 <div className="space-y-[var(--cb-space-xl)]">
-                  {/* Goals section */}
                   <section>
                     <SectionHeading>{t("fixture.goals")}</SectionHeading>
                     {hasGoals ? (
@@ -272,13 +198,10 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
                         </div>
                       </>
                     ) : (
-                      <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
-                        {t("fixture.noGoals")}
-                      </p>
+                      <p className="text-center text-[length:var(--cb-font-size-caption)]" style={{ color: "var(--cb-text-muted)" }}>{t("fixture.noGoals")}</p>
                     )}
                   </section>
 
-                  {/* Cards section */}
                   <section>
                     <SectionHeading>{t("fixture.cards")}</SectionHeading>
                     {hasCards ? (
@@ -288,19 +211,13 @@ export function MatchDetailDialog({ fixture, open, onOpenChange }: Props) {
                           <CardColumn cards={homeCards} align="left" />
                           <CardColumn cards={awayCards} align="right" />
                         </div>
-                        <div className="flex items-center justify-center gap-[var(--cb-space-lg)] mt-[var(--cb-space-md)] pt-[var(--cb-space-sm)] border-t border-[var(--cb-border-subtle)] text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
-                          <span className="flex items-center gap-[var(--cb-space-xs)]">
-                            <CardChip type="yellow" /> {t("fixture.yellow")}
-                          </span>
-                          <span className="flex items-center gap-[var(--cb-space-xs)]">
-                            <CardChip type="red" /> {t("fixture.red")}
-                          </span>
+                        <div className="flex items-center justify-center gap-[var(--cb-space-lg)] mt-[var(--cb-space-md)] pt-[var(--cb-space-sm)] border-t text-[length:var(--cb-font-size-caption)]" style={{ borderColor: "var(--cb-border-subtle)", color: "var(--cb-text-muted)" }}>
+                          <span className="flex items-center gap-[var(--cb-space-xs)]"><CardChip type="yellow" /> {t("fixture.yellow")}</span>
+                          <span className="flex items-center gap-[var(--cb-space-xs)]"><CardChip type="red" /> {t("fixture.red")}</span>
                         </div>
                       </>
                     ) : (
-                      <p className="text-center text-[length:var(--cb-font-size-caption)] text-[var(--cb-text-muted)]">
-                        {t("fixture.noCards")}
-                      </p>
+                      <p className="text-center text-[length:var(--cb-font-size-caption)]" style={{ color: "var(--cb-text-muted)" }}>{t("fixture.noCards")}</p>
                     )}
                   </section>
                 </div>

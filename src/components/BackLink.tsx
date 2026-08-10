@@ -1,6 +1,5 @@
 import { Link } from "@tanstack/react-router";
 import { ChevronLeft } from "lucide-react";
-import { cn } from "@/lib/utils";
 
 export function BackLink({
   to,
@@ -14,10 +13,8 @@ export function BackLink({
   return (
     <Link
       to={to}
-      className={cn(
-        "inline-flex items-center gap-[var(--cb-space-xs)] text-[var(--cb-brand-accent)] font-[var(--cb-font-weight-heading)] hover:underline transition-colors",
-        className,
-      )}
+      className={`inline-flex items-center gap-2 font-[var(--cb-font-weight-heading)] hover:underline transition-colors ${className || ""}`}
+      style={{ color: "var(--cb-brand-accent)" }}
     >
       <ChevronLeft className="w-4 h-4" />
       {children}

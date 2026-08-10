@@ -3,21 +3,10 @@ import { useState, useMemo, useEffect } from "react";
 import { MapPin } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PageNav } from "@/components/PageNav";
 import { MatchDetailDialog } from "@/components/MatchDetailDialog";
-import {
-  usePublicSchedule,
-  usePublicSeasons,
-  usePublicDivisions,
-  usePublicConfig,
-} from "@/hooks/use-public-api";
+import { usePublicSchedule, usePublicSeasons, usePublicDivisions, usePublicConfig } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
 import { useI18n, usePageTitle, dateLocale } from "@/lib/i18n";
 import type { PublicFixture } from "@/types/public-api";
@@ -25,7 +14,7 @@ import type { PublicFixture } from "@/types/public-api";
 export const Route = createFileRoute("/schedule")({
   head: () => ({
     meta: [
-      { title: "Schedule — LigaD1" },
+      { title: "Schedule \u2014 LigaD1" },
       { name: "description", content: "All fixtures and results for the league." },
     ],
   }),
@@ -72,9 +61,7 @@ function Schedule() {
   }, [seasonId, config, seasons]);
 
   useEffect(() => {
-    if (!seasonId && defaultSeasonId) {
-      setSeasonId(defaultSeasonId);
-    }
+    if (!seasonId && defaultSeasonId) setSeasonId(defaultSeasonId);
   }, [seasonId, defaultSeasonId]);
 
   const tabs: { id: View; label: string }[] = [
@@ -86,7 +73,11 @@ function Schedule() {
     if (!fixtures) return [];
     const groups = new Map<string, PublicFixture[]>();
     for (const f of fixtures) {
-      const key = f.roundName || f.round?.toString() || f.matchDate?.slice(0, 10) || "other";
+      const key =
+        f.roundName ||
+        f.round?.toString() ||
+        f.matchDate?.slice(0, 10) ||
+        "other";
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key)!.push(f);
     }
@@ -97,21 +88,21 @@ function Schedule() {
     <Layout>
       <div style={{ background: "var(--cb-brand-primary)" }}>
         <div className="max-w-[1200px] mx-auto px-6 flex gap-2 pt-3">
-          {tabs.map((t) => {
-            const active = view === t.id;
+          {tabs.map((tab) => {
+            const active = view === tab.id;
             return (
               <button
-                key={t.id}
-                onClick={() => setView(t.id)}
+                key={tab.id}
+                onClick={() => setView(tab.id)}
                 className="text-[13px] font-bold tracking-wider px-7 py-3 rounded-t-[16px] transition-colors"
                 style={{
                   background: active ? "var(--cb-surface-panel)" : "transparent",
                   color: active
                     ? "var(--cb-brand-primary)"
-                    : "color-mix(in srgb, var(--cb-text-inverse), transparent 30%)",
+                    : "rgba(255,255,255,0.70)",
                 }}
               >
-                {t.label}
+                {tab.label}
               </button>
             );
           })}
@@ -119,10 +110,10 @@ function Schedule() {
       </div>
 
       <div
-        className="py-5"
+        className="py-5 border-b"
         style={{
           background: "var(--cb-surface-panel)",
-          borderBottom: "1px solid var(--cb-border-subtle)",
+          borderBottomColor: "var(--cb-border-subtle)",
         }}
       >
         <div className="max-w-[1200px] mx-auto px-6 flex flex-wrap items-center gap-3">
@@ -177,22 +168,31 @@ function Schedule() {
         </div>
       </div>
 
-      <section className="py-10" style={{ background: "var(--cb-surface-muted)" }}>
+      <section
+        className="py-10"
+        style={{ background: "var(--cb-surface-muted)" }}
+      >
         <div className="max-w-[1200px] mx-auto px-6">
           {isLoading ? (
             <div className="space-y-4">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-28 w-full rounded-[10px]" />
+                <Skeleton
+                  key={i}
+                  className="h-28 w-full rounded-[10px]"
+                />
               ))}
             </div>
           ) : error ? (
             <div className="text-center py-10">
-              <p className="text-[15px]" style={{ color: "var(--cb-text-secondary)" }}>
+              <p
+                className="text-[15px]"
+                style={{ color: "var(--cb-text-secondary)" }}
+              >
                 {t("common.sectionError")}
               </p>
               <button
                 onClick={() => window.location.reload()}
-                className="mt-2 text-[13px] font-bold hover:underline"
+                className="mt-2 text-[13px] font-bold hover:underline transition-colors"
                 style={{ color: "var(--cb-brand-accent)" }}
               >
                 {t("common.retry")}
@@ -200,7 +200,10 @@ function Schedule() {
             </div>
           ) : fixtures.length === 0 ? (
             <div className="text-center py-10">
-              <p className="text-[15px]" style={{ color: "var(--cb-text-secondary)" }}>
+              <p
+                className="text-[15px]"
+                style={{ color: "var(--cb-text-secondary)" }}
+              >
                 {t("schedule.noFixtures")}
               </p>
             </div>
@@ -216,15 +219,25 @@ function Schedule() {
                       className="text-[12px] uppercase font-bold tracking-wider"
                       style={{ color: "var(--cb-text-primary)" }}
                     >
-                      {groupKey.length === 10 ? formatGroupDate(groupKey, locale) : groupKey}
+                      {groupKey.length === 10
+                        ? formatGroupDate(groupKey, locale)
+                        : groupKey}
                     </span>
                   </div>
                   {groupFixtures.map((m, idx) => (
-                    <MatchCard key={`${m.id}-${idx}`} m={m} onClick={() => setSelectedFixture(m)} />
+                    <MatchCard
+                      key={m.id + "-" + idx}
+                      m={m}
+                      onClick={() => setSelectedFixture(m)}
+                    />
                   ))}
                 </div>
               ))}
-              <PageNav page={page} totalPages={totalPages} onPageChange={setPage} />
+              <PageNav
+                page={page}
+                totalPages={totalPages}
+                onPageChange={setPage}
+              />
             </div>
           )}
         </div>
@@ -260,7 +273,11 @@ function formatDate(isoDate: string, locale: string): string {
   });
 }
 
-function TeamLogoImg({ team }: { team?: { logoUrl?: string; shortCode?: string; name: string } }) {
+function TeamLogoImg({
+  team,
+}: {
+  team?: { logoUrl?: string; shortCode?: string; name: string };
+}) {
   if (!team) return null;
   if (team.logoUrl) {
     return (
@@ -274,11 +291,11 @@ function TeamLogoImg({ team }: { team?: { logoUrl?: string; shortCode?: string; 
   }
   return (
     <div
-      className="w-10 h-10 rounded-[8px] text-[11px] font-bold flex items-center justify-center"
+      className="w-10 h-10 rounded-[8px] text-[11px] font-bold flex items-center justify-center border"
       style={{
         background: "var(--cb-surface-muted)",
         color: "var(--cb-text-secondary)",
-        border: "1px solid var(--cb-border-subtle)",
+        borderColor: "var(--cb-border-subtle)",
       }}
     >
       {team.shortCode || generateInitials(team.name)}
@@ -286,7 +303,13 @@ function TeamLogoImg({ team }: { team?: { logoUrl?: string; shortCode?: string; 
   );
 }
 
-function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
+function MatchCard({
+  m,
+  onClick,
+}: {
+  m: PublicFixture;
+  onClick?: () => void;
+}) {
   const { locale, t } = useI18n();
   const isCompleted = m.status === "completed";
   const statusLabel = isCompleted
@@ -320,11 +343,17 @@ function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
     >
       <div className="flex items-center gap-4">
         <div className="w-[15%] text-center">
-          <div className="text-[13px] font-bold" style={{ color: "var(--cb-text-primary)" }}>
+          <div
+            className="text-[13px] font-bold"
+            style={{ color: "var(--cb-text-primary)" }}
+          >
             {formatDate(m.matchDate, locale)}
           </div>
           {m.kickoffTime && (
-            <div className="text-[12px]" style={{ color: "var(--cb-text-muted)" }}>
+            <div
+              className="text-[12px]"
+              style={{ color: "var(--cb-text-muted)" }}
+            >
               {m.kickoffTime}
             </div>
           )}
@@ -344,12 +373,18 @@ function MatchCard({ m, onClick }: { m: PublicFixture; onClick?: () => void }) {
           m.result?.awayScore != null ? (
             <div
               className="text-[28px] font-extrabold"
-              style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}
+              style={{
+                color: "var(--cb-text-primary)",
+                textWrap: "balance",
+              }}
             >
               {m.result.homeScore} &ndash; {m.result.awayScore}
             </div>
           ) : (
-            <div className="text-[20px]" style={{ color: "var(--cb-text-muted)" }}>
+            <div
+              className="text-[20px]"
+              style={{ color: "var(--cb-text-muted)" }}
+            >
               {t("schedule.vs")}
             </div>
           )}

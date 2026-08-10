@@ -29,11 +29,7 @@ export function PageNav({
               e.preventDefault();
               if (page > 1) onPageChange(page - 1);
             }}
-            className={
-              page <= 1
-                ? "pointer-events-none opacity-40"
-                : "cursor-pointer transition-colors cb-focus"
-            }
+            className={page <= 1 ? "pointer-events-none opacity-40" : "cursor-pointer transition-colors"}
           >
             {t("pagination.previousLabel")}
           </PaginationPrevious>
@@ -43,12 +39,14 @@ export function PageNav({
           <PaginationItem key={p}>
             <button
               onClick={() => onPageChange(p)}
-              className={
-                "flex h-11 w-11 items-center justify-center font-[var(--cb-font-weight-heading)] cb-pill transition-colors cb-focus " +
-                (p === page
-                  ? "bg-[var(--cb-brand-primary)] text-[var(--cb-text-inverse)]"
-                  : "text-[var(--cb-text-secondary)] hover:bg-[var(--cb-surface-muted)]")
-              }
+              className="flex h-11 w-11 items-center justify-center font-[var(--cb-font-weight-heading)] transition-colors"
+              style={{
+                background: p === page ? "var(--cb-brand-primary)" : "transparent",
+                color: p === page ? "var(--cb-text-inverse)" : "var(--cb-text-secondary)",
+                borderRadius: "var(--cb-radius-md)",
+              }}
+              onMouseEnter={(e) => { if (p !== page) e.currentTarget.style.background = "var(--cb-surface-muted)"; }}
+              onMouseLeave={(e) => { if (p !== page) e.currentTarget.style.background = "transparent"; }}
             >
               {p}
             </button>
@@ -62,11 +60,7 @@ export function PageNav({
               e.preventDefault();
               if (page < totalPages) onPageChange(page + 1);
             }}
-            className={
-              page >= totalPages
-                ? "pointer-events-none opacity-40"
-                : "cursor-pointer transition-colors cb-focus"
-            }
+            className={page >= totalPages ? "pointer-events-none opacity-40" : "cursor-pointer transition-colors"}
           >
             {t("pagination.nextLabel")}
           </PaginationNext>

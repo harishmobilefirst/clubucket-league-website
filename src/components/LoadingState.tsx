@@ -1,5 +1,3 @@
-import { cn } from "@/lib/utils";
-
 export function LoadingState({
   message = "Loading…",
   className,
@@ -8,14 +6,9 @@ export function LoadingState({
   className?: string;
 }) {
   return (
-    <div
-      className={cn(
-        "flex flex-col items-center justify-center py-[var(--cb-space-section)] text-center",
-        className,
-      )}
-    >
-      <div className="w-8 h-8 border-2 border-[var(--cb-border-subtle)] border-t-[var(--cb-brand-accent)] rounded-full animate-spin mb-[var(--cb-space-md)]" />
-      <p className="cb-body">{message}</p>
+    <div className={`flex flex-col items-center justify-center py-[var(--cb-space-section)] text-center ${className || ""}`}>
+      <div className="w-8 h-8 border-2 rounded-full animate-spin mb-[var(--cb-space-md)]" style={{ borderColor: "var(--cb-border-subtle)", borderTopColor: "var(--cb-brand-accent)" }} />
+      <p className="text-[length:var(--cb-font-size-body)]" style={{ color: "var(--cb-text-secondary)" }}>{message}</p>
     </div>
   );
 }

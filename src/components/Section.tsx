@@ -1,5 +1,4 @@
 import { cn } from "@/lib/utils";
-import { Container } from "./Container";
 
 export function Section({
   children,
@@ -19,15 +18,16 @@ export function Section({
   return (
     <section
       className={cn(
-        muted && "cb-section-muted",
-        inverse && "cb-section-inverse",
-        !muted && !inverse && "cb-section",
+        !muted && !inverse && "py-[var(--cb-space-section)]",
         !noPadding && "py-[var(--cb-space-section)]",
         "scroll-mt-[68px]",
         className,
       )}
+      style={{
+        background: muted ? "var(--cb-surface-muted)" : inverse ? "var(--cb-brand-primary)" : "var(--cb-surface-canvas)",
+      }}
     >
-      <Container className={containerClassName}>{children}</Container>
+      <div className={cn("max-w-[1200px] mx-auto px-6", containerClassName)}>{children}</div>
     </section>
   );
 }
