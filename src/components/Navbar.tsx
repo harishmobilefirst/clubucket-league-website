@@ -15,7 +15,6 @@ const fallbackNavLinks: NavLink[] = [
   { to: "/standings", labelKey: "nav.standings", moduleKey: "standings" },
   { to: "/news", labelKey: "nav.news", moduleKey: "news" },
   { to: "/highlights", labelKey: "nav.highlights", moduleKey: "highlights" },
-  { to: "/top-scorers", labelKey: "nav.topScorers", moduleKey: "topScorers" },
   { to: "/about", labelKey: "nav.about", moduleKey: "aboutUs" },
 ];
 

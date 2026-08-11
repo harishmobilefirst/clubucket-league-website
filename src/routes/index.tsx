@@ -118,7 +118,7 @@ function Home() {
   const { data: sponsorsData } = usePublicSponsors(locale);
 
   const apiDivisions = home?.divisions || divisionsData;
-  const topScorers = home?.topScorers || topScorersData;
+  const topScorers = (topScorersData?.length ? topScorersData : home?.topScorers || []).slice(0, 7);
   const latestNews = (home?.latestNews || []).filter((n) => contentItemSlug(n));
   const highlightsData = (home?.highlights || []).filter((h) => contentItemSlug(h));
   const sponsors = home?.sponsors && home.sponsors.length > 0 ? home.sponsors : sponsorsData;

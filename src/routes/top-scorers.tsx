@@ -112,7 +112,7 @@ function TopScorers() {
 
 function Row({ s }: { s: PublicTopScorer }) {
   return (
-    <tr className="border-t transition-colors" style={{ borderTopColor: "var(--cb-border-subtle)", background: "var(--cb-surface-panel)", height: 72 }} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--cb-surface-muted)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--cb-surface-panel)"; }}>
+    <tr className="border-t transition-colors" style={{ borderTopColor: "var(--cb-border-subtle)", background: "var(--cb-surface-panel)", minHeight: 72 }} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--cb-surface-muted)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--cb-surface-panel)"; }}>
       <td className="pl-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{s.rank}</td>
       <td>
         <div className="flex items-center gap-4">
@@ -121,7 +121,14 @@ function Row({ s }: { s: PublicTopScorer }) {
           ) : (
             <div className="w-12 h-12 rounded-full text-[11px] font-bold flex items-center justify-center border" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>{generateInitials(s.playerName)}</div>
           )}
-          <span className="text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{s.playerName}</span>
+          <div className="py-3">
+            <div className="text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{s.playerName}</div>
+            {s.position ? (
+              <div className="mt-1 text-[11px] font-bold uppercase tracking-[1.4px]" style={{ color: "var(--cb-text-muted)" }}>
+                {s.position}
+              </div>
+            ) : null}
+          </div>
         </div>
       </td>
       <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{s.teamName || "-"}</td>

@@ -1,4 +1,4 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Layout } from "@/components/Layout";
@@ -52,14 +52,39 @@ function DivisionCard({ division }: { division: PublicDivision }) {
   const scrollerRef = useRef<HTMLDivElement>(null);
   const CARD_STEP = 230;
   const { t } = useI18n();
+  const [paused, setPaused] = useState(false);
+  const [pos, setPos] = useState(0);
+  const teams = division.teams || [];
 
-  const scrollBy = (dir: "left" | "right") => {
+  useEffect(() => {
+    const el = scrollerRef.current;
+    if (!el || paused) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const max = el.scrollWidth - el.clientWidth;
+    if (max <= 0) return;
+    const count = Math.max(1, Math.ceil(max / CARD_STEP));
+    const timer = setInterval(() => {
+      setPos((p) => {
+        const next = (p + 1) % (count + 1);
+        el.scrollTo({ left: next * CARD_STEP, behavior: next === 0 ? "auto" : "smooth" });
+        return next;
+      });
+    }, 1500);
+    return () => clearInterval(timer);
+  }, [paused, teams.length]);
+
+  const shift = (dir: "left" | "right") => {
     const el = scrollerRef.current;
     if (!el) return;
-    el.scrollBy({ left: dir === "left" ? -CARD_STEP : CARD_STEP, behavior: "smooth" });
+    const max = el.scrollWidth - el.clientWidth;
+    if (max <= 0) return;
+    const count = Math.max(1, Math.ceil(max / CARD_STEP));
+    setPos((p) => {
+      const next = dir === "right" ? Math.min(p + 1, count) : Math.max(p - 1, 0);
+      el.scrollTo({ left: next * CARD_STEP, behavior: "smooth" });
+      return next;
+    });
   };
-
-  const teams = division.teams || [];
 
   return (
     <div className="rounded-[10px] overflow-hidden" style={{ background: "var(--cb-surface-panel)", boxShadow: "0 2px 12px rgba(0,0,0,0.07)" }}>
@@ -69,9 +94,9 @@ function DivisionCard({ division }: { division: PublicDivision }) {
       <div className="relative px-6 py-10">
         {teams.length > 0 ? (
           <>
-            <button type="button" onClick={() => scrollBy("left")} aria-label={t("divisions.scrollLeft")} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-colors" style={{ backgroundColor: "var(--cb-brand-primary)", color: "var(--cb-text-inverse)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)"; }}><ChevronLeft className="w-5 h-5" /></button>
-            <button type="button" onClick={() => scrollBy("right")} aria-label={t("divisions.scrollRight")} className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-colors" style={{ backgroundColor: "var(--cb-brand-primary)", color: "var(--cb-text-inverse)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)"; }}><ChevronRight className="w-5 h-5" /></button>
-            <div ref={scrollerRef} className="overflow-x-auto scroll-smooth" style={{ scrollbarWidth: "none" }}>
+            <button type="button" onClick={() => shift("left")} aria-label={t("divisions.scrollLeft")} className="absolute left-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-colors" style={{ backgroundColor: "var(--cb-brand-primary)", color: "var(--cb-text-inverse)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)"; }}><ChevronLeft className="w-5 h-5" /></button>
+            <button type="button" onClick={() => shift("right")} aria-label={t("divisions.scrollRight")} className="absolute right-3 top-1/2 -translate-y-1/2 z-10 w-10 h-10 rounded-full flex items-center justify-center shadow-md transition-colors" style={{ backgroundColor: "var(--cb-brand-primary)", color: "var(--cb-text-inverse)" }} onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = "var(--cb-brand-primary)"; }}><ChevronRight className="w-5 h-5" /></button>
+            <div ref={scrollerRef} className="overflow-x-auto" style={{ scrollbarWidth: "none" }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)} onFocus={() => setPaused(true)} onBlur={() => setPaused(false)}>
               <div className="flex items-stretch gap-5" style={{ width: "max-content" }}>
                 {teams.map((t, idx) => (
                   <Link key={`${t.id}-${idx}`} to="/teams/$teamId" params={{ teamId: t.id }} className="w-[210px] shrink-0 group/team rounded-[14px] border hover:-translate-y-1 transition-all duration-300 flex flex-col" style={{ backgroundColor: "var(--cb-surface-panel)", borderColor: "var(--cb-border-subtle)", boxShadow: "0 2px 10px rgba(0,0,0,0.05)" }} onMouseEnter={(e) => { e.currentTarget.style.borderColor = "var(--cb-brand-accent)"; }} onMouseLeave={(e) => { e.currentTarget.style.borderColor = "var(--cb-border-subtle)"; }}>

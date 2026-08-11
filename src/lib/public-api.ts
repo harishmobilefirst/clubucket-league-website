@@ -450,6 +450,7 @@ export function normalizeTopScorer(
     teamName: team?.name,
     teamInitials: team?.shortCode ?? generateInitials(team?.name),
     goals: raw.goals,
+    position: raw.player?.position,
     imageUrl: raw.player?.imageUrl,
   };
 }

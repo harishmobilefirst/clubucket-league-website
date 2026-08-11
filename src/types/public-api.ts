@@ -414,6 +414,7 @@ export type PublicTopScorerRaw = {
     fullName: string;
     publicCode: string;
     imageUrl?: string;
+    position?: string;
     status: string;
   };
   teamId?: string;
