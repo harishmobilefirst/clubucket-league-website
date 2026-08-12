@@ -201,6 +201,7 @@ const en = {
   "register.genericError": "Something went wrong. Please try again.",
 
   // About
+  "about.eyebrow": "Who We Are",
   "about.title": "About Us",
   "about.subtitle": "The story behind LigaD1",
   "about.fallbackTitle": "More Than a League. A Community.",
@@ -442,6 +443,7 @@ const es: Record<TranslationKey, string> = {
   "register.genericError": "Algo salió mal. Inténtalo de nuevo.",
 
   "about.title": "Nosotros",
+  "about.eyebrow": "Quiénes Somos",
   "about.subtitle": "La historia detrás de LigaD1",
   "about.fallbackTitle": "Más que una liga. Una comunidad.",
   "about.fallbackSummary":

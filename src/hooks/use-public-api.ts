@@ -318,9 +318,20 @@ export function usePublicAbout(locale: string) {
   return useQuery({
     queryKey: queryKeys(slug).about(locale),
     queryFn: () =>
-      fetchPublicApi<PublicAboutUs>(slug, "/about-us", {
+      fetchPublicApi<Record<string, unknown>>(slug, "/about-us", {
         params: { locale },
       }),
+    select: (raw): PublicAboutUs | null => {
+      if (!raw) return null;
+      const pick = (en?: string, es?: string) =>
+        locale === "es" ? (es || en || undefined) : (en || es || undefined);
+      return {
+        title: pick(raw.titleEn as string, raw.titleEs as string) || (raw.title as string),
+        summary: pick(raw.summaryEn as string, raw.summaryEs as string) || (raw.summary as string),
+        imageUrl: raw.featuredImageUrl as string | undefined,
+        bodySections: Array.isArray(raw.bodySections) ? raw.bodySections : undefined,
+      };
+    },
     staleTime: 10 * 60 * 1000,
     enabled: !!locale,
   });
