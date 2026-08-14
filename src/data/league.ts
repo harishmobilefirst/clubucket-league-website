@@ -207,22 +207,22 @@ export const standings: Record<string, StandingRow[]> = {
 export type Player = {
   number: number;
   name: string;
-  position: "GK" | "DEF" | "MID" | "FWD";
+  position: "GK" | "DF" | "MF" | "FW";
   nationality: string;
 };
 
 export const fcAztecaSquad: Player[] = [
   { number: 1, name: "Rodrigo Álvarez", position: "GK", nationality: "Mexico" },
-  { number: 5, name: "Carlos Méndez", position: "DEF", nationality: "Mexico" },
-  { number: 4, name: "Javier Soto", position: "DEF", nationality: "Mexico" },
-  { number: 3, name: "Rafael Cruz", position: "DEF", nationality: "Mexico" },
-  { number: 2, name: "Eduardo Flores", position: "DEF", nationality: "Mexico" },
-  { number: 8, name: "Óscar Lima", position: "MID", nationality: "Mexico" },
-  { number: 6, name: "Diego Herrera", position: "MID", nationality: "Mexico" },
-  { number: 11, name: "Andrés Vega", position: "MID", nationality: "Mexico" },
-  { number: 7, name: "Pablo Torres", position: "MID", nationality: "Mexico" },
-  { number: 9, name: "Fernando Ruiz", position: "FWD", nationality: "Mexico" },
-  { number: 10, name: "Marcos Ibáñez", position: "FWD", nationality: "Mexico" },
+  { number: 5, name: "Carlos Méndez", position: "DF", nationality: "Mexico" },
+  { number: 4, name: "Javier Soto", position: "DF", nationality: "Mexico" },
+  { number: 3, name: "Rafael Cruz", position: "DF", nationality: "Mexico" },
+  { number: 2, name: "Eduardo Flores", position: "DF", nationality: "Mexico" },
+  { number: 8, name: "Óscar Lima", position: "MF", nationality: "Mexico" },
+  { number: 6, name: "Diego Herrera", position: "MF", nationality: "Mexico" },
+  { number: 11, name: "Andrés Vega", position: "MF", nationality: "Mexico" },
+  { number: 7, name: "Pablo Torres", position: "MF", nationality: "Mexico" },
+  { number: 9, name: "Fernando Ruiz", position: "FW", nationality: "Mexico" },
+  { number: 10, name: "Marcos Ibáñez", position: "FW", nationality: "Mexico" },
 ];
 
 export const news = [
