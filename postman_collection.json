@@ -9876,7 +9876,7 @@
             "description": "Validates CSV rows and stores a roster import batch/row preview. Invalid rows are retained for preview but are not checked out or billed.",
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"csv\": \"First Name,Last Name,Email,Position,Jersey Number\\nPostman,Csv,{{teamPortalCsvPlayerEmail}},DEF,99\\nBad,Jersey,bad-roster-row@example.test,MID,10\"\n}"
+              "raw": "{\n  \"csv\": \"First Name,Last Name,Email,Position,Jersey Number\\nPostman,Csv,{{teamPortalCsvPlayerEmail}},DF,99\\nBad,Jersey,bad-roster-row@example.test,MF,10\"\n}"
             }
           },
           "event": [
