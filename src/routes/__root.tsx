@@ -180,6 +180,7 @@ function RootComponent() {
         <LocaleProvider defaultLocale="en">
           <PublicThemeGate>
             <ConfigLocaleSync />
+            <ThemeColorSync />
             <Outlet />
           </PublicThemeGate>
         </LocaleProvider>
@@ -215,6 +216,21 @@ function PublicThemeGate({ children }: { children: React.ReactNode }) {
   }
 
   return <>{children}</>;
+}
+
+function ThemeColorSync() {
+  const { data: config } = usePublicConfig();
+
+  useEffect(() => {
+    if (typeof document === "undefined" || !config?.theme) return;
+    const root = document.documentElement.style;
+    const { primary, secondary, accent } = config.theme;
+    if (primary) root.setProperty("--cb-brand-primary", primary);
+    if (secondary) root.setProperty("--cb-brand-secondary", secondary);
+    if (accent) root.setProperty("--cb-brand-accent", accent);
+  }, [config?.theme]);
+
+  return null;
 }
 
 function ConfigLocaleSync() {
