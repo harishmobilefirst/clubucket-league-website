@@ -3,7 +3,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePublicDivisions } from "@/hooks/use-public-api";
+import { usePublicConfig, usePublicDivisions } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 import type { PublicDivision } from "@/types/public-api";
@@ -11,8 +11,8 @@ import type { PublicDivision } from "@/types/public-api";
 export const Route = createFileRoute("/divisions")({
   head: () => ({
     meta: [
-      { title: "Divisions — LigaD1" },
-      { name: "description", content: "All LigaD1 divisions and clubs —" },
+      { title: "Divisions" },
+      { name: "description", content: "All divisions and clubs —" },
     ],
   }),
   component: Divisions,
@@ -20,7 +20,8 @@ export const Route = createFileRoute("/divisions")({
 
 function Divisions() {
   const { t } = useI18n();
-  usePageTitle("meta.divisions");
+  const { data: config } = usePublicConfig();
+  usePageTitle("meta.divisions", { orgName: config?.displayName || "Clubucket" });
   const { data, isLoading, error } = usePublicDivisions();
 
   return (

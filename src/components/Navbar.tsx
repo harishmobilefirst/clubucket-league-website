@@ -44,7 +44,7 @@ export function Navbar() {
   );
 
   const logoUrl = config?.logoUrl || logo;
-  const leagueName = config?.displayName || "LigaD1";
+  const leagueName = config?.displayName || "Clubucket";
   const locales = config?.supportedLocales.length ? config.supportedLocales : fallbackLocales;
 
   return (

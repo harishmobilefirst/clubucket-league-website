@@ -34,8 +34,8 @@ import type { PublicFixture, PublicTopScorer, PublicSponsor } from "@/types/publ
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "LigaD1 — The Heart of Mexican Soccer" },
-      { name: "description", content: "LigaD1 — Mexico's premier semi-professional soccer league." },
+      { title: "The Heart of Mexican Soccer" },
+      { name: "description", content: "A premier semi-professional soccer organization." },
     ],
   }),
   component: Home,
@@ -52,6 +52,8 @@ function HeroSlider({ slides }: { slides?: { imageUrl?: string; headline?: strin
   const [current, setCurrent] = useState(0);
   const count = slides && slides.length > 0 ? slides.length : fallbackSlides.length;
   const { t } = useI18n();
+  const { data: config } = usePublicConfig();
+  const orgName = config?.displayName || "Clubucket";
 
   useEffect(() => {
     const timer = setInterval(() => setCurrent((p) => (p + 1) % count), 5000);
@@ -80,7 +82,7 @@ function HeroSlider({ slides }: { slides?: { imageUrl?: string; headline?: strin
           ) : (
             <>
               <h1 className="text-[52px] font-extrabold uppercase leading-[1.05]" style={{ color: "var(--cb-text-inverse)", textWrap: "balance" }}>{t("home.heroTitle")}</h1>
-              <p className="text-[18px] mt-5" style={{ color: "rgba(255,255,255,0.80)" }}>LigaD1</p>
+              <p className="text-[18px] mt-5" style={{ color: "rgba(255,255,255,0.80)" }}>{orgName}</p>
               <div className="mt-8">
                 <Link to="/schedule" className="inline-block rounded-full px-7 py-3 text-[14px] font-bold uppercase transition-colors hover:opacity-90" style={{ background: "var(--cb-brand-accent)", color: "var(--cb-text-inverse)" }}>{t("home.heroCta")}</Link>
               </div>
@@ -106,8 +108,9 @@ function HeroSlider({ slides }: { slides?: { imageUrl?: string; headline?: strin
 function Home() {
   const { locale } = useLocale();
   const { t } = useI18n();
-  usePageTitle("meta.home");
   const { data: config } = usePublicConfig();
+  const orgName = config?.displayName || "Clubucket";
+  usePageTitle("meta.home", { orgName });
   const { data: home, isLoading: homeLoading, error: homeError } = usePublicHome(locale);
   const { data: divisionsData } = usePublicDivisions();
   const { data: seasonsData } = usePublicSeasons();
@@ -156,14 +159,14 @@ function Home() {
       <section className="py-20" style={{ background: "var(--cb-surface-muted)" }}>
         <div className="max-w-[1200px] mx-auto px-6 grid md:grid-cols-2 gap-16 items-center">
           <div>
-            <div className="text-[16px] font-extrabold uppercase tracking-[2.5px]" style={{ color: "var(--cb-brand-accent)" }}>{(aboutData as any)?.eyebrow || t("home.aboutEyebrow")}</div>
+            <div className="text-[16px] font-extrabold uppercase tracking-[2.5px]" style={{ color: "var(--cb-brand-accent)" }}>{(aboutData as any)?.eyebrow || t("home.aboutEyebrow", { orgName })}</div>
             <h2 className="text-[32px] font-bold mt-3" style={{ color: "var(--cb-text-primary)", textWrap: "balance" }}>{aboutData?.title || home?.aboutContent?.title || t("home.aboutTitle")}</h2>
-            <p className="text-[15px] mt-5" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{aboutData?.summary || home?.aboutContent?.body || t("home.aboutBody1")}</p>
-            <p className="text-[15px] mt-3" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{(aboutData as any)?.summary2 || t("home.aboutBody2")}</p>
+            <p className="text-[15px] mt-5" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{aboutData?.summary || home?.aboutContent?.body || t("home.aboutBody1", { orgName })}</p>
+            <p className="text-[15px] mt-3" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{(aboutData as any)?.summary2 || t("home.aboutBody2", { orgName })}</p>
             <Link to="/about" className="mt-7 inline-block text-[14px] uppercase font-semibold hover:underline transition-colors" style={{ color: "var(--cb-brand-accent)" }}>{t("common.learnMore")} &rarr;</Link>
           </div>
           <div className="rounded-xl overflow-hidden min-h-[280px]">
-            <img src={aboutData?.imageUrl || home?.aboutContent?.imageUrl || seasonHighlights} alt={aboutData?.title || t("home.aboutImgAlt")} width={1280} height={896} loading="lazy" className="w-full h-full object-cover" />
+            <img src={aboutData?.imageUrl || home?.aboutContent?.imageUrl || seasonHighlights} alt={aboutData?.title || t("home.aboutImgAlt", { orgName })} width={1280} height={896} loading="lazy" className="w-full h-full object-cover" />
           </div>
         </div>
       </section>

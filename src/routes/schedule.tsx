@@ -14,8 +14,8 @@ import type { PublicFixture } from "@/types/public-api";
 export const Route = createFileRoute("/schedule")({
   head: () => ({
     meta: [
-      { title: "Schedule \u2014 LigaD1" },
-      { name: "description", content: "All fixtures and results for the league." },
+      { title: "Schedule" },
+      { name: "description", content: "All fixtures and results." },
     ],
   }),
   component: Schedule,
@@ -30,9 +30,8 @@ function Schedule() {
   const [page, setPage] = useState(1);
   const [selectedFixture, setSelectedFixture] = useState<PublicFixture | null>(null);
   const { locale, t } = useI18n();
-  usePageTitle("meta.schedule");
-
   const { data: config } = usePublicConfig();
+  usePageTitle("meta.schedule", { orgName: config?.displayName || "Clubucket" });
   const { data: seasons, isLoading: seasonsLoading } = usePublicSeasons();
   const { data: divisions } = usePublicDivisions();
 

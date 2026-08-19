@@ -22,7 +22,7 @@ export function Footer() {
   );
 
   const logoUrl = config?.logoUrl || logo;
-  const leagueName = config?.displayName || "LigaD1";
+  const leagueName = config?.displayName || "Clubucket";
   const contactEmail =
     config?.contactEmail ||
     (typeof config?.settings?.contactEmail === "string"

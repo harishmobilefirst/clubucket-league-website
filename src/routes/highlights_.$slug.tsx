@@ -9,7 +9,7 @@ import { BackLink } from "@/components/BackLink";
 import { EmptyState } from "@/components/EmptyState";
 
 export const Route = createFileRoute("/highlights_/$slug")({
-  head: ({ params }) => ({ meta: [{ title: `Highlights — ${params.slug} — LigaD1` }] }),
+  head: ({ params }) => ({ meta: [{ title: `Highlights — ${params.slug}` }] }),
   component: HighlightsDetail,
 });
 

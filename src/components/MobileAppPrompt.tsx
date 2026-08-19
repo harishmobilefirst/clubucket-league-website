@@ -27,7 +27,7 @@ export function MobileAppPrompt() {
 
   if (!show || !appDestinationUrl) return null;
 
-  const leagueName = config?.displayName || "LigaD1";
+  const leagueName = config?.displayName || "Clubucket";
 
   return (
     <div className="fixed inset-0 z-[2000] flex items-center justify-center px-6" style={{ background: "rgba(0,0,0,0.80)", backdropFilter: "blur(8px)" }}>

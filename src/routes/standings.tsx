@@ -11,8 +11,8 @@ import type { PublicStandingRow } from "@/types/public-api";
 export const Route = createFileRoute("/standings")({
   head: () => ({
     meta: [
-      { title: "Standings — LigaD1" },
-      { name: "description", content: "League standings updated after each match." },
+      { title: "Standings" },
+      { name: "description", content: "Standings updated after each match." },
     ],
   }),
   component: Standing,
@@ -20,8 +20,8 @@ export const Route = createFileRoute("/standings")({
 
 function Standing() {
   const { t } = useI18n();
-  usePageTitle("meta.standings");
   const { data: config } = usePublicConfig();
+  usePageTitle("meta.standings", { orgName: config?.displayName || "Clubucket" });
   const { data: divisions } = usePublicDivisions();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string | undefined>(undefined);
 
