@@ -3,13 +3,13 @@ import { useState } from "react";
 import { CheckCircle2, Check, AlertCircle } from "lucide-react";
 import { Layout, PageHeader } from "@/components/Layout";
 import { useI18n, usePageTitle } from "@/lib/i18n";
-import { useCreateInquiry, usePublicDivisions } from "@/hooks/use-public-api";
+import { useCreateInquiry, usePublicConfig, usePublicDivisions } from "@/hooks/use-public-api";
 
 export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
-      { title: "New Team Membership — LigaD1" },
-      { name: "description", content: "Submit a request to join LigaD1." },
+      { title: "New Team Membership — Clubucket" },
+      { name: "description", content: "Submit a request to join." },
     ],
   }),
   component: Register,
@@ -23,8 +23,10 @@ function Register() {
   const [submitted, setSubmitted] = useState(false);
   const inquiry = useCreateInquiry();
   const { data: divisions, isLoading: divisionsLoading } = usePublicDivisions();
+  const { data: config } = usePublicConfig();
+  const orgName = config?.displayName || "Clubucket";
   const { t } = useI18n();
-  usePageTitle("meta.register");
+  usePageTitle("meta.register", { orgName });
 
   const [form, setForm] = useState({
     teamName: "", city: "", contactName: "", contactRole: "", contactEmail: "", contactPhone: "", divisionInterestId: "", aboutTeam: "",
@@ -42,7 +44,7 @@ function Register() {
 
   return (
     <Layout>
-      <PageHeader title={t("register.title")} subtitle={t("register.subtitle")} />
+      <PageHeader title={t("register.title")} subtitle={t("register.subtitle", { orgName })} />
       <section className="py-[60px]" style={{ background: "var(--cb-surface-muted)" }}>
         <div className="max-w-[1200px] mx-auto px-6 grid lg:grid-cols-[3fr_2fr] gap-8">
           <div className="rounded-[10px] p-10 border" style={{ background: "var(--cb-surface-panel)", boxShadow: "0 2px 12px rgba(0,0,0,0.07)", borderColor: "var(--cb-border-subtle)" }}>
@@ -110,15 +112,15 @@ function Register() {
                 </div>
 
                 <button type="submit" disabled={inquiry.isPending} className="w-full mt-7 text-white rounded-full py-3 text-[15px] font-bold uppercase disabled:opacity-50 transition-colors hover:opacity-90" style={{ background: "var(--cb-brand-accent)" }}>{inquiry.isPending ? t("register.submitting") : t("register.submit")}</button>
-                <p className="text-[11px] text-center mt-3" style={{ color: "var(--cb-text-muted)" }}>{t("register.consent")}</p>
+                <p className="text-[11px] text-center mt-3" style={{ color: "var(--cb-text-muted)" }}>{t("register.consent", { orgName })}</p>
               </form>
             )}
           </div>
 
           <aside className="rounded-[10px] p-8 h-fit" style={{ background: "var(--cb-brand-primary)" }}>
-            <h3 className="text-[18px] font-bold" style={{ color: "var(--cb-text-inverse)", textWrap: "balance" }}>{t("register.whyJoin")}</h3>
+            <h3 className="text-[18px] font-bold" style={{ color: "var(--cb-text-inverse)", textWrap: "balance" }}>{t("register.whyJoin", { orgName })}</h3>
             <ul className="mt-5 space-y-4">
-              {[t("register.benefit1"), t("register.benefit2"), t("register.benefit3")].map((text) => (
+              {[t("register.benefit1"), t("register.benefit2", { orgName }), t("register.benefit3")].map((text) => (
                 <li key={text} className="flex gap-3">
                   <Check size={16} className="shrink-0 mt-0.5" style={{ color: "var(--cb-brand-accent)" }} />
                   <span className="text-[14px] leading-[1.7]" style={{ color: "rgba(255,255,255,0.85)" }}>{text}</span>

@@ -53,11 +53,11 @@ const en = {
   // Home
   "home.heroTitle": "The Heart of Mexican Soccer",
   "home.heroCta": "View Schedule",
-  "home.aboutEyebrow": "About LigaD1",
-  "home.aboutTitle": "More Than a League. A Community.",
-  "home.aboutBody1": "LigaD1 is Mexico's premier semi-professional soccer league, bringing together the most competitive clubs from across the country. Founded to bridge the gap between amateur football and the professional game, LigaD1 gives talented players a real platform to grow.",
-  "home.aboutBody2": "With three competitive divisions and a rapidly growing fan base, LigaD1 is more than a competition — it's a movement built on passion, discipline, and community.",
-  "home.aboutImgAlt": "LigaD1 season in action",
+  "home.aboutEyebrow": "About {orgName}",
+  "home.aboutTitle": "More Than a Competition. A Community.",
+  "home.aboutBody1": "{orgName} is a premier semi-professional soccer organization, bringing together some of the most competitive clubs and teams in the region. Founded to bridge the gap between amateur football and the professional game, {orgName} gives talented players a real platform to grow.",
+  "home.aboutBody2": "With competitive divisions and a rapidly growing fan base, {orgName} is more than a competition — it's a movement built on passion, discipline, and community.",
+  "home.aboutImgAlt": "{orgName} season in action",
   "home.our": "OUR",
   "home.divisions": "DIVISIONS",
   "home.viewStandings": "View Standings",
@@ -112,7 +112,7 @@ const en = {
 
   // Top scorers
   "topScorers.title": "Top Scorers",
-  "topScorers.subtitle": "Leading goal-scorers across the league.",
+  "topScorers.subtitle": "Leading goal-scorers this season.",
   "topScorers.allSeasons": "All Seasons",
   "topScorers.allDivisions": "All Divisions",
   "topScorers.player": "Player",
@@ -122,7 +122,7 @@ const en = {
 
   // News
   "news.title": "News & Updates",
-  "news.subtitle": "Latest from LigaD1",
+  "news.subtitle": "Latest from {orgName}",
   "news.empty": "No news articles available.",
   "news.notFound": "Article not found.",
   "news.back": "Back to News",
@@ -132,7 +132,7 @@ const en = {
 
   // Highlights
   "highlights.title": "Highlights",
-  "highlights.subtitle": "The best moments from LigaD1",
+  "highlights.subtitle": "The best moments from {orgName}",
   "highlights.empty": "No highlights available.",
   "highlights.notFound": "Highlight not found.",
   "highlights.back": "Back to Highlights",
@@ -168,7 +168,7 @@ const en = {
 
   // Register
   "register.title": "New Team Membership",
-  "register.subtitle": "Submit a request to join LigaD1.",
+  "register.subtitle": "Submit a request to join {orgName}.",
   "register.formTitle": "Team Registration Request",
   "register.formIntro":
     "Fill in the details below and our team will get back to you within 3–5 business days.",
@@ -184,18 +184,18 @@ const en = {
   "register.noPreference": "No Preference",
   "register.aboutTeam": "Tell us about your team",
   "register.aboutTeamPlaceholder":
-    "Share any relevant background — how long active, number of players, previous league experience...",
+    "Share any relevant background — how long active, number of players, previous competitive experience...",
   "register.submit": "Submit Request",
   "register.submitting": "Submitting...",
   "register.consent":
-    "By submitting this form you agree to be contacted by LigaD1 regarding your application.",
+    "By submitting this form you agree to be contacted by {orgName} regarding your application.",
   "register.requestSubmitted": "Request Submitted!",
   "register.thankYou":
     "Thank you for your interest. Our team will review your application and reach out within 3–5 business days.",
   "register.backHome": "Back to Home",
-  "register.whyJoin": "Why Join LigaD1?",
-  "register.benefit1": "Compete in one of Mexico's most organised semi-professional leagues",
-  "register.benefit2": "Full access to LigaD1's scheduling, standings, and digital platform",
+  "register.whyJoin": "Why Join {orgName}?",
+  "register.benefit1": "Compete in one of the most organised semi-professional soccer leagues",
+  "register.benefit2": "Full access to {orgName}'s scheduling, standings, and digital platform",
   "register.benefit3": "Exposure for your players and club to scouts and fans across the region",
   "register.haveQuestions": "Have questions?",
   "register.genericError": "Something went wrong. Please try again.",
@@ -203,10 +203,10 @@ const en = {
   // About
   "about.eyebrow": "Who We Are",
   "about.title": "About Us",
-  "about.subtitle": "The story behind LigaD1",
-  "about.fallbackTitle": "More Than a League. A Community.",
+  "about.subtitle": "The story behind {orgName}",
+  "about.fallbackTitle": "More Than a Competition. A Community.",
   "about.fallbackSummary":
-    "LigaD1 is Mexico's premier semi-professional soccer league, bringing together the most competitive clubs from across the country. Founded to bridge the gap between amateur football and the professional game, LigaD1 gives talented players a real platform to grow.",
+    "{orgName} is a premier semi-professional soccer organization, bringing together some of the most competitive clubs and teams in the region. Founded to bridge the gap between amateur football and the professional game, {orgName} gives talented players a real platform to grow.",
   "about.mission.title": "Our Mission",
   "about.mission.body":
     "Develop the next generation of Mexican soccer talent through competitive, well-organized league play.",
@@ -245,19 +245,20 @@ const en = {
   "error.websiteUnavailable": "Website unavailable",
   "error.configLoadFailed": "The public website configuration could not be loaded.",
 
-  // Document titles
-  "meta.home": "LigaD1 — The Heart of Mexican Soccer",
-  "meta.divisions": "Divisions — LigaD1",
-  "meta.schedule": "Schedule — LigaD1",
-  "meta.standings": "Standings — LigaD1",
-  "meta.news": "News & Updates — LigaD1",
-  "meta.newsItem": "News — {slug} — LigaD1",
-  "meta.highlights": "Highlights — LigaD1",
-  "meta.highlightsItem": "Highlights — {slug} — LigaD1",
-  "meta.about": "About Us — LigaD1",
-  "meta.register": "New Team Membership — LigaD1",
-  "meta.topScorers": "Top Scorers — LigaD1",
-  "meta.team": "Team Profile — LigaD1",
+  // Document titles. {orgName} is threaded in from the resolved org's config.displayName,
+  // falling back to "Clubucket" only until config loads or if it's unset.
+  "meta.home": "{orgName}",
+  "meta.divisions": "Divisions — {orgName}",
+  "meta.schedule": "Schedule — {orgName}",
+  "meta.standings": "Standings — {orgName}",
+  "meta.news": "News & Updates — {orgName}",
+  "meta.newsItem": "News — {slug} — {orgName}",
+  "meta.highlights": "Highlights — {orgName}",
+  "meta.highlightsItem": "Highlights — {slug} — {orgName}",
+  "meta.about": "About Us — {orgName}",
+  "meta.register": "New Team Membership — {orgName}",
+  "meta.topScorers": "Top Scorers — {orgName}",
+  "meta.team": "Team Profile — {orgName}",
 };
 
 const es: Record<TranslationKey, string> = {
@@ -302,11 +303,11 @@ const es: Record<TranslationKey, string> = {
 
   "home.heroTitle": "El Corazón del Futbol Mexicano",
   "home.heroCta": "Ver Calendario",
-  "home.aboutEyebrow": "Acerca de LigaD1",
-  "home.aboutTitle": "Más que una liga. Una comunidad.",
-  "home.aboutBody1": "LigaD1 es la liga de fútbol semiprofesional premier de México, reuniendo a los clubes más competitivos de todo el país. Fundada para cerrar la brecha entre el fútbol amateur y el profesional, LigaD1 da a los jugadores talentosos una plataforma real para crecer.",
-  "home.aboutBody2": "Con tres divisiones competitivas y una base de fans en rápido crecimiento, LigaD1 es más que una competencia — es un movimiento construido sobre pasión, disciplina y comunidad.",
-  "home.aboutImgAlt": "La temporada de LigaD1 en acción",
+  "home.aboutEyebrow": "Acerca de {orgName}",
+  "home.aboutTitle": "Más que una competencia. Una comunidad.",
+  "home.aboutBody1": "{orgName} es una organización semiprofesional de fútbol de primer nivel, que reúne a algunos de los clubes y equipos más competitivos de la región. Fundada para cerrar la brecha entre el fútbol amateur y el profesional, {orgName} da a los jugadores talentosos una plataforma real para crecer.",
+  "home.aboutBody2": "Con divisiones competitivas y una base de fans en rápido crecimiento, {orgName} es más que una competencia — es un movimiento construido sobre pasión, disciplina y comunidad.",
+  "home.aboutImgAlt": "La temporada de {orgName} en acción",
   "home.our": "NUESTRAS",
   "home.divisions": "DIVISIONES",
   "home.viewStandings": "Ver Tabla",
@@ -358,7 +359,7 @@ const es: Record<TranslationKey, string> = {
   "standings.empty": "La tabla aún no está disponible.",
 
   "topScorers.title": "Goleadores",
-  "topScorers.subtitle": "Los máximos goleadores de la liga.",
+  "topScorers.subtitle": "Los máximos goleadores de la temporada.",
   "topScorers.allSeasons": "Todas las Temporadas",
   "topScorers.allDivisions": "Todas las Divisiones",
   "topScorers.player": "Jugador",
@@ -367,7 +368,7 @@ const es: Record<TranslationKey, string> = {
   "topScorers.empty": "No se encontraron goleadores con los filtros seleccionados.",
 
   "news.title": "Noticias y Actualizaciones",
-  "news.subtitle": "Lo último de LigaD1",
+  "news.subtitle": "Lo último de {orgName}",
   "news.empty": "No hay artículos de noticias disponibles.",
   "news.notFound": "Artículo no encontrado.",
   "news.back": "Volver a Noticias",
@@ -376,7 +377,7 @@ const es: Record<TranslationKey, string> = {
   "news.learnMore": "Saber más",
 
   "highlights.title": "Destacados",
-  "highlights.subtitle": "Los mejores momentos de LigaD1",
+  "highlights.subtitle": "Los mejores momentos de {orgName}",
   "highlights.empty": "No hay destacados disponibles.",
   "highlights.notFound": "Destacado no encontrado.",
   "highlights.back": "Volver a Destacados",
@@ -408,7 +409,7 @@ const es: Record<TranslationKey, string> = {
   "fixture.unknownPlayer": "Jugador desconocido",
 
   "register.title": "Nueva Membresía de Equipo",
-  "register.subtitle": "Envía una solicitud para unirte a LigaD1.",
+  "register.subtitle": "Envía una solicitud para unirte a {orgName}.",
   "register.formTitle": "Solicitud de Registro de Equipo",
   "register.formIntro":
     "Completa los detalles a continuación y nuestro equipo se comunicará contigo en un plazo de 3 a 5 días hábiles.",
@@ -424,19 +425,19 @@ const es: Record<TranslationKey, string> = {
   "register.noPreference": "Sin Preferencia",
   "register.aboutTeam": "Cuéntanos sobre tu equipo",
   "register.aboutTeamPlaceholder":
-    "Comparte información relevante: cuánto tiempo activo, número de jugadores, experiencia en ligas anteriores...",
+    "Comparte información relevante: cuánto tiempo activo, número de jugadores, experiencia competitiva anterior...",
   "register.submit": "Enviar Solicitud",
   "register.submitting": "Enviando...",
   "register.consent":
-    "Al enviar este formulario aceptas ser contactado por LigaD1 respecto a tu solicitud.",
+    "Al enviar este formulario aceptas ser contactado por {orgName} respecto a tu solicitud.",
   "register.requestSubmitted": "¡Solicitud Enviada!",
   "register.thankYou":
     "Gracias por tu interés. Nuestro equipo revisará tu solicitud y se comunicará contigo en un plazo de 3 a 5 días hábiles.",
   "register.backHome": "Volver al Inicio",
-  "register.whyJoin": "¿Por qué unirte a LigaD1?",
-  "register.benefit1": "Compite en una de las ligas semiprofesionales mejor organizadas de México",
+  "register.whyJoin": "¿Por qué unirte a {orgName}?",
+  "register.benefit1": "Compite en una de las ligas semiprofesionales de fútbol mejor organizadas",
   "register.benefit2":
-    "Acceso completo al calendario, las tablas y la plataforma digital de LigaD1",
+    "Acceso completo al calendario, las tablas y la plataforma digital de {orgName}",
   "register.benefit3":
     "Visibilidad para tus jugadores y tu club ante visores y aficionados de la región",
   "register.haveQuestions": "¿Tienes preguntas?",
@@ -444,10 +445,10 @@ const es: Record<TranslationKey, string> = {
 
   "about.title": "Nosotros",
   "about.eyebrow": "Quiénes Somos",
-  "about.subtitle": "La historia detrás de LigaD1",
-  "about.fallbackTitle": "Más que una liga. Una comunidad.",
+  "about.subtitle": "La historia detrás de {orgName}",
+  "about.fallbackTitle": "Más que una competencia. Una comunidad.",
   "about.fallbackSummary":
-    "LigaD1 es la liga semiprofesional de futbol más importante de México, que reúne a los clubes más competitivos del país. Fundada para cerrar la brecha entre el futbol amateur y el juego profesional, LigaD1 da a los jugadores talentosos una plataforma real para crecer.",
+    "{orgName} es una organización semiprofesional de fútbol de primer nivel, que reúne a algunos de los clubes más competitivos de la región. Fundada para cerrar la brecha entre el futbol amateur y el juego profesional, {orgName} da a los jugadores talentosos una plataforma real para crecer.",
   "about.mission.title": "Nuestra Misión",
   "about.mission.body":
     "Desarrollar a la próxima generación de talento futbolístico mexicano mediante una liga competitiva y bien organizada.",
@@ -485,18 +486,18 @@ const es: Record<TranslationKey, string> = {
   "error.websiteUnavailable": "Sitio web no disponible",
   "error.configLoadFailed": "No se pudo cargar la configuración del sitio web público.",
 
-  "meta.home": "LigaD1 — El Corazón del Futbol Mexicano",
-  "meta.divisions": "Divisiones — LigaD1",
-  "meta.schedule": "Calendario — LigaD1",
-  "meta.standings": "Tabla General — LigaD1",
-  "meta.news": "Noticias y Actualizaciones — LigaD1",
-  "meta.newsItem": "Noticias — {slug} — LigaD1",
-  "meta.highlights": "Destacados — LigaD1",
-  "meta.highlightsItem": "Destacados — {slug} — LigaD1",
-  "meta.about": "Nosotros — LigaD1",
-  "meta.register": "Nueva Membresía de Equipo — LigaD1",
-  "meta.topScorers": "Goleadores — LigaD1",
-  "meta.team": "Perfil del Equipo — LigaD1",
+  "meta.home": "{orgName}",
+  "meta.divisions": "Divisiones — {orgName}",
+  "meta.schedule": "Calendario — {orgName}",
+  "meta.standings": "Tabla General — {orgName}",
+  "meta.news": "Noticias y Actualizaciones — {orgName}",
+  "meta.newsItem": "Noticias — {slug} — {orgName}",
+  "meta.highlights": "Destacados — {orgName}",
+  "meta.highlightsItem": "Destacados — {slug} — {orgName}",
+  "meta.about": "Nosotros — {orgName}",
+  "meta.register": "Nueva Membresía de Equipo — {orgName}",
+  "meta.topScorers": "Goleadores — {orgName}",
+  "meta.team": "Perfil del Equipo — {orgName}",
 };
 
 export const translations: Record<string, Record<string, string>> = { en, es };

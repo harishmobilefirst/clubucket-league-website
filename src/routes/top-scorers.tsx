@@ -12,8 +12,8 @@ import type { PublicTopScorer } from "@/types/public-api";
 export const Route = createFileRoute("/top-scorers")({
   head: () => ({
     meta: [
-      { title: "Top Scorers — LigaD1" },
-      { name: "description", content: "Leading goal-scorers across the league." },
+      { title: "Top Scorers — Clubucket" },
+      { name: "description", content: "Leading goal-scorers this season." },
     ],
   }),
   component: TopScorers,
@@ -21,8 +21,8 @@ export const Route = createFileRoute("/top-scorers")({
 
 function TopScorers() {
   const { t } = useI18n();
-  usePageTitle("meta.topScorers");
   const { data: config } = usePublicConfig();
+  usePageTitle("meta.topScorers", { orgName: config?.displayName || "Clubucket" });
   const { data: seasons } = usePublicSeasons();
   const { data: divisions } = usePublicDivisions();
 

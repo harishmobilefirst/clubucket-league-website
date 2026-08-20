@@ -2,18 +2,20 @@ import { createFileRoute, Link, notFound } from "@tanstack/react-router";
 import { Instagram, Facebook, Twitter, Globe } from "lucide-react";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePublicTeam } from "@/hooks/use-public-api";
+import { usePublicConfig, usePublicTeam } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
-import { useI18n } from "@/lib/i18n";
+import { useI18n, usePageTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/teams/$teamId")({
-  head: () => ({ meta: [{ title: "Team Profile — LigaD1" }] }),
+  head: () => ({ meta: [{ title: "Team Profile — Clubucket" }] }),
   component: TeamProfile,
 });
 
 function TeamProfile() {
   const { teamId } = Route.useParams();
   const { t } = useI18n();
+  const { data: config } = usePublicConfig();
+  usePageTitle("meta.team", { orgName: config?.displayName || "Clubucket" });
   const { data: team, isLoading, error } = usePublicTeam(teamId);
 
   if (error && !isLoading) {

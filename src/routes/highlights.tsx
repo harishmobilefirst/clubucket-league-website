@@ -5,17 +5,17 @@ import { HighlightCard } from "@/components/HighlightCard";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageNav } from "@/components/PageNav";
-import { usePublicHighlights } from "@/hooks/use-public-api";
+import { usePublicConfig, usePublicHighlights } from "@/hooks/use-public-api";
 import { contentItemSlug, normalizeContentImage, normalizeContentExcerpt } from "@/lib/public-api";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/highlights")({
   head: () => ({
     meta: [
-      { title: "Highlights — LigaD1" },
-      { name: "description", content: "Match highlights, top goals, and standout moments from LigaD1." },
-      { property: "og:title", content: "Highlights — LigaD1" },
-      { property: "og:description", content: "Match highlights, top goals, and standout moments from LigaD1." },
+      { title: "Highlights — Clubucket" },
+      { name: "description", content: "Match highlights, top goals, and standout moments." },
+      { property: "og:title", content: "Highlights — Clubucket" },
+      { property: "og:description", content: "Match highlights, top goals, and standout moments." },
     ],
   }),
   component: Highlights,
@@ -23,7 +23,8 @@ export const Route = createFileRoute("/highlights")({
 
 function Highlights() {
   const { locale, t } = useI18n();
-  usePageTitle("meta.highlights");
+  const { data: config } = usePublicConfig();
+  usePageTitle("meta.highlights", { orgName: config?.displayName || "Clubucket" });
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = usePublicHighlights(locale, page);
   const items = (data?.items ?? []).filter((h) => contentItemSlug(h));
@@ -33,7 +34,7 @@ function Highlights() {
 
   return (
     <Layout>
-      <PageHeader title={t("highlights.title")} subtitle={t("highlights.subtitle")} />
+      <PageHeader title={t("highlights.title")} subtitle={t("highlights.subtitle", { orgName: config?.displayName || "Clubucket" })} />
       <section className="py-[60px]" style={{ background: "var(--cb-surface-muted)" }}>
         <div className="max-w-[1200px] mx-auto px-6">
           {isLoading ? (

@@ -5,15 +5,15 @@ import { NewsCard } from "@/components/NewsCard";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PageNav } from "@/components/PageNav";
-import { usePublicNews } from "@/hooks/use-public-api";
+import { usePublicConfig, usePublicNews } from "@/hooks/use-public-api";
 import { contentItemSlug, normalizeContentImage, normalizeContentExcerpt } from "@/lib/public-api";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/news")({
   head: () => ({
     meta: [
-      { title: "News & Updates — LigaD1" },
-      { name: "description", content: "Latest news, match reports, and updates from LigaD1." },
+      { title: "News & Updates — Clubucket" },
+      { name: "description", content: "Latest news, match reports, and updates." },
     ],
   }),
   component: News,
@@ -21,7 +21,8 @@ export const Route = createFileRoute("/news")({
 
 function News() {
   const { locale, t } = useI18n();
-  usePageTitle("meta.news");
+  const { data: config } = usePublicConfig();
+  usePageTitle("meta.news", { orgName: config?.displayName || "Clubucket" });
   const [page, setPage] = useState(1);
   const { data, isLoading, error } = usePublicNews(locale, page);
   const items = (data?.items ?? []).filter((n) => contentItemSlug(n));
@@ -31,7 +32,7 @@ function News() {
 
   return (
     <Layout>
-      <PageHeader title={t("news.title")} subtitle={t("news.subtitle")} />
+      <PageHeader title={t("news.title")} subtitle={t("news.subtitle", { orgName: config?.displayName || "Clubucket" })} />
       <section className="py-[60px]" style={{ background: "var(--cb-surface-muted)" }}>
         <div className="max-w-[1200px] mx-auto px-6">
           {isLoading ? (
