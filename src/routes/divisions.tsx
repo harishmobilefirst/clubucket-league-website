@@ -11,8 +11,8 @@ import type { PublicDivision } from "@/types/public-api";
 export const Route = createFileRoute("/divisions")({
   head: () => ({
     meta: [
-      { title: "Divisions" },
-      { name: "description", content: "All divisions and clubs —" },
+      { title: "Divisions — Clubucket" },
+      { name: "description", content: "All divisions and clubs." },
     ],
   }),
   component: Divisions,

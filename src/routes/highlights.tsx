@@ -12,9 +12,9 @@ import { useI18n, usePageTitle } from "@/lib/i18n";
 export const Route = createFileRoute("/highlights")({
   head: () => ({
     meta: [
-      { title: "Highlights" },
+      { title: "Highlights — Clubucket" },
       { name: "description", content: "Match highlights, top goals, and standout moments." },
-      { property: "og:title", content: "Highlights" },
+      { property: "og:title", content: "Highlights — Clubucket" },
       { property: "og:description", content: "Match highlights, top goals, and standout moments." },
     ],
   }),

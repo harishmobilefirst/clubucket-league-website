@@ -9,7 +9,7 @@ import { BackLink } from "@/components/BackLink";
 import { EmptyState } from "@/components/EmptyState";
 
 export const Route = createFileRoute("/news_/$slug")({
-  head: ({ params }) => ({ meta: [{ title: `News — ${params.slug}` }] }),
+  head: ({ params }) => ({ meta: [{ title: `News — ${params.slug} — Clubucket` }] }),
   component: NewsDetail,
 });
 

@@ -14,7 +14,7 @@ import type { PublicFixture } from "@/types/public-api";
 export const Route = createFileRoute("/schedule")({
   head: () => ({
     meta: [
-      { title: "Schedule" },
+      { title: "Schedule — Clubucket" },
       { name: "description", content: "All fixtures and results." },
     ],
   }),

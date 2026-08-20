@@ -11,7 +11,7 @@ import type { PublicStandingRow } from "@/types/public-api";
 export const Route = createFileRoute("/standings")({
   head: () => ({
     meta: [
-      { title: "Standings" },
+      { title: "Standings — Clubucket" },
       { name: "description", content: "Standings updated after each match." },
     ],
   }),

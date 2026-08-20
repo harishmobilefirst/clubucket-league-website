@@ -9,9 +9,9 @@ import seasonHighlights from "@/assets/season-highlights.jpg";
 export const Route = createFileRoute("/about")({
   head: () => ({
     meta: [
-      { title: "About Us" },
+      { title: "About Us — Clubucket" },
       { name: "description", content: "Learn about our premier semi-professional soccer organization." },
-      { property: "og:title", content: "About Us" },
+      { property: "og:title", content: "About Us — Clubucket" },
       { property: "og:description", content: "Learn about our premier semi-professional soccer organization." },
     ],
   }),

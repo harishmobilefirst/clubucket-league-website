@@ -8,7 +8,7 @@ import { useCreateInquiry, usePublicConfig, usePublicDivisions } from "@/hooks/u
 export const Route = createFileRoute("/register")({
   head: () => ({
     meta: [
-      { title: "New Team Membership" },
+      { title: "New Team Membership — Clubucket" },
       { name: "description", content: "Submit a request to join." },
     ],
   }),

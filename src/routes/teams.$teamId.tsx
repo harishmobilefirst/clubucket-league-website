@@ -7,7 +7,7 @@ import { generateInitials } from "@/lib/public-api";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 
 export const Route = createFileRoute("/teams/$teamId")({
-  head: () => ({ meta: [{ title: "Team Profile" }] }),
+  head: () => ({ meta: [{ title: "Team Profile — Clubucket" }] }),
   component: TeamProfile,
 });
 

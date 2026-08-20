@@ -34,7 +34,7 @@ import type { PublicFixture, PublicTopScorer, PublicSponsor } from "@/types/publ
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "The Heart of Mexican Soccer" },
+      { title: "Clubucket — The Heart of Mexican Soccer" },
       { name: "description", content: "A premier semi-professional soccer organization." },
     ],
   }),

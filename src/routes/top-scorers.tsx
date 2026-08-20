@@ -12,7 +12,7 @@ import type { PublicTopScorer } from "@/types/public-api";
 export const Route = createFileRoute("/top-scorers")({
   head: () => ({
     meta: [
-      { title: "Top Scorers" },
+      { title: "Top Scorers — Clubucket" },
       { name: "description", content: "Leading goal-scorers this season." },
     ],
   }),

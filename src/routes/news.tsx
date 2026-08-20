@@ -12,7 +12,7 @@ import { useI18n, usePageTitle } from "@/lib/i18n";
 export const Route = createFileRoute("/news")({
   head: () => ({
     meta: [
-      { title: "News & Updates" },
+      { title: "News & Updates — Clubucket" },
       { name: "description", content: "Latest news, match reports, and updates." },
     ],
   }),
