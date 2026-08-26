@@ -94,7 +94,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
         ? loaderData.config.subtitle || `${loaderData.config.displayName} on Clubucket`
         : "Clubucket — team and league management.";
     const favicon =
-      loaderData?.kind === "published" ? loaderData.config.logoUrl : "/favicon.ico";
+      loaderData?.kind === "published" ? loaderData.config.logoUrl : "/favicon.png";
 
     return {
       meta: [
