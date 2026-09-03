@@ -70,6 +70,7 @@ const en = {
   "home.recentResults": "Recent Results",
   "home.pauseTicker": "Pause ticker",
   "home.resumeTicker": "Resume ticker",
+  "home.sectionError": "Today's scores, news, and highlights didn't load.",
   "ticker.pause": "Pause ticker",
   "ticker.resume": "Resume ticker",
 
@@ -95,6 +96,7 @@ const en = {
   "schedule.noGoalOrCardDetails": "No goal or card details recorded for this match.",
   "schedule.matchDetailsCouldNotLoad": "Match details could not load.",
   "schedule.unknownPlayer": "Unknown player",
+  "schedule.sectionError": "Fixtures and results didn't load.",
 
   // Standings
   "standings.team": "TEAM",
@@ -109,6 +111,7 @@ const en = {
     "P: Played · W: Wins · L: Losses · GF: Goals For · GA: Goals Against · GD: Goal Difference · PTS: Points",
   "standings.notAvailable": "Standings are not available yet.",
   "standings.empty": "Standings are not available yet.",
+  "standings.sectionError": "The standings table didn't load.",
 
   // Top scorers
   "topScorers.title": "Top Scorers",
@@ -320,6 +323,7 @@ const es: Record<TranslationKey, string> = {
   "home.recentResults": "Resultados Recientes",
   "home.pauseTicker": "Pausar marcador",
   "home.resumeTicker": "Reanudar marcador",
+  "home.sectionError": "No se pudieron cargar los resultados, noticias y destacados de hoy.",
   "ticker.pause": "Pausar marcador",
   "ticker.resume": "Reanudar marcador",
 
@@ -344,6 +348,7 @@ const es: Record<TranslationKey, string> = {
   "schedule.noGoalOrCardDetails": "No hay detalles de goles o tarjetas para este partido.",
   "schedule.matchDetailsCouldNotLoad": "No se pudieron cargar los detalles del partido.",
   "schedule.unknownPlayer": "Jugador desconocido",
+  "schedule.sectionError": "No se pudieron cargar los partidos y resultados.",
 
   "standings.team": "EQUIPO",
   "standings.p": "PJ",
@@ -357,6 +362,7 @@ const es: Record<TranslationKey, string> = {
     "PJ: Partidos Jugados · G: Ganados · P: Perdidos · GF: Goles a Favor · GC: Goles en Contra · DG: Diferencia de Goles · PTS: Puntos",
   "standings.notAvailable": "La tabla aún no está disponible.",
   "standings.empty": "La tabla aún no está disponible.",
+  "standings.sectionError": "No se pudo cargar la tabla de posiciones.",
 
   "topScorers.title": "Goleadores",
   "topScorers.subtitle": "Los máximos goleadores de la temporada.",

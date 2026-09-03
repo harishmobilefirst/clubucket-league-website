@@ -1,6 +1,7 @@
-import { createFileRoute } from "@tanstack/react-router";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState, useMemo, useEffect } from "react";
 import { MapPin } from "lucide-react";
+import { z } from "zod";
 import { Layout } from "@/components/Layout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,6 +12,15 @@ import { generateInitials } from "@/lib/public-api";
 import { useI18n, usePageTitle, dateLocale } from "@/lib/i18n";
 import type { PublicFixture } from "@/types/public-api";
 
+type View = "fixtures" | "results";
+
+const scheduleSearchSchema = z.object({
+  view: z.enum(["fixtures", "results"]).catch("fixtures"),
+  divisionId: z.string().catch("ALL"),
+  seasonId: z.string().optional().catch(undefined),
+  page: z.number().int().min(1).catch(1),
+});
+
 export const Route = createFileRoute("/schedule")({
   head: () => ({
     meta: [
@@ -18,16 +28,13 @@ export const Route = createFileRoute("/schedule")({
       { name: "description", content: "All fixtures and results." },
     ],
   }),
+  validateSearch: scheduleSearchSchema,
   component: Schedule,
 });
 
-type View = "fixtures" | "results";
-
 function Schedule() {
-  const [view, setView] = useState<View>("fixtures");
-  const [divisionId, setDivisionId] = useState<string>("ALL");
-  const [seasonId, setSeasonId] = useState<string | undefined>(undefined);
-  const [page, setPage] = useState(1);
+  const { view, divisionId, seasonId, page } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
   const [selectedFixture, setSelectedFixture] = useState<PublicFixture | null>(null);
   const { locale, t } = useI18n();
   const { data: config } = usePublicConfig();
@@ -35,8 +42,13 @@ function Schedule() {
   const { data: seasons, isLoading: seasonsLoading } = usePublicSeasons();
   const { data: divisions } = usePublicDivisions();
 
+  const setView = (v: View) => navigate({ search: (prev) => ({ ...prev, view: v, page: 1 }) });
+  const setDivisionId = (v: string) => navigate({ search: (prev) => ({ ...prev, divisionId: v, page: 1 }) });
+  const setSeasonId = (v: string | undefined) => navigate({ search: (prev) => ({ ...prev, seasonId: v, page: 1 }) });
+  const setPage = (v: number) => navigate({ search: (prev) => ({ ...prev, page: v }) });
+
   const activeDivisionId = divisionId && divisionId !== "ALL" ? divisionId : undefined;
-  const { data, isLoading, error } = usePublicSchedule(
+  const { data, isLoading, error, refetch } = usePublicSchedule(
     seasonId,
     activeDivisionId,
     view === "fixtures" ? "scheduled" : "completed",
@@ -44,10 +56,6 @@ function Schedule() {
   );
   const fixtures = data?.items ?? [];
   const totalPages = data?.meta?.totalPages ?? 1;
-
-  useEffect(() => {
-    setPage(1);
-  }, [view, divisionId, seasonId]);
 
   const defaultSeasonId = useMemo(() => {
     if (seasonId) return seasonId;
@@ -60,8 +68,10 @@ function Schedule() {
   }, [seasonId, config, seasons]);
 
   useEffect(() => {
-    if (!seasonId && defaultSeasonId) setSeasonId(defaultSeasonId);
-  }, [seasonId, defaultSeasonId]);
+    if (!seasonId && defaultSeasonId) {
+      navigate({ search: (prev) => ({ ...prev, seasonId: defaultSeasonId }), replace: true });
+    }
+  }, [seasonId, defaultSeasonId, navigate]);
 
   const tabs: { id: View; label: string }[] = [
     { id: "fixtures", label: t("schedule.fixtures") },
@@ -187,10 +197,10 @@ function Schedule() {
                 className="text-[15px]"
                 style={{ color: "var(--cb-text-secondary)" }}
               >
-                {t("common.sectionError")}
+                {t("schedule.sectionError")}
               </p>
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => refetch()}
                 className="mt-2 text-[13px] font-bold hover:underline transition-colors"
                 style={{ color: "var(--cb-brand-accent)" }}
               >

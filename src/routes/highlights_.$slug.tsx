@@ -99,12 +99,6 @@ function HighlightsDetail() {
             item.body.split("\n").map((line, i) => <p key={i}>{line}</p>)
           ) : item.summary ? (<p>{item.summary}</p>) : null}
 
-          {item.ctaUrl && !item.mediaUrl && (
-            <div className="mt-[var(--cb-space-lg)]">
-              <a href={item.ctaUrl} target="_blank" rel="noopener noreferrer" className="inline-block rounded-full px-7 py-3 text-[14px] font-bold uppercase transition-colors hover:opacity-90" style={{ background: "var(--cb-brand-accent)", color: "var(--cb-text-inverse)" }}>{item.ctaText || t("news.learnMore")}</a>
-            </div>
-          )}
-
           {item.tags?.length ? (
             <div className="flex flex-wrap gap-[var(--cb-space-xs)] mt-[var(--cb-space-xl)] pt-[var(--cb-space-lg)] border-t" style={{ borderColor: "var(--cb-border-subtle)" }}>
               {item.tags.map((tag) => (<span key={tag} className="text-[length:var(--cb-font-size-caption)] px-[var(--cb-space-sm)] py-[var(--cb-space-xs)] rounded-full font-[var(--cb-font-weight-heading)]" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)" }}>{tag}</span>))}

@@ -111,7 +111,7 @@ function Home() {
   const { data: config } = usePublicConfig();
   const orgName = config?.displayName || "Clubucket";
   usePageTitle("meta.home", { orgName });
-  const { data: home, isLoading: homeLoading, error: homeError } = usePublicHome(locale);
+  const { data: home, isLoading: homeLoading, error: homeError, refetch: refetchHome } = usePublicHome(locale);
   const { data: divisionsData } = usePublicDivisions();
   const { data: seasonsData } = usePublicSeasons();
   const seasonId = getDefaultSeasonId(config, seasonsData);
@@ -149,8 +149,8 @@ function Home() {
       {homeError && (
         <section className="py-[var(--cb-space-section)]" style={{ background: "var(--cb-surface-muted)" }}>
           <div className="max-w-[1200px] mx-auto px-6 text-center">
-            <p className="text-[15px]" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{t("common.sectionCouldNotLoad")}</p>
-            <button onClick={() => window.location.reload()} className="mt-7 text-[14px] uppercase font-semibold hover:underline transition-colors" style={{ color: "var(--cb-brand-accent)" }}>{t("common.retry")}</button>
+            <p className="text-[15px]" style={{ color: "var(--cb-text-secondary)", lineHeight: 1.7 }}>{t("home.sectionError")}</p>
+            <button onClick={() => refetchHome()} className="mt-7 text-[14px] uppercase font-semibold hover:underline transition-colors" style={{ color: "var(--cb-brand-accent)" }}>{t("common.retry")}</button>
           </div>
         </section>
       )}

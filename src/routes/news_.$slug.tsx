@@ -98,12 +98,6 @@ function NewsDetail() {
             </div>
           )}
 
-          {item.ctaUrl && !item.mediaUrl && (
-            <div className="mt-5">
-              <a href={item.ctaUrl} target="_blank" rel="noopener noreferrer" className="inline-block rounded-full px-7 py-3 text-[14px] font-bold uppercase transition-colors hover:opacity-90" style={{ background: "var(--cb-brand-accent)", color: "var(--cb-text-inverse)" }}>{item.ctaText || t("news.learnMore")}</a>
-            </div>
-          )}
-
           {item.tags?.length ? (
             <div className="flex flex-wrap gap-2 mt-8 pt-5" style={{ borderTop: "1px solid var(--cb-border-subtle)" }}>
               {item.tags.map((tag) => (<span key={tag} className="text-[12px] px-3 py-1.5 rounded-full font-bold" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)" }}>{tag}</span>))}

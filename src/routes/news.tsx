@@ -60,7 +60,7 @@ function News() {
             <>
               <div className="grid md:grid-cols-3 gap-6">
                 {items.map((n, idx) => (
-                  <NewsLinkWrapper key={`${n.id}-${idx}`} to="/news_/$slug" params={{ slug: contentItemSlug(n) }}>
+                  <NewsLinkWrapper key={`${n.id}-${idx}`} to="/news/$slug" params={{ slug: contentItemSlug(n) }}>
                     <NewsCard category={n.category || ""} title={n.title} date={n.date || ""} excerpt={normalizeContentExcerpt(n)} image={normalizeContentImage(n)} />
                   </NewsLinkWrapper>
                 ))}

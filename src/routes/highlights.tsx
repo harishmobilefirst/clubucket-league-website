@@ -62,7 +62,7 @@ function Highlights() {
             <>
               <div className="grid md:grid-cols-3 gap-6">
                 {items.map((h, idx) => (
-                  <HighlightLinkWrapper key={`${h.id}-${idx}`} to="/highlights_/$slug" params={{ slug: contentItemSlug(h) }}>
+                  <HighlightLinkWrapper key={`${h.id}-${idx}`} to="/highlights/$slug" params={{ slug: contentItemSlug(h) }}>
                     <HighlightCard title={h.title} date={h.date || ""} excerpt={normalizeContentExcerpt(h)} image={normalizeContentImage(h)} mediaUrl={h.mediaUrl} category={h.category || ""} />
                   </HighlightLinkWrapper>
                 ))}

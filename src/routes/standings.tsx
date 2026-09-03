@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useState, type ReactNode } from "react";
 import { Layout } from "@/components/Layout";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -18,6 +18,52 @@ export const Route = createFileRoute("/standings")({
   component: Standing,
 });
 
+type StandingsColumn = {
+  key: string;
+  label: string;
+  headerClassName: string;
+  cellClassName: string;
+  render: (r: PublicStandingRow) => ReactNode;
+};
+
+function useStandingsColumns(t: (key: string) => string): StandingsColumn[] {
+  return [
+    { key: "rank", label: "#", headerClassName: "w-[8%] text-left pl-4 sm:pl-8", cellClassName: "pl-4 sm:pl-8 text-[15px]", render: (r) => r.rank },
+    {
+      key: "team",
+      label: t("standings.team"),
+      headerClassName: "w-[30%] text-left",
+      cellClassName: "",
+      render: (r) => (
+        <div className="flex items-center gap-3 sm:gap-4">
+          {r.team.logoUrl ? (
+            <img src={r.team.logoUrl} alt={r.team.name} className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] object-contain border shrink-0" style={{ borderColor: "var(--cb-border-subtle)" }} />
+          ) : (
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] text-[10px] sm:text-[11px] font-bold flex items-center justify-center border shrink-0" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>{r.team.shortCode || generateInitials(r.team.name)}</div>
+          )}
+          <span className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.team.name}</span>
+        </div>
+      ),
+    },
+    { key: "played", label: t("standings.p"), headerClassName: "w-[10%] text-left", cellClassName: "text-[13px] sm:text-[15px]", render: (r) => r.played },
+    { key: "wins", label: t("standings.w"), headerClassName: "w-[10%] text-left", cellClassName: "text-[13px] sm:text-[15px]", render: (r) => r.wins },
+    { key: "losses", label: t("standings.l"), headerClassName: "w-[10%] text-left", cellClassName: "text-[13px] sm:text-[15px]", render: (r) => r.losses },
+    { key: "gf", label: t("standings.gf"), headerClassName: "w-[10%] text-left", cellClassName: "text-[13px] sm:text-[15px]", render: (r) => r.goalsFor },
+    { key: "ga", label: t("standings.ga"), headerClassName: "w-[10%] text-left", cellClassName: "text-[13px] sm:text-[15px]", render: (r) => r.goalsAgainst },
+    {
+      key: "gd",
+      label: t("standings.gd"),
+      headerClassName: "w-[6%] text-left",
+      cellClassName: "text-[13px] sm:text-[15px]",
+      render: (r) => {
+        const gd = r.goalDifference ?? r.goalsFor - r.goalsAgainst;
+        return gd > 0 ? `+${gd}` : gd;
+      },
+    },
+    { key: "pts", label: t("standings.pts"), headerClassName: "w-[10%] text-left pr-4 sm:pr-8", cellClassName: "pr-4 sm:pr-8 text-[13px] sm:text-[15px] font-bold", render: (r) => r.points },
+  ];
+}
+
 function Standing() {
   const { t } = useI18n();
   const { data: config } = usePublicConfig();
@@ -27,7 +73,8 @@ function Standing() {
 
   const divisionId = selectedDivisionId || divisions?.[0]?.id;
   const seasonId = config?.activeSeasonId;
-  const { data: standings, isLoading, error } = usePublicStandings(seasonId, divisionId);
+  const { data: standings, isLoading, error, refetch } = usePublicStandings(seasonId, divisionId);
+  const columns = useStandingsColumns(t);
 
   return (
     <Layout>
@@ -49,45 +96,40 @@ function Standing() {
         <div className="max-w-[1200px] mx-auto px-6">
           <div className="overflow-x-auto overflow-y-hidden rounded-md border" style={{ borderColor: "var(--cb-border-subtle)" }}>
             <table className="w-full min-w-[640px] border-collapse">
+              <caption className="sr-only">{t("standings.legend")}</caption>
               <thead>
                 <tr className="text-[13px] font-extrabold uppercase tracking-wider h-14" style={{ background: "var(--cb-status-success)", color: "var(--cb-text-primary)" }}>
-                  <th className="w-[8%] text-left pl-4 sm:pl-8">#</th>
-                  <th className="w-[30%] text-left">{t("standings.team")}</th>
-                  <th className="w-[10%] text-left">{t("standings.p")}</th>
-                  <th className="w-[10%] text-left">{t("standings.w")}</th>
-                  <th className="w-[10%] text-left">{t("standings.l")}</th>
-                  <th className="w-[10%] text-left">{t("standings.gf")}</th>
-                  <th className="w-[10%] text-left">{t("standings.ga")}</th>
-                  <th className="w-[6%] text-left">{t("standings.gd")}</th>
-                  <th className="w-[10%] text-left pr-4 sm:pr-8">{t("standings.pts")}</th>
+                  {columns.map((col) => (
+                    <th key={col.key} scope="col" className={col.headerClassName}>{col.label}</th>
+                  ))}
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   Array.from({ length: 8 }).map((_, i) => (
                     <tr key={i} className="h-[72px]" style={{ borderTop: "1px solid var(--cb-border-subtle)" }}>
-                      <td className="pl-4 sm:pl-8"><Skeleton className="h-5 w-6" /></td>
-                      <td><div className="flex items-center gap-4"><Skeleton className="w-10 h-10 rounded-[8px]" /><Skeleton className="h-5 w-32" /></div></td>
-                      <td><Skeleton className="h-5 w-6" /></td>
-                      <td><Skeleton className="h-5 w-6" /></td>
-                      <td><Skeleton className="h-5 w-6" /></td>
-                      <td><Skeleton className="h-5 w-6" /></td>
-                      <td><Skeleton className="h-5 w-6" /></td>
-                      <td><Skeleton className="h-5 w-6" /></td>
-                      <td className="pr-4 sm:pr-8"><Skeleton className="h-5 w-8" /></td>
+                      {columns.map((col) => (
+                        <td key={col.key} className={col.cellClassName}>
+                          {col.key === "team" ? (
+                            <div className="flex items-center gap-4"><Skeleton className="w-10 h-10 rounded-[8px]" /><Skeleton className="h-5 w-32" /></div>
+                          ) : (
+                            <Skeleton className={col.key === "pts" ? "h-5 w-8" : "h-5 w-6"} />
+                          )}
+                        </td>
+                      ))}
                     </tr>
                   ))
                 ) : error ? (
                   <tr className="h-[72px]" style={{ borderTop: "1px solid var(--cb-border-subtle)" }}>
-                    <td colSpan={9} className="text-center text-[15px]">
-                      This section could not load.
-                      <button onClick={() => window.location.reload()} className="ml-1 text-[13px] font-bold hover:underline transition-colors" style={{ color: "var(--cb-brand-accent)" }}>{t("common.retry")}</button>
+                    <td colSpan={columns.length} className="text-center text-[15px]">
+                      {t("standings.sectionError")}
+                      <button onClick={() => refetch()} className="ml-1 text-[13px] font-bold hover:underline transition-colors" style={{ color: "var(--cb-brand-accent)" }}>{t("common.retry")}</button>
                     </td>
                   </tr>
                 ) : !standings || standings.length === 0 ? (
-                  <tr style={{ borderTop: "1px solid var(--cb-border-subtle)" }}><td colSpan={9}><EmptyState message={t("standings.empty")} /></td></tr>
+                  <tr style={{ borderTop: "1px solid var(--cb-border-subtle)" }}><td colSpan={columns.length}><EmptyState message={t("standings.empty")} /></td></tr>
                 ) : (
-                  standings.map((r, idx) => <Row key={`${r.id}-${idx}`} r={r} />)
+                  standings.map((r, idx) => <Row key={`${r.id}-${idx}`} r={r} columns={columns} />)
                 )}
               </tbody>
             </table>
@@ -99,27 +141,12 @@ function Standing() {
   );
 }
 
-function Row({ r }: { r: PublicStandingRow }) {
-  const gd = r.goalDifference ?? r.goalsFor - r.goalsAgainst;
+function Row({ r, columns }: { r: PublicStandingRow; columns: StandingsColumn[] }) {
   return (
     <tr className="h-[72px]" style={{ borderTop: "1px solid var(--cb-border-subtle)", background: "var(--cb-surface-panel)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--cb-surface-muted)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--cb-surface-panel)"; }}>
-      <td className="pl-4 sm:pl-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.rank}</td>
-      <td>
-        <div className="flex items-center gap-3 sm:gap-4">
-          {r.team.logoUrl ? (
-            <img src={r.team.logoUrl} alt={r.team.name} className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] object-contain border shrink-0" style={{ borderColor: "var(--cb-border-subtle)" }} />
-          ) : (
-            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] text-[10px] sm:text-[11px] font-bold flex items-center justify-center border shrink-0" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>{r.team.shortCode || generateInitials(r.team.name)}</div>
-          )}
-          <span className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.team.name}</span>
-        </div>
-      </td>
-      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.played}</td>
-      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.losses}</td>
-      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.goalsFor}</td>
-      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.goalsAgainst}</td>
-      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{gd > 0 ? `+${gd}` : gd}</td>
-      <td className="pr-4 sm:pr-8 text-[13px] sm:text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{r.points}</td>
+      {columns.map((col) => (
+        <td key={col.key} className={col.cellClassName} style={{ color: "var(--cb-text-primary)" }}>{col.render(r)}</td>
+      ))}
     </tr>
   );
 }
