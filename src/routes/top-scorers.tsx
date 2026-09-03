@@ -41,10 +41,10 @@ function TopScorers() {
       <PageHeader title={t("topScorers.title")} subtitle={t("topScorers.subtitle")} />
 
       <div className="border-b" style={{ background: "var(--cb-surface-panel)", borderBottomColor: "var(--cb-border-subtle)" }}>
-        <div className="max-w-[1200px] mx-auto px-6 py-4 flex items-center gap-8">
+        <div className="max-w-[1200px] mx-auto px-6 py-4 flex flex-wrap items-center gap-3 sm:gap-8">
           {seasons && seasons.length > 0 && (
             <Select value={seasonId || "ALL"} onValueChange={(v) => { setSeasonId(v === "ALL" ? undefined : v); setPage(1); }}>
-              <SelectTrigger className="w-[180px] h-10"><SelectValue placeholder={t("topScorers.allSeasons")} /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-[180px] h-10"><SelectValue placeholder={t("topScorers.allSeasons")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">{t("topScorers.allSeasons")}</SelectItem>
                 {seasons.map((s) => (<SelectItem key={s.id} value={s.id}>{s.name}</SelectItem>))}
@@ -53,7 +53,7 @@ function TopScorers() {
           )}
           {divisions && divisions.length > 0 && (
             <Select value={divisionId} onValueChange={(v) => { setDivisionId(v); setPage(1); }}>
-              <SelectTrigger className="w-[180px] h-10"><SelectValue placeholder={t("topScorers.allDivisions")} /></SelectTrigger>
+              <SelectTrigger className="w-full sm:w-[180px] h-10"><SelectValue placeholder={t("topScorers.allDivisions")} /></SelectTrigger>
               <SelectContent>
                 <SelectItem value="ALL">{t("topScorers.allDivisions")}</SelectItem>
                 {divisions.map((d) => (<SelectItem key={d.id} value={d.id}>{d.name}</SelectItem>))}
@@ -65,24 +65,24 @@ function TopScorers() {
 
       <section className="py-10" style={{ background: "var(--cb-surface-panel)" }}>
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="overflow-hidden rounded-md border" style={{ borderColor: "var(--cb-border-subtle)" }}>
-            <table className="w-full border-collapse">
+          <div className="overflow-x-auto overflow-y-hidden rounded-md border" style={{ borderColor: "var(--cb-border-subtle)" }}>
+            <table className="w-full min-w-[480px] border-collapse">
               <thead>
                 <tr className="text-[13px] font-extrabold uppercase tracking-wider" style={{ background: "var(--cb-status-success)", color: "var(--cb-text-inverse)", height: 56 }}>
-                  <th className="w-[10%] text-left pl-8">#</th>
+                  <th className="w-[10%] text-left pl-4 sm:pl-8">#</th>
                   <th className="w-[40%] text-left">{t("topScorers.player")}</th>
                   <th className="w-[30%] text-left">{t("topScorers.team")}</th>
-                  <th className="w-[20%] text-left pr-8">{t("topScorers.goals")}</th>
+                  <th className="w-[20%] text-left pr-4 sm:pr-8">{t("topScorers.goals")}</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   Array.from({ length: 8 }).map((_, i) => (
                     <tr key={i} className="border-t" style={{ borderTopColor: "var(--cb-border-subtle)", height: 72 }}>
-                      <td className="pl-8"><Skeleton className="h-5 w-6" /></td>
+                      <td className="pl-4 sm:pl-8"><Skeleton className="h-5 w-6" /></td>
                       <td><div className="flex items-center gap-4"><Skeleton className="w-12 h-12 rounded-full" /><Skeleton className="h-5 w-36" /></div></td>
                       <td><Skeleton className="h-5 w-24" /></td>
-                      <td className="pr-8"><Skeleton className="h-5 w-8" /></td>
+                      <td className="pr-4 sm:pr-8"><Skeleton className="h-5 w-8" /></td>
                     </tr>
                   ))
                 ) : error ? (
@@ -113,16 +113,16 @@ function TopScorers() {
 function Row({ s }: { s: PublicTopScorer }) {
   return (
     <tr className="border-t transition-colors" style={{ borderTopColor: "var(--cb-border-subtle)", background: "var(--cb-surface-panel)", minHeight: 72 }} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--cb-surface-muted)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--cb-surface-panel)"; }}>
-      <td className="pl-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{s.rank}</td>
+      <td className="pl-4 sm:pl-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{s.rank}</td>
       <td>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {s.imageUrl ? (
-            <img src={s.imageUrl} alt={s.playerName} className="w-12 h-12 rounded-full object-cover border" style={{ borderColor: "var(--cb-border-subtle)" }} />
+            <img src={s.imageUrl} alt={s.playerName} className="w-10 h-10 sm:w-12 sm:h-12 rounded-full object-cover border shrink-0" style={{ borderColor: "var(--cb-border-subtle)" }} />
           ) : (
-            <div className="w-12 h-12 rounded-full text-[11px] font-bold flex items-center justify-center border" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>{generateInitials(s.playerName)}</div>
+            <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full text-[11px] font-bold flex items-center justify-center border shrink-0" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>{generateInitials(s.playerName)}</div>
           )}
           <div className="py-3">
-            <div className="text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{s.playerName}</div>
+            <div className="text-[14px] sm:text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{s.playerName}</div>
             {s.position ? (
               <div className="mt-1 text-[11px] font-bold uppercase tracking-[1.4px]" style={{ color: "var(--cb-text-muted)" }}>
                 {s.position}
@@ -131,8 +131,8 @@ function Row({ s }: { s: PublicTopScorer }) {
           </div>
         </div>
       </td>
-      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{s.teamName || "-"}</td>
-      <td className="pr-8 text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{s.goals}</td>
+      <td className="text-[14px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{s.teamName || "-"}</td>
+      <td className="pr-4 sm:pr-8 text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{s.goals}</td>
     </tr>
   );
 }

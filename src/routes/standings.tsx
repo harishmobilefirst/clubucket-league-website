@@ -32,11 +32,11 @@ function Standing() {
   return (
     <Layout>
       <div className="border-b" style={{ background: "var(--cb-surface-panel)", borderBottomColor: "var(--cb-border-subtle)" }}>
-        <div className="max-w-[1200px] mx-auto px-6 flex gap-8">
+        <div className="max-w-[1200px] mx-auto px-6 flex gap-5 sm:gap-8 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
           {divisions?.map((d) => {
             const active = d.id === divisionId;
             return (
-              <button key={d.id} type="button" onClick={() => setSelectedDivisionId(d.id)} className="relative py-4 text-[13px] uppercase cursor-pointer transition-colors" style={{ color: active ? "var(--cb-text-primary)" : "var(--cb-text-muted)", fontWeight: active ? 700 : 600 }}>
+              <button key={d.id} type="button" onClick={() => setSelectedDivisionId(d.id)} className="relative py-4 text-[13px] uppercase cursor-pointer transition-colors shrink-0" style={{ color: active ? "var(--cb-text-primary)" : "var(--cb-text-muted)", fontWeight: active ? 700 : 600 }}>
                 {d.name}
                 {active && <span className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none" style={{ background: "var(--cb-brand-accent)" }} />}
               </button>
@@ -47,11 +47,11 @@ function Standing() {
 
       <section className="py-10" style={{ background: "var(--cb-surface-panel)" }}>
         <div className="max-w-[1200px] mx-auto px-6">
-          <div className="overflow-hidden rounded-md border" style={{ borderColor: "var(--cb-border-subtle)" }}>
-            <table className="w-full border-collapse">
+          <div className="overflow-x-auto overflow-y-hidden rounded-md border" style={{ borderColor: "var(--cb-border-subtle)" }}>
+            <table className="w-full min-w-[640px] border-collapse">
               <thead>
                 <tr className="text-[13px] font-extrabold uppercase tracking-wider h-14" style={{ background: "var(--cb-status-success)", color: "var(--cb-text-primary)" }}>
-                  <th className="w-[8%] text-left pl-8">#</th>
+                  <th className="w-[8%] text-left pl-4 sm:pl-8">#</th>
                   <th className="w-[30%] text-left">{t("standings.team")}</th>
                   <th className="w-[10%] text-left">{t("standings.p")}</th>
                   <th className="w-[10%] text-left">{t("standings.w")}</th>
@@ -59,14 +59,14 @@ function Standing() {
                   <th className="w-[10%] text-left">{t("standings.gf")}</th>
                   <th className="w-[10%] text-left">{t("standings.ga")}</th>
                   <th className="w-[6%] text-left">{t("standings.gd")}</th>
-                  <th className="w-[10%] text-left pr-8">{t("standings.pts")}</th>
+                  <th className="w-[10%] text-left pr-4 sm:pr-8">{t("standings.pts")}</th>
                 </tr>
               </thead>
               <tbody>
                 {isLoading ? (
                   Array.from({ length: 8 }).map((_, i) => (
                     <tr key={i} className="h-[72px]" style={{ borderTop: "1px solid var(--cb-border-subtle)" }}>
-                      <td className="pl-8"><Skeleton className="h-5 w-6" /></td>
+                      <td className="pl-4 sm:pl-8"><Skeleton className="h-5 w-6" /></td>
                       <td><div className="flex items-center gap-4"><Skeleton className="w-10 h-10 rounded-[8px]" /><Skeleton className="h-5 w-32" /></div></td>
                       <td><Skeleton className="h-5 w-6" /></td>
                       <td><Skeleton className="h-5 w-6" /></td>
@@ -74,7 +74,7 @@ function Standing() {
                       <td><Skeleton className="h-5 w-6" /></td>
                       <td><Skeleton className="h-5 w-6" /></td>
                       <td><Skeleton className="h-5 w-6" /></td>
-                      <td className="pr-8"><Skeleton className="h-5 w-8" /></td>
+                      <td className="pr-4 sm:pr-8"><Skeleton className="h-5 w-8" /></td>
                     </tr>
                   ))
                 ) : error ? (
@@ -103,23 +103,23 @@ function Row({ r }: { r: PublicStandingRow }) {
   const gd = r.goalDifference ?? r.goalsFor - r.goalsAgainst;
   return (
     <tr className="h-[72px]" style={{ borderTop: "1px solid var(--cb-border-subtle)", background: "var(--cb-surface-panel)" }} onMouseEnter={(e) => { e.currentTarget.style.background = "var(--cb-surface-muted)"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "var(--cb-surface-panel)"; }}>
-      <td className="pl-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.rank}</td>
+      <td className="pl-4 sm:pl-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.rank}</td>
       <td>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-3 sm:gap-4">
           {r.team.logoUrl ? (
-            <img src={r.team.logoUrl} alt={r.team.name} className="w-10 h-10 rounded-[8px] object-contain border" style={{ borderColor: "var(--cb-border-subtle)" }} />
+            <img src={r.team.logoUrl} alt={r.team.name} className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] object-contain border shrink-0" style={{ borderColor: "var(--cb-border-subtle)" }} />
           ) : (
-            <div className="w-10 h-10 rounded-[8px] text-[11px] font-bold flex items-center justify-center border" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>{r.team.shortCode || generateInitials(r.team.name)}</div>
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-[8px] text-[10px] sm:text-[11px] font-bold flex items-center justify-center border shrink-0" style={{ background: "var(--cb-surface-muted)", color: "var(--cb-text-secondary)", borderColor: "var(--cb-border-subtle)" }}>{r.team.shortCode || generateInitials(r.team.name)}</div>
           )}
-          <span className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.team.name}</span>
+          <span className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.team.name}</span>
         </div>
       </td>
-      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.played}</td>
-      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.losses}</td>
-      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.goalsFor}</td>
-      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.goalsAgainst}</td>
-      <td className="text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{gd > 0 ? `+${gd}` : gd}</td>
-      <td className="pr-8 text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.points}</td>
+      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.played}</td>
+      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.losses}</td>
+      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.goalsFor}</td>
+      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{r.goalsAgainst}</td>
+      <td className="text-[13px] sm:text-[15px]" style={{ color: "var(--cb-text-primary)" }}>{gd > 0 ? `+${gd}` : gd}</td>
+      <td className="pr-4 sm:pr-8 text-[13px] sm:text-[15px] font-bold" style={{ color: "var(--cb-text-primary)" }}>{r.points}</td>
     </tr>
   );
 }

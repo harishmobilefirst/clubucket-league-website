@@ -122,7 +122,7 @@ function Schedule() {
             disabled={!divisions || divisions.length === 0}
           >
             <SelectTrigger
-              className="w-[220px] h-11 text-[13px] font-semibold uppercase tracking-wide rounded-md"
+              className="w-full sm:w-[220px] h-11 text-[13px] font-semibold uppercase tracking-wide rounded-md"
               style={{
                 borderColor: "var(--cb-border-subtle)",
                 background: "var(--cb-surface-panel)",
@@ -147,7 +147,7 @@ function Schedule() {
             disabled={seasonsLoading || !seasons || seasons.length === 0}
           >
             <SelectTrigger
-              className="w-[220px] h-11 text-[13px] font-semibold uppercase tracking-wide rounded-md"
+              className="w-full sm:w-[220px] h-11 text-[13px] font-semibold uppercase tracking-wide rounded-md"
               style={{
                 borderColor: "var(--cb-border-subtle)",
                 background: "var(--cb-surface-panel)",
@@ -334,14 +334,41 @@ function MatchCard({
       onMouseLeave={(e) => {
         e.currentTarget.style.borderColor = "var(--cb-border-subtle)";
       }}
-      className="rounded-[10px] px-7 py-5 mb-2.5 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2"
+      className="rounded-[10px] px-4 py-4 sm:px-7 sm:py-5 mb-2.5 cursor-pointer transition-colors focus:outline-none focus-visible:ring-2"
       style={{
         background: "var(--cb-surface-panel)",
         border: "1px solid var(--cb-border-subtle)",
       }}
     >
-      <div className="flex items-center gap-4">
-        <div className="w-[15%] text-center">
+      <div className="flex items-center justify-between gap-2 sm:hidden">
+        <div
+          className="text-[12px] font-bold"
+          style={{ color: "var(--cb-text-primary)" }}
+        >
+          {formatDate(m.matchDate, locale)}
+          {m.kickoffTime && (
+            <span className="font-normal" style={{ color: "var(--cb-text-muted)" }}>
+              {" "}&middot; {m.kickoffTime}
+            </span>
+          )}
+        </div>
+        <span
+          className="inline-block text-[10px] font-semibold px-2.5 py-1 rounded-full shrink-0"
+          style={{
+            background: isCompleted
+              ? "color-mix(in srgb, var(--cb-status-success), transparent 86%)"
+              : "var(--cb-surface-muted)",
+            color: isCompleted
+              ? "var(--cb-status-success)"
+              : "var(--cb-text-secondary)",
+          }}
+        >
+          {statusLabel}
+        </span>
+      </div>
+
+      <div className="mt-3 flex items-center gap-3 sm:mt-0 sm:gap-4">
+        <div className="hidden sm:block sm:w-[15%] text-center">
           <div
             className="text-[13px] font-bold"
             style={{ color: "var(--cb-text-primary)" }}
@@ -357,21 +384,21 @@ function MatchCard({
             </div>
           )}
         </div>
-        <div className="w-[25%] flex items-center justify-end gap-2.5">
+        <div className="flex-1 min-w-0 sm:flex-none sm:w-[25%] flex items-center justify-end gap-2 sm:gap-2.5">
           <span
-            className="text-[15px] font-semibold text-right"
+            className="text-[13px] sm:text-[15px] font-semibold text-right truncate"
             style={{ color: "var(--cb-text-primary)" }}
           >
             {m.homeTeam.name}
           </span>
           <TeamLogoImg team={m.homeTeam} />
         </div>
-        <div className="w-[20%] text-center">
+        <div className="shrink-0 w-[64px] sm:w-[20%] text-center">
           {isCompleted &&
           m.result?.homeScore != null &&
           m.result?.awayScore != null ? (
             <div
-              className="text-[28px] font-extrabold"
+              className="text-[20px] sm:text-[28px] font-extrabold"
               style={{
                 color: "var(--cb-text-primary)",
                 textWrap: "balance",
@@ -381,23 +408,23 @@ function MatchCard({
             </div>
           ) : (
             <div
-              className="text-[20px]"
+              className="text-[15px] sm:text-[20px]"
               style={{ color: "var(--cb-text-muted)" }}
             >
               {t("schedule.vs")}
             </div>
           )}
         </div>
-        <div className="w-[25%] flex items-center gap-2.5">
+        <div className="flex-1 min-w-0 sm:flex-none sm:w-[25%] flex items-center gap-2 sm:gap-2.5">
           <TeamLogoImg team={m.awayTeam} />
           <span
-            className="text-[15px] font-semibold"
+            className="text-[13px] sm:text-[15px] font-semibold truncate"
             style={{ color: "var(--cb-text-primary)" }}
           >
             {m.awayTeam.name}
           </span>
         </div>
-        <div className="w-[15%] text-right">
+        <div className="hidden sm:block sm:w-[15%] text-right">
           <span
             className="inline-block text-[11px] font-semibold px-3 py-1 rounded-full"
             style={{
