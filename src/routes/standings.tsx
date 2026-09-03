@@ -1,12 +1,18 @@
-import { createFileRoute } from "@tanstack/react-router";
-import { useState, type ReactNode } from "react";
+import { createFileRoute, useNavigate } from "@tanstack/react-router";
+import { useEffect, useMemo, useState, type ReactNode } from "react";
+import { z } from "zod";
 import { Layout } from "@/components/Layout";
 import { EmptyState } from "@/components/EmptyState";
 import { Skeleton } from "@/components/ui/skeleton";
-import { usePublicStandings, usePublicDivisions, usePublicConfig } from "@/hooks/use-public-api";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { usePublicStandings, usePublicDivisions, usePublicConfig, usePublicSeasons } from "@/hooks/use-public-api";
 import { generateInitials } from "@/lib/public-api";
 import { useI18n, usePageTitle } from "@/lib/i18n";
 import type { PublicStandingRow } from "@/types/public-api";
+
+const standingsSearchSchema = z.object({
+  seasonId: z.string().optional().catch(undefined),
+});
 
 export const Route = createFileRoute("/standings")({
   head: () => ({
@@ -15,6 +21,7 @@ export const Route = createFileRoute("/standings")({
       { name: "description", content: "Standings updated after each match." },
     ],
   }),
+  validateSearch: standingsSearchSchema,
   component: Standing,
 });
 
@@ -66,29 +73,78 @@ function useStandingsColumns(t: (key: string) => string): StandingsColumn[] {
 
 function Standing() {
   const { t } = useI18n();
+  const { seasonId } = Route.useSearch();
+  const navigate = useNavigate({ from: Route.fullPath });
   const { data: config } = usePublicConfig();
   usePageTitle("meta.standings", { orgName: config?.displayName || "Clubucket" });
   const { data: divisions } = usePublicDivisions();
+  const { data: seasons, isLoading: seasonsLoading } = usePublicSeasons();
   const [selectedDivisionId, setSelectedDivisionId] = useState<string | undefined>(undefined);
 
   const divisionId = selectedDivisionId || divisions?.[0]?.id;
-  const seasonId = config?.activeSeasonId;
-  const { data: standings, isLoading, error, refetch } = usePublicStandings(seasonId, divisionId);
+
+  const setSeasonId = (v: string | undefined) =>
+    navigate({ search: (prev) => ({ ...prev, seasonId: v }) });
+
+  const defaultSeasonId = useMemo(() => {
+    if (seasonId) return seasonId;
+    if (config?.activeSeasonId) return config.activeSeasonId;
+    if (seasons && seasons.length > 0) {
+      const active = seasons.find((s) => s.isActive || s.isCurrent);
+      return active?.id || seasons[0].id;
+    }
+    return undefined;
+  }, [seasonId, config, seasons]);
+
+  useEffect(() => {
+    if (!seasonId && defaultSeasonId) {
+      navigate({ search: (prev) => ({ ...prev, seasonId: defaultSeasonId }), replace: true });
+    }
+  }, [seasonId, defaultSeasonId, navigate]);
+
+  const activeSeasonId = seasonId || defaultSeasonId;
+  const { data: standings, isLoading, error, refetch } = usePublicStandings(activeSeasonId, divisionId);
   const columns = useStandingsColumns(t);
 
   return (
     <Layout>
       <div className="border-b" style={{ background: "var(--cb-surface-panel)", borderBottomColor: "var(--cb-border-subtle)" }}>
-        <div className="max-w-[1200px] mx-auto px-6 flex gap-5 sm:gap-8 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
-          {divisions?.map((d) => {
-            const active = d.id === divisionId;
-            return (
-              <button key={d.id} type="button" onClick={() => setSelectedDivisionId(d.id)} className="relative py-4 text-[13px] uppercase cursor-pointer transition-colors shrink-0" style={{ color: active ? "var(--cb-text-primary)" : "var(--cb-text-muted)", fontWeight: active ? 700 : 600 }}>
-                {d.name}
-                {active && <span className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none" style={{ background: "var(--cb-brand-accent)" }} />}
-              </button>
-            );
-          })}
+        <div className="max-w-[1200px] mx-auto px-6 flex flex-wrap items-center justify-between gap-3 py-3">
+          <div className="flex gap-5 sm:gap-8 overflow-x-auto" style={{ scrollbarWidth: "none" }}>
+            {divisions?.map((d) => {
+              const active = d.id === divisionId;
+              return (
+                <button key={d.id} type="button" onClick={() => setSelectedDivisionId(d.id)} className="relative py-1 text-[13px] uppercase cursor-pointer transition-colors shrink-0" style={{ color: active ? "var(--cb-text-primary)" : "var(--cb-text-muted)", fontWeight: active ? 700 : 600 }}>
+                  {d.name}
+                  {active && <span className="absolute bottom-0 left-0 right-0 h-[2px] pointer-events-none" style={{ background: "var(--cb-brand-accent)" }} />}
+                </button>
+              );
+            })}
+          </div>
+
+          <Select
+            value={activeSeasonId || ""}
+            onValueChange={(v) => setSeasonId(v || undefined)}
+            disabled={seasonsLoading || !seasons || seasons.length === 0}
+          >
+            <SelectTrigger
+              className="w-full sm:w-[220px] h-10 text-[13px] font-semibold uppercase tracking-wide rounded-md shrink-0"
+              style={{
+                borderColor: "var(--cb-border-subtle)",
+                background: "var(--cb-surface-panel)",
+                color: "var(--cb-text-primary)",
+              }}
+            >
+              <SelectValue placeholder={t("schedule.selectSeason")} />
+            </SelectTrigger>
+            <SelectContent>
+              {seasons?.map((s) => (
+                <SelectItem key={s.id} value={s.id}>
+                  {s.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
       </div>
 
