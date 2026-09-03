@@ -223,7 +223,9 @@ function Home() {
             </div>
             <div className="grid md:grid-cols-3 gap-6 mt-12">
               {latestNews.slice(0, 3).map((item, idx) => (
-                <NewsCard key={`${item.id || item.title}-${idx}`} category={item.category || ""} title={item.title} date={item.date || ""} excerpt={normalizeContentExcerpt(item)} image={normalizeContentImage(item)} />
+                <Link key={`${item.id || item.title}-${idx}`} to="/news/$slug" params={{ slug: contentItemSlug(item) }} className="block h-full">
+                  <NewsCard category={item.category || ""} title={item.title} date={item.date || ""} excerpt={normalizeContentExcerpt(item)} image={normalizeContentImage(item)} />
+                </Link>
               ))}
             </div>
           </div>
@@ -242,7 +244,9 @@ function Home() {
             </div>
             <div className="grid md:grid-cols-3 gap-6 mt-8">
               {highlightsData.slice(0, 3).map((item, idx) => (
-                <HighlightCard key={`${item.id || item.title}-${idx}`} title={item.title} date={item.date || ""} excerpt={normalizeContentExcerpt(item)} image={normalizeContentImage(item)} mediaUrl={item.mediaUrl} category={item.category || ""} />
+                <Link key={`${item.id || item.title}-${idx}`} to="/highlights/$slug" params={{ slug: contentItemSlug(item) }} className="block h-full">
+                  <HighlightCard title={item.title} date={item.date || ""} excerpt={normalizeContentExcerpt(item)} image={normalizeContentImage(item)} mediaUrl={item.mediaUrl} category={item.category || ""} />
+                </Link>
               ))}
             </div>
           </div>
