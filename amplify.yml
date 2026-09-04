@@ -1,0 +1,22 @@
+version: 1
+frontend:
+  phases:
+    preBuild:
+      commands:
+        # Use `npm install` (not `npm ci`) so the build tolerates optional-dependency
+        # lockfile drift from rolldown/vite native bindings across npm versions.
+        - npm install --no-audit --no-fund
+    build:
+      commands:
+        # DEPLOY_TARGET switches the Nitro preset to aws-amplify (see vite.config.ts).
+        # VITE_API_BASE_URL and VITE_ORGANIZATION_SLUG are injected at build time from
+        # the Amplify app env vars.
+        - DEPLOY_TARGET=amplify npm run build
+  artifacts:
+    # Nitro's aws-amplify preset writes the SSR deploy manifest + compute bundle here.
+    baseDirectory: .amplify-hosting
+    files:
+      - "**/*"
+  cache:
+    paths:
+      - node_modules/**/*
